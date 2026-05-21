@@ -17,6 +17,8 @@ a{text-decoration:none;color:inherit}img{max-width:100%;display:block}button{cur
 
 /* HEADER */
 #header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--white);box-shadow:0 1px 0 var(--gray)}
+
+/* Desktop header */
 .header-top{display:flex;align-items:center;gap:16px;padding:0 32px;height:68px;max-width:1320px;margin:0 auto}
 .logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
 .logo-mark{width:40px;height:40px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center}
@@ -36,6 +38,14 @@ a{text-decoration:none;color:inherit}img{max-width:100%;display:block}button{cur
 .cart-count{background:var(--red);color:white;font-size:.65rem;font-weight:900;min-width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-left:2px}
 .h-btn-wpp{background:#25D366;color:white;border-radius:50px;padding:9px 16px}
 .h-btn-wpp:hover{background:#1dba58;color:white}
+
+/* Mobile search bar (hidden on desktop) */
+.mobile-search{display:none;padding:8px 16px 10px;background:var(--white);border-top:1px solid var(--gray)}
+.mobile-search-inner{display:flex;background:var(--off);border:1.5px solid var(--gray);border-radius:50px;overflow:hidden;transition:var(--tr)}
+.mobile-search-inner:focus-within{border-color:var(--blue)}
+.mobile-search-inner input{flex:1;border:none;background:transparent;padding:10px 16px;font-size:.88rem;font-family:'Nunito',sans-serif;color:var(--black);outline:none}
+.mobile-search-inner button{background:var(--blue);border:none;width:42px;height:42px;display:flex;align-items:center;justify-content:center;color:white;font-size:.95rem;flex-shrink:0}
+
 .nav-wrap{border-top:1px solid var(--gray)}
 .nav-bar{display:flex;align-items:center;padding:0 32px;height:44px;gap:2px;max-width:1320px;margin:0 auto;overflow-x:auto}
 .nav-bar::-webkit-scrollbar{height:0}
@@ -46,6 +56,7 @@ a{text-decoration:none;color:inherit}img{max-width:100%;display:block}button{cur
 
 /* HERO */
 .hero{margin-top:112px;background:linear-gradient(120deg,#1a4fa0 0%,#3a7bd5 55%,#5b9ae8 100%);overflow:hidden;position:relative}
+/* hero margin desktop = header-top 68px + nav 44px = 112px ✓ */
 .hero-inner{max-width:1320px;margin:0 auto;padding:56px 32px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px}
 .hero-text{color:white}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:50px;padding:5px 14px;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(255,255,255,.25)}
@@ -262,7 +273,61 @@ footer{background:#0f1420;color:white;padding:52px 32px 20px}
 .rv.in{opacity:1;transform:translateY(0)}
 
 @media(max-width:1100px){.cats-grid{grid-template-columns:repeat(5,1fr)}.products-grid{grid-template-columns:repeat(3,1fr)}.footer-inner{grid-template-columns:1fr 1fr}}
-@media(max-width:840px){.header-top{padding:0 16px}.h-btn-wpp span{display:none}.hero-inner{grid-template-columns:1fr;text-align:center}.hero-btns{justify-content:center}.hero-cards{display:none}.cats-grid{grid-template-columns:repeat(4,1fr)}.products-grid{grid-template-columns:repeat(2,1fr)}.why-grid{grid-template-columns:1fr}.svc-grid{grid-template-columns:1fr}.reviews-grid{grid-column:1}.footer-inner{grid-template-columns:1fr}.nav-bar{padding:0 16px}.sec{padding:36px 16px}.frow{grid-template-columns:1fr}}
+
+@media(max-width:840px){
+  /* Header mobile: logo + ações, busca embaixo */
+  .header-top{padding:0 14px;height:60px;gap:10px}
+  .logo-sub{display:none}
+  .logo-name{font-size:1.1rem}
+  .logo-mark{width:36px;height:36px}
+  /* Esconde busca do header-top no mobile */
+  .search-wrap{display:none}
+  /* Esconde WhatsApp e Instagram no mobile */
+  .h-btn-wpp{display:none}
+  .h-btn[title="Instagram"]{display:none}
+  /* Botão sacola compacto */
+  .h-btn-cart{padding:8px 14px;font-size:.8rem}
+  /* Mostra barra de busca mobile */
+  .mobile-search{display:block}
+  /* Hero margin ajustado (header 60px + busca mobile ~60px + nav 44px = 164px) */
+  .hero{margin-top:164px}
+  .hero-inner{grid-template-columns:1fr;text-align:center;padding:36px 20px}
+  .hero-btns{justify-content:center;flex-direction:column;align-items:center}
+  .btn-hero-p,.btn-hero-o{width:100%;max-width:320px;justify-content:center}
+  .hero-cards{display:none}
+  /* Nav */
+  .nav-bar{padding:0 12px}
+  /* Cats */
+  .cats-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .cat-item{padding:14px 8px}
+  .cat-e{font-size:1.6rem}
+  .cat-label{font-size:.7rem}
+  /* Products */
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  /* Why */
+  .why-grid{grid-template-columns:1fr}
+  /* Services */
+  .svc-grid{grid-template-columns:1fr}
+  /* Reviews */
+  .reviews-grid{grid-template-columns:1fr}
+  /* Footer */
+  .footer-inner{grid-template-columns:1fr}
+  /* Section padding */
+  .sec{padding:36px 16px}
+  /* Form */
+  .frow{grid-template-columns:1fr}
+  /* Strip */
+  .strip{gap:16px;padding:12px 16px}
+  .strip-i{font-size:.75rem}
+}
+
+@media(max-width:480px){
+  .cats-grid{grid-template-columns:repeat(2,1fr)}
+  .products-grid{grid-template-columns:1fr}
+  .pay-opts{grid-template-columns:1fr}
+  .pay-opt{flex-direction:row;gap:12px;padding:13px}
+  .hero-h1{font-size:1.9rem}
+}
 @media(max-width:520px){.cats-grid{grid-template-columns:repeat(3,1fr)}.products-grid{grid-template-columns:1fr}.pay-opts{grid-template-columns:1fr}.pay-opt{flex-direction:row;gap:12px;padding:13px}}
 </style>
 </head>
@@ -284,6 +349,18 @@ footer{background:#0f1420;color:white;padding:52px 32px 20px}
       <a href="https://wa.me/5527988840319" target="_blank" class="h-btn h-btn-wpp"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
     </div>
   </div>
+  <!-- Barra de busca exclusiva para mobile -->
+  <div class="mobile-search">
+    <div class="mobile-search-inner">
+      <input type="text" id="searchInputMobile" placeholder="Buscar produtos, rações, acessórios…"
+             oninput="doSearch(this.value)"
+             onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
+      <button onclick="doSearch(document.getElementById('searchInputMobile').value)">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="nav-wrap">
     <nav class="nav-bar">
       <div class="nav-item active" data-sp="todos" onclick="filterBySpecies(this,'todos')">🐾 Todos</div>
