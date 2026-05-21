@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Agrocampo Pet Shop – Vila Velha, ES</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{--blue:#3a7bd5;--blue-light:#5b9ae8;--blue-pale:#eaf2ff;--blue-dark:#2260b5;--red:#e5373a;--white:#ffffff;--off:#f7f9fc;--gray:#e8ecf1;--gray-mid:#d0d8e4;--gray-dark:#6b7a90;--black:#1a1f2e;--radius:10px;--radius-sm:7px;--radius-lg:18px;--shadow:0 2px 12px rgba(58,123,213,.10);--shadow-md:0 6px 28px rgba(58,123,213,.16);--tr:.22s cubic-bezier(.4,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;color:var(--black);background:var(--white);overflow-x:hidden}
+a{text-decoration:none;color:inherit}img{max-width:100%;display:block}button{cursor:pointer;font-family:'Nunito',sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--off)}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:3px}
+
+/* HEADER */
+#header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--white);box-shadow:0 1px 0 var(--gray)}
+.header-top{display:flex;align-items:center;gap:16px;padding:0 32px;height:68px;max-width:1320px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
+.logo-mark{width:40px;height:40px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-mark i{color:white;font-size:1.2rem}
+.logo-name{font-size:1.3rem;font-weight:900;color:var(--blue);letter-spacing:-.5px}
+.logo-sub{font-size:.65rem;color:var(--gray-dark);display:block;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+.search-wrap{flex:1;max-width:520px;margin:0 auto;display:flex;background:var(--off);border:1.5px solid var(--gray);border-radius:50px;overflow:hidden;transition:var(--tr)}
+.search-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,123,213,.12)}
+.search-wrap input{flex:1;border:none;background:transparent;padding:0 18px;font-size:.92rem;font-family:'Nunito',sans-serif;color:var(--black);outline:none}
+.search-wrap button{background:var(--blue);border:none;width:46px;height:46px;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem;transition:var(--tr);flex-shrink:0}
+.search-wrap button:hover{background:var(--blue-dark)}
+.h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.h-btn{display:flex;align-items:center;gap:7px;border:none;background:transparent;border-radius:8px;padding:8px 12px;font-size:.82rem;font-weight:700;color:var(--black);transition:var(--tr);white-space:nowrap}
+.h-btn:hover{background:var(--off);color:var(--blue)}
+.h-btn-cart{background:var(--blue);color:white;border-radius:50px;padding:9px 18px}
+.h-btn-cart:hover{background:var(--blue-dark);color:white}
+.cart-count{background:var(--red);color:white;font-size:.65rem;font-weight:900;min-width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-left:2px}
+.h-btn-wpp{background:#25D366;color:white;border-radius:50px;padding:9px 16px}
+.h-btn-wpp:hover{background:#1dba58;color:white}
+.nav-wrap{border-top:1px solid var(--gray)}
+.nav-bar{display:flex;align-items:center;padding:0 32px;height:44px;gap:2px;max-width:1320px;margin:0 auto;overflow-x:auto}
+.nav-bar::-webkit-scrollbar{height:0}
+.nav-item{display:flex;align-items:center;gap:6px;padding:0 14px;height:100%;font-size:.83rem;font-weight:700;color:var(--gray-dark);border-bottom:2px solid transparent;white-space:nowrap;transition:var(--tr);cursor:pointer}
+.nav-item:hover{color:var(--blue);border-bottom-color:var(--blue)}
+.nav-item.active{color:var(--blue);border-bottom-color:var(--blue)}
+.nav-item.promo{color:var(--red)}.nav-item.promo:hover{border-bottom-color:var(--red)}
+
+/* HERO */
+.hero{margin-top:112px;background:linear-gradient(120deg,#1a4fa0 0%,#3a7bd5 55%,#5b9ae8 100%);overflow:hidden;position:relative}
+.hero-inner{max-width:1320px;margin:0 auto;padding:56px 32px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px}
+.hero-text{color:white}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:50px;padding:5px 14px;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(255,255,255,.25)}
+.hero-h1{font-size:clamp(2rem,4vw,3.2rem);font-weight:900;line-height:1.1;margin-bottom:14px}
+.hero-h1 span{color:#ffe066}
+.hero-p{font-size:1rem;opacity:.88;line-height:1.65;margin-bottom:28px;max-width:440px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-hero-p{background:white;color:var(--blue-dark);border:none;border-radius:50px;padding:14px 28px;font-size:.95rem;font-weight:800;transition:var(--tr);box-shadow:0 4px 18px rgba(0,0,0,.2)}
+.btn-hero-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.btn-hero-o{background:transparent;color:white;border:2px solid rgba(255,255,255,.55);border-radius:50px;padding:12px 24px;font-size:.95rem;font-weight:700;transition:var(--tr)}
+.btn-hero-o:hover{border-color:white;background:rgba(255,255,255,.1)}
+.hero-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:1}
+.hci{background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.22);border-radius:var(--radius-lg);padding:18px 12px;text-align:center;color:white;transition:var(--tr)}
+.hci:hover{background:rgba(255,255,255,.22);transform:translateY(-3px)}
+.hci .e{font-size:2.2rem;margin-bottom:6px}
+.hci span{font-size:.78rem;font-weight:700;opacity:.9}
+.hero-rbar{grid-column:1/-1;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:14px;color:white}
+.stars-gold{color:#ffe066;font-size:.95rem;letter-spacing:1px}
+.rbar-info strong{display:block;font-size:1rem;font-weight:900}
+.rbar-info small{font-size:.75rem;opacity:.7}
+
+/* STRIP */
+.strip{background:var(--blue-dark);display:flex;align-items:center;justify-content:center;gap:36px;padding:13px 24px;flex-wrap:wrap}
+.strip-i{display:flex;align-items:center;gap:8px;color:white;font-size:.82rem;font-weight:700}
+.strip-i i{color:#ffe066}
+
+/* SECTIONS */
+.sec{padding:52px 32px;max-width:1320px;margin:0 auto}
+.sec-hd{margin-bottom:32px}
+.sec-hd h2{font-size:1.5rem;font-weight:900;color:var(--black);margin-bottom:4px}
+.sec-hd p{font-size:.88rem;color:var(--gray-dark)}
+.sec-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.see-all{font-size:.83rem;font-weight:800;color:var(--blue);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.see-all:hover{color:var(--blue-dark)}
+
+/* CATS */
+.cats-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+.cat-item{display:flex;flex-direction:column;align-items:center;gap:10px;background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);padding:20px 10px;cursor:pointer;transition:var(--tr);text-align:center}
+.cat-item:hover{border-color:var(--blue);box-shadow:var(--shadow);transform:translateY(-3px)}
+.cat-item.active{border-color:var(--blue);background:var(--blue-pale)}
+.cat-e{font-size:2rem}.cat-label{font-size:.75rem;font-weight:800;color:var(--black);line-height:1.2}
+
+/* PRODUCTS */
+.products-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.prod-card{background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);overflow:hidden;transition:var(--tr);display:flex;flex-direction:column}
+.prod-card:hover{border-color:var(--blue-light);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.prod-card.esgotado{opacity:.7}
+.prod-card.esgotado:hover{transform:none;box-shadow:none;border-color:var(--gray)}
+.prod-thumb{height:160px;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative}
+.prod-tag{position:absolute;top:10px;left:10px;background:var(--red);color:white;font-size:.65rem;font-weight:900;padding:3px 9px;border-radius:50px;letter-spacing:.04em;text-transform:uppercase}
+.prod-tag.novo{background:var(--blue)}
+.prod-tag.esgotado-tag{background:#9e9e9e}
+.prod-body{padding:14px;flex:1;display:flex;flex-direction:column}
+.prod-brand{font-size:.7rem;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-weight:700}
+.prod-name{font-size:.83rem;font-weight:700;line-height:1.35;margin-bottom:10px;flex:1}
+.prod-old{font-size:.75rem;color:var(--gray-dark);text-decoration:line-through;line-height:1}
+.prod-price{font-size:1.15rem;font-weight:900;color:var(--blue);line-height:1.2}
+.prod-inst{font-size:.7rem;color:var(--gray-dark);margin-top:2px}
+.btn-add{margin-top:12px;background:var(--blue);color:white;border:none;border-radius:50px;padding:10px;font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--tr)}
+.btn-add:hover{background:var(--blue-dark)}
+.btn-add:active{transform:scale(.97)}
+.btn-esgotado{margin-top:12px;background:var(--gray);color:var(--gray-dark);border:none;border-radius:50px;padding:10px;font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;cursor:not-allowed}
+.no-results{grid-column:1/-1;text-align:center;padding:48px;color:var(--gray-dark);font-size:.9rem}
+.no-results i{font-size:2.5rem;color:var(--gray-mid);display:block;margin-bottom:10px}
+
+/* WHY */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.why-card{display:flex;gap:16px;align-items:flex-start;background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);padding:24px;transition:var(--tr)}
+.why-card:hover{border-color:var(--blue);box-shadow:var(--shadow)}
+.why-icon{width:52px;height:52px;background:var(--blue-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--blue);flex-shrink:0}
+.why-text h4{font-size:.92rem;font-weight:800;margin-bottom:4px}
+.why-text p{font-size:.8rem;color:var(--gray-dark);line-height:1.55}
+
+/* SERVICES */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.svc-card{border:1.5px solid var(--gray);border-radius:var(--radius-lg);overflow:hidden;background:white;transition:var(--tr)}
+.svc-card:hover{border-color:var(--blue);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.svc-top{background:var(--blue-pale);padding:24px;display:flex;align-items:center;gap:14px}
+.svc-emoji{font-size:2.4rem}
+.svc-top h3{font-size:1rem;font-weight:900;color:var(--blue-dark)}
+.svc-top p{font-size:.78rem;color:var(--gray-dark);margin-top:2px}
+.svc-body{padding:18px}
+.svc-price{font-size:1.05rem;font-weight:900;color:var(--blue);margin-bottom:14px;display:block}
+.btn-svc{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;border-radius:50px;padding:11px 20px;font-size:.82rem;font-weight:800;transition:var(--tr)}
+.btn-svc:hover{background:#1dba58;transform:translateY(-1px)}
+
+/* REVIEWS */
+.reviews-bg{background:var(--black)}
+.reviews-bg .sec-hd h2{color:white}
+.reviews-bg .sec-hd p{color:rgba(255,255,255,.45)}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rev-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);padding:24px;transition:var(--tr)}
+.rev-card:hover{background:rgba(255,255,255,.09)}
+.rev-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.rev-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.rev-name{color:white;font-size:.88rem;font-weight:800}
+.rev-date{color:rgba(255,255,255,.35);font-size:.72rem;margin-top:1px}
+.rev-stars{color:#ffe066;font-size:.85rem;margin-bottom:8px}
+.rev-text{color:rgba(255,255,255,.7);font-size:.83rem;line-height:1.6}
+
+/* FOOTER */
+footer{background:#0f1420;color:white;padding:52px 32px 20px}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;max-width:1320px;margin:0 auto 36px}
+.ft-logo-name{font-size:1.2rem;font-weight:900;color:white;letter-spacing:-.5px}
+.ft-logo p{color:rgba(255,255,255,.45);font-size:.83rem;line-height:1.65;margin:14px 0 20px}
+.ft-socials{display:flex;gap:8px}
+.ft-s{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:.9rem;transition:var(--tr)}
+.ft-s:hover{background:var(--blue);border-color:var(--blue);color:white}
+.ft-col h5{font-size:.88rem;font-weight:900;margin-bottom:16px;color:white}
+.ft-col ul{list-style:none}
+.ft-col ul li{margin-bottom:9px}
+.ft-col ul li a{color:rgba(255,255,255,.45);font-size:.8rem;transition:var(--tr)}
+.ft-col ul li a:hover{color:var(--blue)}
+.ft-contact p{display:flex;align-items:flex-start;gap:8px;font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:10px;line-height:1.5}
+.ft-contact i{color:var(--blue);flex-shrink:0;margin-top:2px}
+.ft-hours{background:rgba(255,255,255,.05);border-left:3px solid var(--blue);border-radius:var(--radius-sm);padding:14px;margin-top:12px}
+.ft-hours p{font-size:.78rem;color:rgba(255,255,255,.45);margin-bottom:3px}
+.ft-hours strong{color:white;font-size:.8rem}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:18px;display:flex;align-items:center;justify-content:space-between;max-width:1320px;margin:0 auto;font-size:.76rem;color:rgba(255,255,255,.25)}
+.footer-bottom span{color:var(--blue)}
+
+/* CART DRAWER */
+.drawer-mask{position:fixed;inset:0;z-index:2000;background:rgba(15,20,32,.55);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:var(--tr)}
+.drawer-mask.open{opacity:1;pointer-events:all}
+.drawer{position:absolute;right:0;top:0;bottom:0;width:400px;background:white;display:flex;flex-direction:column;transform:translateX(100%);transition:.28s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.15)}
+.drawer-mask.open .drawer{transform:translateX(0)}
+.drawer-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--gray)}
+.drawer-hd h3{font-size:1.05rem;font-weight:900}
+.drawer-close{width:34px;height:34px;border:none;background:var(--off);border-radius:50%;font-size:.95rem;color:var(--gray-dark);transition:var(--tr)}
+.drawer-close:hover{background:var(--gray)}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 22px}
+.cart-empty-state{text-align:center;padding:50px 20px;color:var(--gray-dark)}
+.cart-empty-state i{font-size:2.8rem;color:var(--gray-mid);margin-bottom:12px}
+.cart-empty-state p{font-size:.88rem}
+.ci{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--gray)}
+.ci-thumb{width:58px;height:58px;background:var(--off);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:.82rem;font-weight:700;line-height:1.35;margin-bottom:5px}
+.ci-price{font-size:.92rem;font-weight:900;color:var(--blue)}
+.ci-qty{display:flex;align-items:center;gap:6px;border:1.5px solid var(--gray);border-radius:50px;overflow:hidden;margin-top:6px;width:fit-content}
+.ci-qty button{width:28px;height:28px;border:none;background:transparent;font-size:.95rem;font-weight:900;color:var(--blue);transition:var(--tr)}
+.ci-qty button:hover{background:var(--blue-pale)}
+.ci-qty span{font-size:.82rem;font-weight:700;min-width:18px;text-align:center}
+.ci-del{background:none;border:none;color:var(--gray-mid);font-size:.82rem;cursor:pointer;padding:4px;margin-left:4px;transition:var(--tr)}
+.ci-del:hover{color:var(--red)}
+.drawer-ft{padding:16px 22px;border-top:1px solid var(--gray);background:var(--off)}
+.cart-subtotal{display:flex;justify-content:space-between;font-weight:900;font-size:1rem;margin-bottom:14px}
+.btn-checkout-main{width:100%;background:var(--blue);color:white;border:none;border-radius:50px;padding:15px;font-size:.95rem;font-weight:900;transition:var(--tr)}
+.btn-checkout-main:hover{background:var(--blue-dark)}
+
+/* MODAL */
+.modal-mask{position:fixed;inset:0;z-index:3000;background:rgba(15,20,32,.6);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:var(--tr)}
+.modal-mask.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:var(--radius-lg);max-width:520px;width:100%;max-height:92vh;overflow-y:auto;transform:scale(.96);transition:var(--tr)}
+.modal-mask.open .modal{transform:scale(1)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--gray);position:sticky;top:0;background:white;z-index:1;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.modal-hd h3{font-size:1rem;font-weight:900}
+.modal-close{width:34px;height:34px;border:none;background:var(--off);border-radius:50%;font-size:.9rem;color:var(--gray-dark);transition:var(--tr)}
+.modal-close:hover{background:var(--gray)}
+.modal-bd{padding:24px 26px}
+.steps{display:flex;margin-bottom:24px}
+.stp{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.stp::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--gray);z-index:0}
+.stp:last-child::after{display:none}
+.stp-dot{width:32px;height:32px;border-radius:50%;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;z-index:1;position:relative;transition:var(--tr);color:var(--gray-dark)}
+.stp.active .stp-dot{background:var(--blue);color:white}
+.stp.done .stp-dot{background:var(--blue-dark);color:white}
+.stp-lbl{font-size:.68rem;font-weight:700;color:var(--gray-dark);margin-top:5px;text-align:center}
+.stp.active .stp-lbl{color:var(--blue)}
+.order-sum{background:var(--off);border-radius:var(--radius);padding:14px;margin-bottom:18px}
+.order-sum h4{font-size:.83rem;font-weight:900;margin-bottom:10px}
+.sum-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;padding:5px 0;border-bottom:1px solid var(--gray)}
+.sum-row:last-child{border:none;padding-top:10px;font-weight:900;font-size:.95rem}
+.sum-val-total{color:var(--blue)}
+.pay-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.pay-opt{border:2px solid var(--gray);border-radius:var(--radius);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:var(--tr);background:white}
+.pay-opt:hover{border-color:var(--blue)}
+.pay-opt.sel{border-color:var(--blue);background:var(--blue-pale)}
+.pay-opt i{font-size:1.5rem;color:var(--blue)}
+.pay-opt span{font-size:.78rem;font-weight:800;color:var(--black)}
+.del-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.del-opt{border:2px solid var(--gray);border-radius:var(--radius);padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:var(--tr);background:white;text-align:center}
+.del-opt:hover{border-color:var(--blue)}
+.del-opt.sel{border-color:var(--blue);background:var(--blue-pale)}
+.del-opt i{font-size:1.8rem;color:var(--blue)}
+.del-opt strong{font-size:.88rem;font-weight:900}
+.del-opt small{font-size:.73rem;color:var(--gray-dark)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:.77rem;font-weight:800;color:var(--black);margin-bottom:5px}
+.fg input{width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:11px 13px;font-size:.85rem;font-family:'Nunito',sans-serif;color:var(--black);background:white;outline:none;transition:var(--tr)}
+.fg input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,123,213,.1)}
+.pix-wrap{text-align:center;padding:8px 0}
+.pix-qr{width:140px;height:140px;background:var(--off);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:4.5rem;border:2px dashed var(--gray-mid)}
+.pix-key{background:var(--off);border-radius:var(--radius-sm);padding:12px 16px;font-size:.95rem;font-weight:900;border:1.5px solid var(--gray);font-family:monospace;margin:12px 0}
+.btn-copy{background:var(--blue);color:white;border:none;border-radius:50px;padding:11px 26px;font-size:.85rem;font-weight:800;transition:var(--tr);margin-bottom:10px}
+.btn-copy:hover{background:var(--blue-dark)}
+.pix-alert{background:#fffbe6;border-radius:var(--radius-sm);padding:12px 14px;border-left:3px solid #f59e0b;font-size:.8rem;color:#78350f;line-height:1.55;text-align:left;margin-top:10px}
+.info-box{background:var(--blue-pale);border-radius:var(--radius);padding:16px 18px;font-size:.82rem;color:var(--blue-dark);line-height:1.6;margin-bottom:16px;border-left:3px solid var(--blue)}
+.pickup-box{background:var(--blue-pale);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:16px}
+.success-wrap{text-align:center;padding:16px 0}
+.suc-icon{width:72px;height:72px;background:var(--blue-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;color:var(--blue);margin:0 auto 18px}
+.success-wrap h3{font-size:1.2rem;font-weight:900;margin-bottom:8px}
+.success-wrap p{color:var(--gray-dark);font-size:.85rem;line-height:1.65;margin-bottom:22px}
+.btn-wpp-suc{display:inline-flex;align-items:center;gap:9px;background:#25D366;color:white;border:none;border-radius:50px;padding:13px 26px;font-size:.88rem;font-weight:800;transition:var(--tr)}
+.btn-wpp-suc:hover{background:#1dba58}
+.btn-next{width:100%;background:var(--blue);color:white;border:none;border-radius:50px;padding:14px;font-size:.9rem;font-weight:900;transition:var(--tr);margin-top:6px}
+.btn-next:hover{background:var(--blue-dark)}
+.float-wpp{position:fixed;bottom:24px;right:24px;z-index:900;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;border:none;box-shadow:0 4px 20px rgba(37,211,102,.5);transition:var(--tr)}
+.float-wpp:hover{transform:scale(1.08)}
+.toast{position:fixed;bottom:90px;right:24px;z-index:5000;background:var(--black);color:white;padding:12px 20px;border-radius:50px;font-size:.82rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:8px;transform:translateY(16px);opacity:0;pointer-events:none;transition:var(--tr)}
+.toast.show{transform:translateY(0);opacity:1}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+
+@media(max-width:1100px){.cats-grid{grid-template-columns:repeat(5,1fr)}.products-grid{grid-template-columns:repeat(3,1fr)}.footer-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:840px){.header-top{padding:0 16px}.h-btn-wpp span{display:none}.hero-inner{grid-template-columns:1fr;text-align:center}.hero-btns{justify-content:center}.hero-cards{display:none}.cats-grid{grid-template-columns:repeat(4,1fr)}.products-grid{grid-template-columns:repeat(2,1fr)}.why-grid{grid-template-columns:1fr}.svc-grid{grid-template-columns:1fr}.reviews-grid{grid-column:1}.footer-inner{grid-template-columns:1fr}.nav-bar{padding:0 16px}.sec{padding:36px 16px}.frow{grid-template-columns:1fr}}
+@media(max-width:520px){.cats-grid{grid-template-columns:repeat(3,1fr)}.products-grid{grid-template-columns:1fr}.pay-opts{grid-template-columns:1fr}.pay-opt{flex-direction:row;gap:12px;padding:13px}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="header-top">
+    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <div class="logo-mark"><i class="fas fa-paw"></i></div>
+      <div><span class="logo-name">Agrocampo</span><span class="logo-sub">Pet Shop · Vila Velha – ES</span></div>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Buscar produtos, rações, acessórios…" oninput="doSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
+      <button onclick="doSearch(document.getElementById('searchInput').value)"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="h-actions">
+      <a href="https://www.instagram.com" target="_blank" class="h-btn"><i class="fab fa-instagram"></i></a>
+      <button class="h-btn h-btn-cart" onclick="openDrawer()"><i class="fas fa-shopping-bag"></i> Sacola <span class="cart-count" id="cartCount">0</span></button>
+      <a href="https://wa.me/5527988840319" target="_blank" class="h-btn h-btn-wpp"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
+    </div>
+  </div>
+  <div class="nav-wrap">
+    <nav class="nav-bar">
+      <div class="nav-item active" data-sp="todos" onclick="filterBySpecies(this,'todos')">🐾 Todos</div>
+      <div class="nav-item" data-sp="cachorro" onclick="filterBySpecies(this,'cachorro')">🐶 Cachorro</div>
+      <div class="nav-item" data-sp="gato" onclick="filterBySpecies(this,'gato')">🐱 Gato</div>
+      <div class="nav-item" data-sp="peixe" onclick="filterBySpecies(this,'peixe')">🐠 Peixes</div>
+      <div class="nav-item" data-sp="passaro" onclick="filterBySpecies(this,'passaro')">🦜 Pássaro</div>
+      <div class="nav-item" data-sp="roedor" onclick="filterBySpecies(this,'roedor')">🐹 Roedores</div>
+      <div class="nav-item" onclick="scrollSec('servicos')">✂️ Serviços</div>
+      <div class="nav-item promo" onclick="filterByTag('OFERTA')">🔥 Promoções</div>
+      <a href="tel:+552732261943" class="nav-item"><i class="fas fa-phone"></i> (27) 3226-1943</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge"><i class="fas fa-star"></i> 4,6 estrelas · 225 avaliações Google</div>
+      <h1 class="hero-h1">Tudo que seu<br/><span>pet precisa</span><br/>em um só lugar.</h1>
+      <p class="hero-p">Rações premium, acessórios, medicamentos, banho, tosa e consultório veterinário em Vila Velha – ES.</p>
+      <div class="hero-btns">
+        <button class="btn-hero-p" onclick="scrollSec('produtos')"><i class="fas fa-shopping-bag"></i> Comprar Agora</button>
+        <button class="btn-hero-o" onclick="scrollSec('servicos')"><i class="fas fa-calendar-check"></i> Agendar Serviço</button>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="hci"><div class="e">🐶</div><span>Cães</span></div>
+      <div class="hci"><div class="e">🐱</div><span>Gatos</span></div>
+      <div class="hci"><div class="e">🐠</div><span>Peixes</span></div>
+      <div class="hci"><div class="e">🦜</div><span>Aves</span></div>
+      <div class="hci"><div class="e">🐹</div><span>Roedores</span></div>
+      <div class="hci"><div class="e">🐢</div><span>Répteis</span></div>
+      <div class="hero-rbar">
+        <div><div class="stars-gold">★★★★★</div><div class="rbar-info"><strong>4,6 / 5,0</strong><small>225 avaliações verificadas</small></div></div>
+        <div style="margin-left:auto;font-size:2rem">🏆</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="strip-i"><i class="fas fa-boxes"></i> Grande variedade</div>
+  <div class="strip-i"><i class="fas fa-heart"></i> Ótimo atendimento</div>
+  <div class="strip-i"><i class="fas fa-medal"></i> Rações de qualidade</div>
+  <div class="strip-i"><i class="fas fa-truck"></i> Entrega em Vila Velha</div>
+  <div class="strip-i"><i class="fas fa-stethoscope"></i> Consultório veterinário</div>
+</div>
+
+<section id="categorias">
+  <div class="sec">
+    <div class="sec-hd rv"><div class="sec-row"><div><h2>Categorias</h2><p>Encontre por tipo de produto</p></div></div></div>
+    <div class="cats-grid">
+      <div class="cat-item rv" onclick="filterByCat(this,'racao')"><div class="cat-e">🥩</div><div class="cat-label">Ração</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'petisco')"><div class="cat-e">🦴</div><div class="cat-label">Petiscos e Ossos</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'sache')"><div class="cat-e">🥫</div><div class="cat-label">Sachês</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'brinquedo')"><div class="cat-e">🎾</div><div class="cat-label">Brinquedos</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'higiene')"><div class="cat-e">🛁</div><div class="cat-label">Higiene e Beleza</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'medicamento')"><div class="cat-e">💊</div><div class="cat-label">Farmácia</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'coleira')"><div class="cat-e">🦮</div><div class="cat-label">Coleiras e Peitorais</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'cama')"><div class="cat-e">🛏️</div><div class="cat-label">Camas e Cobertores</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'alimentacao')"><div class="cat-e">🥣</div><div class="cat-label">Comedouros</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'transporte')"><div class="cat-e">🧳</div><div class="cat-label">Transporte</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'aquario')"><div class="cat-e">🐟</div><div class="cat-label">Aquários</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'roupa')"><div class="cat-e">👕</div><div class="cat-label">Roupas</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'areia')"><div class="cat-e">🏖️</div><div class="cat-label">Areias e Banheiros</div></div>
+      <div class="cat-item rv" onclick="filterByCat(this,'todos')"><div class="cat-e">📦</div><div class="cat-label">Ver Todos</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="produtos" style="background:var(--off);padding:40px 0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 32px">
+    <div class="sec-hd rv">
+      <div class="sec-row">
+        <div><h2 id="prodsTitle">Produtos em Destaque</h2><p id="prodsSub">Qualidade e variedade para seu pet</p></div>
+        <a href="#" class="see-all" onclick="filterByCat(null,'todos');return false">Ver todos <i class="fas fa-chevron-right"></i></a>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec">
+    <div class="sec-hd rv"><div class="sec-row"><div><h2>Por que escolher a Agrocampo?</h2><p>Referência em Vila Velha há mais de uma década</p></div></div></div>
+    <div class="why-grid">
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-boxes"></i></div><div class="why-text"><h4>Enorme variedade</h4><p>Mais de 1.000 produtos para todas as espécies do seu pet.</p></div></div>
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-heart"></i></div><div class="why-text"><h4>Atendimento especializado</h4><p>Equipe apaixonada com orientação personalizada para cada caso.</p></div></div>
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-medal"></i></div><div class="why-text"><h4>Qualidade garantida</h4><p>Somente marcas renomadas com procedência assegurada.</p></div></div>
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-truck"></i></div><div class="why-text"><h4>Entrega rápida</h4><p>Delivery ágil em Vila Velha e região.</p></div></div>
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-stethoscope"></i></div><div class="why-text"><h4>Consultório veterinário</h4><p>Consultas, vacinas e cuidados preventivos no local.</p></div></div>
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-star"></i></div><div class="why-text"><h4>4,6 ★ no Google</h4><p>225 avaliações verificadas — a mais bem avaliada da região.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="servicos" style="background:var(--off);padding:40px 0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 32px">
+    <div class="sec-hd rv"><div class="sec-row"><div><h2>Serviços Pet Shop</h2><p>Agendamento direto pelo WhatsApp</p></div></div></div>
+    <div class="svc-grid">
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🛁</div><div><h3>Banho Completo</h3><p>Com secagem e perfume</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 45,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar um banho." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">✂️</div><div><h3>Tosa Profissional</h3><p>Higiênica ou estética</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 55,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🩺</div><div><h3>Consultório Veterinário</h3><p>Consultas e vacinação</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 80,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma consulta veterinária." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🎁</div><div><h3>Planos Pet</h3><p>Banho + tosa mensais</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 120,00/mês</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de saber sobre os Planos Pet." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Consultar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🐾</div><div><h3>Combo Banho + Tosa</h3><p>Com hidratação de pelagem</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 90,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar o Combo Banho e Tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">💉</div><div><h3>Vacinação</h3><p>Calendário atualizado</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 65,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar vacinação para meu pet." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="reviews-bg" id="avaliacoes">
+  <div class="sec">
+    <div class="sec-hd rv"><div class="sec-row"><div><h2>O que nossos clientes dizem</h2><p>4,6 ★ com base em 225 avaliações no Google</p></div></div></div>
+    <div class="reviews-grid">
+      <div class="rev-card rv"><div class="rev-top"><div class="rev-av" style="background:#e8f5e9">👩</div><div><div class="rev-name">Maria Claudia S.</div><div class="rev-date">há 2 semanas</div></div></div><div class="rev-stars">★★★★★</div><p class="rev-text">Melhor pet shop de Vila Velha! Grande variedade de produtos, equipe super atenciosa. Meu cachorro adora o banho lá. Recomendo demais!</p></div>
+      <div class="rev-card rv"><div class="rev-top"><div class="rev-av" style="background:#e3f2fd">👨</div><div><div class="rev-name">Roberto Ferreira</div><div class="rev-date">há 1 mês</div></div></div><div class="rev-stars">★★★★★</div><p class="rev-text">Fui comprar ração e fiquei impressionado com a variedade. O pessoal conhece muito bem os produtos e me deu ótimas dicas de nutrição.</p></div>
+      <div class="rev-card rv"><div class="rev-top"><div class="rev-av" style="background:#fce4ec">👩‍🦱</div><div><div class="rev-name">Juliana Teixeira</div><div class="rev-date">há 3 semanas</div></div></div><div class="rev-stars">★★★★☆</div><p class="rev-text">Ótimo atendimento veterinário! Levei minha gata e fui muito bem atendida. Preço acessível e o médico foi dedicado e carinhoso.</p></div>
+      <div class="rev-card rv"><div class="rev-top"><div class="rev-av" style="background:#fff8e1">👦</div><div><div class="rev-name">Felipe Andrade</div><div class="rev-date">há 2 meses</div></div></div><div class="rev-stars">★★★★★</div><p class="rev-text">Rações de qualidade e preço competitivo. Sempre encontro tudo para meus 3 cachorros. A entrega rápida no bairro é um diferencial!</p></div>
+      <div class="rev-card rv"><div class="rev-top"><div class="rev-av" style="background:#e8eaf6">👩‍🦳</div><div><div class="rev-name">Sônia Magalhães</div><div class="rev-date">há 1 semana</div></div></div><div class="rev-stars">★★★★★</div><p class="rev-text">Tudo para seu pet em um só lugar. Uso o banho e compro ração há anos. Nunca me decepcionei!</p></div>
+      <div class="rev-card rv"><div class="rev-top"><div class="rev-av" style="background:#e0f7fa">👨‍🦲</div><div><div class="rev-name">Carlos Eduardo L.</div><div class="rev-date">há 5 dias</div></div></div><div class="rev-stars">★★★★★</div><p class="rev-text">Comprei meu aquário e todos os acessórios aqui. Atendimento impecável. Lugar completo e de confiança!</p></div>
+    </div>
+  </div>
+</div>
+
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="ft-logo">
+      <div style="display:flex;align-items:center;gap:10px"><div class="logo-mark"><i class="fas fa-paw"></i></div><span class="ft-logo-name">Agrocampo</span></div>
+      <p>Sua pet shop de confiança em Vila Velha – ES. Cuidando do seu pet com amor e qualidade há mais de 10 anos.</p>
+      <div class="ft-socials">
+        <a href="https://www.instagram.com" target="_blank" class="ft-s"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/5527988840319" target="_blank" class="ft-s"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.facebook.com" target="_blank" class="ft-s"><i class="fab fa-facebook-f"></i></a>
+        <a href="tel:+552732261943" class="ft-s"><i class="fas fa-phone"></i></a>
+      </div>
+    </div>
+    <div class="ft-col"><h5>Navegação</h5><ul><li><a href="#categorias">Produtos</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#avaliacoes">Avaliações</a></li><li><a href="#footer">Contato</a></li></ul></div>
+    <div class="ft-col"><h5>Categorias</h5><ul><li><a href="#" onclick="filterByCat(null,'racao');return false">Rações</a></li><li><a href="#" onclick="filterByCat(null,'brinquedo');return false">Brinquedos</a></li><li><a href="#" onclick="filterByCat(null,'higiene');return false">Higiene</a></li><li><a href="#" onclick="filterByCat(null,'medicamento');return false">Farmácia</a></li><li><a href="#" onclick="filterByCat(null,'aquario');return false">Aquários</a></li><li><a href="#" onclick="filterByCat(null,'coleira');return false">Acessórios</a></li></ul></div>
+    <div class="ft-col"><h5>Contato</h5><div class="ft-contact"><p><i class="fas fa-map-marker-alt"></i> Av. Jerônimo Monteiro, 34 – Vila Batista, Vila Velha – ES</p><p><i class="fas fa-phone"></i> (27) 3226-1943</p><p><i class="fab fa-whatsapp"></i> (27) 98884-0319</p><p><i class="fab fa-instagram"></i> @agrocampopetshop</p></div><div class="ft-hours"><strong>Seg–Sex:</strong><p>08h00 às 18h00</p><strong>Sábado:</strong><p>08h00 às 13h00</p><strong>Domingo:</strong><p>Fechado</p></div></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 Agrocampo Pet Shop — Todos os direitos reservados.</span><span>Feito com <span>♥</span> para os pets de Vila Velha</span></div>
+</footer>
+
+<a href="https://wa.me/5527988840319" target="_blank" class="float-wpp"><i class="fab fa-whatsapp"></i></a>
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt"></span></div>
+
+<div class="drawer-mask" id="drawerMask" onclick="handleMaskClick(event)">
+  <div class="drawer">
+    <div class="drawer-hd"><h3>🛍️ Sacola</h3><button class="drawer-close" onclick="closeDrawer()">✕</button></div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-ft" id="drawerFt" style="display:none">
+      <div class="cart-subtotal"><span>Total</span><span id="cartTotal">R$ 0,00</span></div>
+      <button class="btn-checkout-main" onclick="openCheckout()">Finalizar compra →</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="mTitle">Finalizar Compra</h3><button class="modal-close" onclick="closeCheckout()">✕</button></div>
+    <div class="modal-bd" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+// ===== PRODUTOS (fonte única de dados) =====
+const PRODS = [
+  {id:1,name:'Ração Golden Special Adulto 15kg',brand:'Golden',cat:'racao',species:'cachorro',e:'🥩',price:129.90,old:159.90,tag:'OFERTA'},
+  {id:2,name:'Ração Royal Canin Gato Adulto 4kg',brand:'Royal Canin',cat:'racao',species:'gato',e:'😺',price:89.90,old:null,tag:null},
+  {id:3,name:'Sachê Pedigree Carne e Frango 100g',brand:'Pedigree',cat:'sache',species:'cachorro',e:'🥫',price:4.90,old:6.50,tag:'PROMO'},
+  {id:4,name:'Sachê Whiskas Atum para Gatos 85g',brand:'Whiskas',cat:'sache',species:'gato',e:'🐟',price:3.90,old:null,tag:null},
+  {id:5,name:'Brinquedo Mordedor Natural Pet 30cm',brand:'PetFun',cat:'brinquedo',species:'cachorro',e:'🦷',price:24.90,old:null,tag:null},
+  {id:6,name:'Brinquedo Kong Classic Médio',brand:'Kong',cat:'brinquedo',species:'cachorro',e:'🎾',price:49.90,old:69.90,tag:'OFERTA'},
+  {id:7,name:'Shampoo Pet Society Neutro 500ml',brand:'Pet Society',cat:'higiene',species:'cachorro',e:'🛁',price:22.90,old:null,tag:null},
+  {id:8,name:'Antipulgas Frontline Plus Cão Até 10kg',brand:'Frontline',cat:'medicamento',species:'cachorro',e:'💊',price:79.90,old:null,tag:null},
+  {id:9,name:'Ração para Peixes Tropical Colour 40g',brand:'Tropical',cat:'racao',species:'peixe',e:'🐠',price:12.90,old:null,tag:null},
+  {id:10,name:'Aquário Kit Completo 20 Litros',brand:'Aquatek',cat:'aquario',species:'peixe',e:'🐟',price:189.00,old:220.00,tag:'NOVO'},
+  {id:11,name:'Coleira Nylon Ajustável Colorida M',brand:'PetStyle',cat:'coleira',species:'cachorro',e:'🦮',price:18.90,old:null,tag:null},
+  {id:12,name:'Ração Golden Gatos Castrados 3kg',brand:'Golden',cat:'racao',species:'gato',e:'🐱',price:59.90,old:74.90,tag:'PROMO'},
+  {id:13,name:'Petisco Ossinho Bifinho Carne 500g',brand:'PetBiscoito',cat:'petisco',species:'cachorro',e:'🦴',price:14.90,old:null,tag:null},
+  {id:14,name:"Ração Hill's Aves Domésticas 1kg",brand:"Hill's",cat:'racao',species:'passaro',e:'🦜',price:39.90,old:null,tag:null},
+  {id:15,name:'Areia Sanitária para Gatos 4kg',brand:'PetFresh',cat:'areia',species:'gato',e:'🏖️',price:29.90,old:34.90,tag:'PROMO'},
+  {id:16,name:'Caminha Pelúcia Redonda P',brand:'Confort Pet',cat:'cama',species:'cachorro',e:'🛏️',price:59.90,old:null,tag:'NOVO'},
+  {id:17,name:'Comedouro Inox Antiderrapante M',brand:'PetWare',cat:'alimentacao',species:'cachorro',e:'🥣',price:32.90,old:null,tag:null},
+  {id:18,name:'Bolsa de Transporte Soft Pet M',brand:'CarryPet',cat:'transporte',species:'cachorro',e:'🧳',price:129.00,old:160.00,tag:'OFERTA'},
+  {id:19,name:'Ração Hamster Roedor Gourmet 500g',brand:'RoeGold',cat:'racao',species:'roedor',e:'🐹',price:19.90,old:null,tag:null},
+  {id:20,name:'Repelente Spray Antipulgas 200ml',brand:'BioVet',cat:'medicamento',species:'cachorro',e:'🪲',price:34.90,old:null,tag:null},
+];
+
+// ===== ESTOQUE (sincronizado via localStorage) =====
+const STOCK_KEY = 'agrocampo_stock';
+
+function getStock(){
+  try{ return JSON.parse(localStorage.getItem(STOCK_KEY)||'{}') }catch(e){return{}}
+}
+
+function isAvailable(id){
+  const s = getStock();
+  return s[id] !== 'esgotado';
+}
+
+// Ouvir mudanças do admin em outra aba
+window.addEventListener('storage', e => {
+  if(e.key === STOCK_KEY) renderProds(filtered());
+});
+
+// ===== RENDER PRODUTOS =====
+let cart=[], af={cat:'todos',sp:'todos',tag:''};
+
+function renderProds(list){
+  const g=document.getElementById('productsGrid');
+  if(!list.length){g.innerHTML='<div class="no-results"><i class="fas fa-search"></i>Nenhum produto encontrado.</div>';return}
+  g.innerHTML=list.map(p=>{
+    const ok=isAvailable(p.id);
+    return`<div class="prod-card${ok?'':' esgotado'} rv">
+      <div class="prod-thumb">
+        ${!ok?'<span class="prod-tag esgotado-tag">ESGOTADO</span>':(p.tag?`<span class="prod-tag ${p.tag==='NOVO'?'novo':''}">${p.tag}</span>`:'')}
+        ${p.e}
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand">${p.brand}</div>
+        <div class="prod-name">${p.name}</div>
+        ${p.old?`<div class="prod-old">R$ ${p.old.toFixed(2).replace('.',',')}</div>`:''}
+        <div class="prod-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+        <div class="prod-inst">${ok?'em até 3× sem juros':'<span style="color:var(--red)">Produto esgotado no momento.</span>'}</div>
+        ${ok
+          ?`<button class="btn-add" onclick="addCart(${p.id})"><i class="fas fa-plus"></i> Adicionar</button>`
+          :`<button class="btn-esgotado" disabled><i class="fas fa-ban"></i> Indisponível</button>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+  initRv();
+}
+
+function filtered(){
+  let l=[...PRODS];
+  if(af.tag) l=l.filter(p=>p.tag&&p.tag===af.tag);
+  if(af.sp&&af.sp!=='todos') l=l.filter(p=>p.species===af.sp);
+  if(af.cat&&af.cat!=='todos') l=l.filter(p=>p.cat===af.cat);
+  return l;
+}
+
+function filterByCat(el,cat){
+  af.cat=cat; af.tag='';
+  document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labels={'racao':'Rações','petisco':'Petiscos e Ossos','sache':'Sachês','brinquedo':'Brinquedos','higiene':'Higiene e Beleza','medicamento':'Farmácia','coleira':'Coleiras e Peitorais','cama':'Camas e Cobertores','alimentacao':'Comedouros','transporte':'Transporte','aquario':'Aquários','roupa':'Roupas','areia':'Areias e Banheiros','todos':'Todos os Produtos'};
+  document.getElementById('prodsTitle').textContent=labels[cat]||'Produtos';
+  document.getElementById('prodsSub').textContent=cat==='todos'?'Tudo para o seu pet':'Filtrando por categoria';
+  renderProds(filtered()); scrollSec('produtos');
+}
+
+function filterBySpecies(el,sp){
+  af.sp=sp; af.cat='todos'; af.tag='';
+  document.querySelectorAll('.nav-item[data-sp]').forEach(e=>e.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labels={'todos':'Todos os Produtos','cachorro':'Para Cachorros 🐶','gato':'Para Gatos 🐱','peixe':'Para Peixes 🐠','passaro':'Para Pássaros 🦜','roedor':'Para Roedores 🐹','reptil':'Para Répteis 🐢'};
+  document.getElementById('prodsTitle').textContent=labels[sp]||'Produtos';
+  document.getElementById('prodsSub').textContent='Filtrando por espécie';
+  renderProds(filtered()); scrollSec('produtos');
+}
+
+function filterByTag(tag){
+  af.tag=tag; af.cat='todos'; af.sp='todos';
+  document.getElementById('prodsTitle').textContent='🔥 Promoções';
+  document.getElementById('prodsSub').textContent='Melhores ofertas do momento';
+  renderProds(filtered()); scrollSec('produtos');
+}
+
+function doSearch(q){
+  const t=q.trim().toLowerCase();
+  if(!t){renderProds(PRODS);document.getElementById('prodsTitle').textContent='Produtos em Destaque';document.getElementById('prodsSub').textContent='Qualidade e variedade para seu pet';return}
+  const r=PRODS.filter(p=>p.name.toLowerCase().includes(t)||p.brand.toLowerCase().includes(t)||p.cat.toLowerCase().includes(t)||p.species.toLowerCase().includes(t));
+  document.getElementById('prodsTitle').textContent=`Resultados para "${q}"`;
+  document.getElementById('prodsSub').textContent=`${r.length} produto(s) encontrado(s)`;
+  renderProds(r); scrollSec('produtos');
+}
+
+// ===== CART =====
+function addCart(id){
+  if(!isAvailable(id)){toast('Produto esgotado!');return}
+  const p=PRODS.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex) ex.qty++; else cart.push({...p,qty:1});
+  updCart(); openDrawer(); toast(`${p.name.substring(0,30)}… adicionado!`);
+}
+
+function updCart(){
+  const tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('cartCount').textContent=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartTotal').textContent=fmt(tot);
+  const bd=document.getElementById('drawerBody'), ft=document.getElementById('drawerFt');
+  if(!cart.length){bd.innerHTML='<div class="cart-empty-state"><i class="fas fa-shopping-bag"></i><p>Sua sacola está vazia.</p></div>';ft.style.display='none';return}
+  ft.style.display='block';
+  bd.innerHTML=cart.map(c=>`<div class="ci"><div class="ci-thumb">${c.e}</div><div class="ci-info"><div class="ci-name">${c.name}</div><div class="ci-price">${fmt(c.price*c.qty)}</div><div class="ci-qty"><button onclick="chgQty(${c.id},-1)">−</button><span>${c.qty}</span><button onclick="chgQty(${c.id},1)">+</button></div></div><button class="ci-del" onclick="rmItem(${c.id})"><i class="fas fa-trash"></i></button></div>`).join('');
+}
+
+function chgQty(id,d){const i=cart.find(c=>c.id===id);if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(c=>c.id!==id);updCart()}
+function rmItem(id){cart=cart.filter(c=>c.id!==id);updCart()}
+function openDrawer(){document.getElementById('drawerMask').classList.add('open')}
+function closeDrawer(){document.getElementById('drawerMask').classList.remove('open')}
+function handleMaskClick(e){if(e.target===e.currentTarget)closeDrawer()}
+
+// ===== SALVAR PEDIDO =====
+function saveOrder(data){
+  try{
+    const orders=JSON.parse(localStorage.getItem('agrocampo_orders')||'[]');
+    orders.push({...data,id:'PED-'+Date.now(),date:new Date().toLocaleDateString('pt-BR'),time:new Date().toLocaleTimeString('pt-BR'),status:'Aguardando'});
+    localStorage.setItem('agrocampo_orders',JSON.stringify(orders));
+  }catch(e){}
+}
+
+// ===== CHECKOUT =====
+let chkStep=1, payM='', delivM='';
+function openCheckout(){closeDrawer();chkStep=1;payM='';delivM='';document.getElementById('modalMask').classList.add('open');renderChk()}
+function closeCheckout(){document.getElementById('modalMask').classList.remove('open')}
+function fmt(v){return'R$ '+v.toFixed(2).replace('.',',')}
+function total(){return cart.reduce((s,c)=>s+c.price*c.qty,0)}
+
+function stpsHtml(a){return`<div class="steps">${['Pagamento','Entrega','Confirmação'].map((l,i)=>{const n=i+1,cls=n<a?'done':n===a?'active':'';return`<div class="stp ${cls}"><div class="stp-dot">${n<a?'✓':n}</div><div class="stp-lbl">${l}</div></div>`;}).join('')}</div>`}
+
+function sumHtml(){return`<div class="order-sum"><h4>Resumo do pedido</h4>${cart.map(c=>`<div class="sum-row"><span>${c.name.substring(0,28)}… ×${c.qty}</span><span>${fmt(c.price*c.qty)}</span></div>`).join('')}<div class="sum-row"><span>Total</span><span class="sum-val-total">${fmt(total())}</span></div></div>`}
+
+function addrForm(){return`<div class="frow"><div class="fg"><label>Nome Completo</label><input id="f-nome" placeholder="Seu nome completo"/></div><div class="fg"><label>Telefone / WhatsApp</label><input id="f-tel" placeholder="(27) 99999-9999"/></div></div><div class="frow"><div class="fg"><label>CEP</label><input id="f-cep" placeholder="00000-000" maxlength="9" oninput="mskCep(this)"/></div><div class="fg"><label>Número</label><input id="f-num" placeholder="Nº da casa"/></div></div><div class="fg"><label>Rua / Avenida</label><input id="f-rua" placeholder="Nome da rua ou avenida"/></div><div class="frow"><div class="fg"><label>Complemento <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-comp" placeholder="Apto, Bloco..."/></div><div class="fg"><label>Bairro</label><input id="f-bairro" placeholder="Seu bairro"/></div></div><div class="frow"><div class="fg"><label>Cidade</label><input id="f-cidade" value="Vila Velha"/></div><div class="fg"><label>Estado</label><input id="f-estado" value="ES" maxlength="2"/></div></div><div class="fg"><label>Referência <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-ref" placeholder="Próximo ao mercado, portão azul..."/></div>`}
+
+function pickupBox(lbl){return`<div class="pickup-box"><div style="font-size:2.8rem;margin-bottom:10px">🏪</div><h4 style="margin-bottom:6px;color:var(--blue-dark)">Retire na loja!</h4><p style="font-size:.82rem;color:var(--gray-dark);line-height:1.55">Av. Jerônimo Monteiro, 34 – Vila Batista, Vila Velha – ES<br/>⏰ Seg–Sex 08h–18h | Sáb 08h–13h</p><p style="margin-top:10px;font-size:.82rem;font-weight:700">Pagamento: <span style="color:var(--blue)">${lbl}</span> — realizado no balcão da loja.</p></div>`}
+
+function renderChk(){
+  const bd=document.getElementById('mBody'),ti=document.getElementById('mTitle');
+  if(chkStep===1){
+    ti.textContent='💳 Forma de Pagamento';
+    bd.innerHTML=`${stpsHtml(1)}${sumHtml()}<p style="font-size:.82rem;font-weight:800;margin-bottom:4px">Selecione o pagamento:</p><div class="pay-opts"><div class="pay-opt" id="op-pix" onclick="selPay('pix')"><i class="fas fa-qrcode"></i><span>PIX</span></div><div class="pay-opt" id="op-dinheiro" onclick="selPay('dinheiro')"><i class="fas fa-money-bill-wave"></i><span>Dinheiro</span></div><div class="pay-opt" id="op-cartao" onclick="selPay('cartao')"><i class="fas fa-credit-card"></i><span>Cartão</span></div></div><button class="btn-next" onclick="goS2()">Continuar →</button>`;
+  } else if(chkStep===2){
+    ti.textContent='📦 Forma de Entrega';
+    bd.innerHTML=`${stpsHtml(2)}${sumHtml()}<p style="font-size:.82rem;font-weight:800;margin-bottom:4px">Como deseja receber?</p><div class="del-opts"><div class="del-opt" id="op-delivery" onclick="selDeliv('delivery')"><i class="fas fa-motorcycle"></i><strong>Delivery</strong><small>Recebo em casa</small></div><div class="del-opt" id="op-retirada" onclick="selDeliv('retirada')"><i class="fas fa-store"></i><strong>Retirada</strong><small>Busco na loja</small></div></div><button class="btn-next" onclick="goS3()">Continuar →</button>`;
+  } else if(chkStep===3 && payM==='pix'){
+    ti.textContent='⚡ Pagamento via PIX';
+    const wt=encodeURIComponent(`Olá! Realizei o pagamento via PIX. Total: ${fmt(total())}`);
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}<div class="pix-wrap"><div class="pix-qr">📱</div><p style="font-size:.8rem;color:var(--gray-dark);margin-bottom:4px">Chave PIX (Telefone):</p><div class="pix-key">(27) 98884-0318</div><button class="btn-copy" onclick="cpPix()"><i class="fas fa-copy"></i> Copiar Chave PIX</button><div class="pix-alert"><strong><i class="fas fa-info-circle"></i> Após o pagamento, envie o comprovante pelo WhatsApp.</strong></div><a href="https://wa.me/5527988840319?text=${wt}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;border-radius:50px;padding:12px 22px;font-weight:800;margin-top:14px;font-size:.85rem"><i class="fab fa-whatsapp"></i> Enviar Comprovante</a></div><div style="margin-top:16px;background:var(--off);border-radius:var(--radius);padding:14px;border:1.5px solid var(--gray)"><p style="font-size:.8rem;font-weight:800;margin-bottom:8px">Forma de retirada do pedido:</p><div class="del-opts"><div class="del-opt" id="op-delivery" onclick="selDeliv('delivery')"><i class="fas fa-motorcycle"></i><strong>Delivery</strong><small>Recebo em casa</small></div><div class="del-opt" id="op-retirada" onclick="selDeliv('retirada')"><i class="fas fa-store"></i><strong>Retirada</strong><small>Busco na loja</small></div></div><button class="btn-next" onclick="goS3pix()">Continuar →</button></div>`;
+  } else if(chkStep===4 && payM==='pix' && delivM==='delivery'){
+    ti.textContent='🏠 Endereço de Entrega';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}<div class="info-box"><i class="fas fa-info-circle"></i> Pagamento: <strong>PIX</strong> — envie o comprovante após pagar.</div>${addrForm()}<button class="btn-next" onclick="confirmOrder()"><i class="fas fa-check"></i> Confirmar Pedido</button>`;
+  } else if(chkStep===4 && payM==='pix' && delivM==='retirada'){
+    ti.textContent='🏪 Retirada na Loja';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}${pickupBox('PIX')}<button class="btn-next" onclick="showSuccess()"><i class="fas fa-check"></i> Confirmar Retirada</button>`;
+  } else if(chkStep===3 && delivM==='delivery'){
+    const lbl=payM==='dinheiro'?'💵 Dinheiro na entrega':'💳 Cartão na entrega';
+    ti.textContent='🏠 Endereço de Entrega';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}<div class="info-box"><i class="fas fa-info-circle"></i> Pagamento: <strong>${lbl}</strong></div>${addrForm()}<button class="btn-next" onclick="confirmOrder()"><i class="fas fa-check"></i> Confirmar Pedido</button>`;
+  } else if(chkStep===3 && delivM==='retirada'){
+    ti.textContent='🏪 Retirada na Loja';
+    const lbl=payM==='dinheiro'?'💵 Dinheiro':'💳 Cartão';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}${pickupBox(lbl)}<button class="btn-next" onclick="showSuccess()"><i class="fas fa-check"></i> Confirmar Retirada</button>`;
+  }
+}
+
+function selPay(m){payM=m;document.querySelectorAll('.pay-opt').forEach(e=>e.classList.remove('sel'));document.getElementById('op-'+m)?.classList.add('sel')}
+function selDeliv(m){delivM=m;document.querySelectorAll('.del-opt').forEach(e=>e.classList.remove('sel'));document.getElementById('op-'+m)?.classList.add('sel')}
+function goS2(){if(!payM){toast('Selecione a forma de pagamento!');return}chkStep=2;renderChk()}
+function goS3(){if(!delivM){toast('Selecione a forma de entrega!');return}chkStep=3;renderChk()}
+function goS3pix(){if(!delivM){toast('Selecione como quer receber!');return}chkStep=4;renderChk()}
+function cpPix(){navigator.clipboard.writeText('(27) 98884-0318').catch(()=>{});toast('Chave PIX copiada!')}
+
+function confirmOrder(){
+  const nome=document.getElementById('f-nome')?.value.trim(),tel=document.getElementById('f-tel')?.value.trim(),cep=document.getElementById('f-cep')?.value.trim(),rua=document.getElementById('f-rua')?.value.trim(),num=document.getElementById('f-num')?.value.trim(),bairro=document.getElementById('f-bairro')?.value.trim();
+  if(!nome||!tel||!cep||!rua||!num||!bairro){toast('Preencha todos os campos obrigatórios!');return}
+  saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),total:total(),payment:payM,delivery:delivM,address:{nome,tel,cep,rua,num,bairro}});
+  showSuccess();
+}
+
+function showSuccess(){
+  saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),total:total(),payment:payM,delivery:delivM});
+  cart=[];updCart();
+  document.getElementById('mTitle').textContent='✅ Pedido Confirmado!';
+  document.getElementById('mBody').innerHTML=`<div class="success-wrap"><div class="suc-icon"><i class="fas fa-check"></i></div><h3>Pedido enviado com sucesso!</h3><p>Entraremos em contato em breve para confirmar os detalhes da sua entrega ou retirada.</p><a href="https://wa.me/5527988840319?text=Olá! Acabei de fazer um pedido no site da Agrocampo." target="_blank" class="btn-wpp-suc"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a><br/><br/><button onclick="closeCheckout()" style="background:none;border:1.5px solid var(--gray);border-radius:50px;padding:9px 22px;font-size:.82rem;font-weight:700;cursor:pointer">Fechar</button></div>`;
+}
+
+function mskCep(el){let v=el.value.replace(/\D/g,'');if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5,8);el.value=v}
+function toast(msg){const t=document.getElementById('toast');document.getElementById('toastTxt').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function scrollSec(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
+function initRv(){const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.08});document.querySelectorAll('.rv:not(.in)').forEach(el=>obs.observe(el))}
+document.addEventListener('DOMContentLoaded',()=>{renderProds(PRODS);updCart();initRv()});
+</script>
+</body>
+</html>

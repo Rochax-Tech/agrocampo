@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Agrocampo – Painel Administrativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --blue:#3a7bd5;--blue-light:#5b9ae8;--blue-pale:#eaf2ff;--blue-dark:#2260b5;
+  --red:#e5373a;--red-pale:#ffeaea;--green:#16a34a;--green-pale:#dcfce7;
+  --white:#fff;--off:#f7f9fc;--gray:#e8ecf1;--gray-mid:#d0d8e4;--gray-dark:#6b7a90;
+  --black:#1a1f2e;--sidebar:240px;
+  --radius:10px;--radius-sm:7px;--radius-lg:16px;
+  --shadow:0 2px 12px rgba(58,123,213,.10);--shadow-md:0 6px 28px rgba(58,123,213,.14);
+  --tr:.2s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:var(--black);background:var(--off)}
+a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:'Nunito',sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--off)}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:3px}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1a4fa0,#3a7bd5);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
+.login-screen.hidden{opacity:0;pointer-events:none}
+.login-box{background:white;border-radius:20px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+.login-logo{width:56px;height:56px;background:var(--blue);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:white}
+.login-box h2{font-size:1.4rem;font-weight:900;margin-bottom:4px}
+.login-box p{font-size:.85rem;color:var(--gray-dark);margin-bottom:28px}
+.login-field{margin-bottom:14px;text-align:left}
+.login-field label{display:block;font-size:.78rem;font-weight:800;margin-bottom:5px}
+.login-field input{width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:12px 14px;font-size:.9rem;font-family:'Nunito',sans-serif;outline:none;transition:var(--tr)}
+.login-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,123,213,.12)}
+.login-error{color:var(--red);font-size:.78rem;margin-bottom:10px;display:none}
+.login-error.show{display:block}
+.btn-login{width:100%;background:var(--blue);color:white;border:none;border-radius:50px;padding:14px;font-size:.95rem;font-weight:900;transition:var(--tr);margin-top:4px}
+.btn-login:hover{background:var(--blue-dark)}
+.login-hint{font-size:.72rem;color:var(--gray-dark);margin-top:16px}
+
+/* LAYOUT */
+.layout{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--black);display:flex;flex-direction:column;flex-shrink:0;transition:var(--tr)}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo-mark{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem}
+.sb-logo-name{font-size:1rem;font-weight:900;color:white}
+.sb-logo-sub{font-size:.6rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em}
+.sb-section{padding:16px 12px 6px;font-size:.62rem;font-weight:900;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);margin:2px 8px;font-size:.83rem;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;transition:var(--tr)}
+.sb-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.sb-item.active{background:var(--blue);color:white}
+.sb-item i{width:18px;text-align:center;font-size:.9rem}
+.sb-badge{margin-left:auto;background:var(--red);color:white;font-size:.6rem;font-weight:900;min-width:18px;height:18px;border-radius:50px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+.sb-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.sb-av{width:34px;height:34px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:.85rem;flex-shrink:0}
+.sb-uname{font-size:.8rem;font-weight:700;color:white}
+.sb-urole{font-size:.68rem;color:rgba(255,255,255,.35)}
+.btn-logout{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);color:rgba(255,255,255,.4);font-size:.78rem;font-weight:700;cursor:pointer;transition:var(--tr);background:none;border:none;width:100%;margin-top:4px}
+.btn-logout:hover{color:var(--red);background:rgba(229,55,58,.08)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:64px;background:white;border-bottom:1px solid var(--gray);flex-shrink:0}
+.topbar-left h1{font-size:1.1rem;font-weight:900}
+.topbar-left p{font-size:.75rem;color:var(--gray-dark);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;border-radius:50px;font-size:.8rem;font-weight:800;border:none;transition:var(--tr)}
+.tb-btn-primary{background:var(--blue);color:white}
+.tb-btn-primary:hover{background:var(--blue-dark)}
+.tb-btn-outline{background:white;color:var(--black);border:1.5px solid var(--gray)}
+.tb-btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.tb-live{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:var(--green)}
+.tb-live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+
+/* PAGES */
+.page{display:none}.page.active{display:block}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);padding:20px 22px;transition:var(--tr)}
+.stat-card:hover{box-shadow:var(--shadow);border-color:var(--blue)}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.stat-trend{font-size:.72rem;font-weight:800;display:flex;align-items:center;gap:3px}
+.stat-trend.up{color:var(--green)}.stat-trend.down{color:var(--red)}
+.stat-val{font-size:1.6rem;font-weight:900;line-height:1;margin-bottom:4px}
+.stat-label{font-size:.75rem;color:var(--gray-dark);font-weight:700}
+
+/* SEARCH BAR */
+.admin-search{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.asearch{display:flex;align-items:center;gap:8px;background:white;border:1.5px solid var(--gray);border-radius:50px;padding:0 16px;flex:1;max-width:400px;transition:var(--tr)}
+.asearch:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(58,123,213,.1)}
+.asearch i{color:var(--gray-dark);font-size:.9rem}
+.asearch input{border:none;background:transparent;padding:11px 0;font-size:.87rem;font-family:'Nunito',sans-serif;outline:none;flex:1;color:var(--black)}
+.filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.ftab{padding:8px 14px;border-radius:50px;font-size:.75rem;font-weight:800;border:1.5px solid var(--gray);background:white;color:var(--gray-dark);cursor:pointer;transition:var(--tr)}
+.ftab:hover{border-color:var(--blue);color:var(--blue)}
+.ftab.active{background:var(--blue);border-color:var(--blue);color:white}
+
+/* PRODUCT TABLE */
+.table-wrap{background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);overflow:hidden}
+.table-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--gray)}
+.table-head h3{font-size:.92rem;font-weight:900}
+.table-count{font-size:.75rem;color:var(--gray-dark);font-weight:700}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--off)}
+th{padding:11px 16px;text-align:left;font-size:.72rem;font-weight:900;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--gray)}
+td{padding:13px 16px;font-size:.83rem;border-bottom:1px solid var(--gray);vertical-align:middle}
+tr:last-child td{border:none}
+tr:hover td{background:var(--off)}
+.prod-thumb-sm{width:44px;height:44px;background:var(--off);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.prod-cell{display:flex;align-items:center;gap:12px}
+.prod-cell-info .pn{font-size:.83rem;font-weight:700}
+.prod-cell-info .pb{font-size:.7rem;color:var(--gray-dark);margin-top:1px}
+.cat-pill{background:var(--blue-pale);color:var(--blue-dark);font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:50px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+
+/* STATUS TOGGLE */
+.stock-toggle{display:flex;border-radius:50px;overflow:hidden;border:1.5px solid var(--gray);width:fit-content}
+.stg-btn{padding:7px 14px;font-size:.75rem;font-weight:800;border:none;background:white;color:var(--gray-dark);cursor:pointer;transition:var(--tr);white-space:nowrap}
+.stg-btn:hover{background:var(--off)}
+.stg-btn.active-ok{background:var(--green-pale);color:var(--green)}
+.stg-btn.active-no{background:var(--red-pale);color:var(--red)}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.status-dot.ok{background:var(--green)}.status-dot.no{background:var(--red)}
+
+/* ORDERS TABLE */
+.order-status{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:50px}
+.order-status.aguardando{background:#fff8e1;color:#b45309}
+.order-status.confirmado{background:var(--green-pale);color:var(--green)}
+.order-status.entregue{background:var(--blue-pale);color:var(--blue)}
+.order-status.cancelado{background:var(--red-pale);color:var(--red)}
+.order-actions{display:flex;gap:6px}
+.act-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1.5px solid var(--gray);background:white;display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;transition:var(--tr);color:var(--gray-dark)}
+.act-btn:hover{border-color:var(--blue);color:var(--blue)}
+.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray-dark)}
+.empty-state i{font-size:2.8rem;color:var(--gray-mid);display:block;margin-bottom:12px}
+.empty-state p{font-size:.88rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--black);color:white;padding:12px 20px;border-radius:50px;font-size:.82rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:8px;transform:translateY(16px);opacity:0;pointer-events:none;transition:var(--tr)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green{background:var(--green)}.toast.red{background:var(--red)}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.sec-header h2{font-size:1.1rem;font-weight:900}
+.sec-header p{font-size:.8rem;color:var(--gray-dark);margin-top:2px}
+
+/* EXCEL EXPORT AREA */
+.export-box{background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.export-box-info{display:flex;align-items:center;gap:14px}
+.export-icon{width:48px;height:48px;background:#e8f5e9;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#16a34a;flex-shrink:0}
+.export-box-info h4{font-size:.92rem;font-weight:900;margin-bottom:3px}
+.export-box-info p{font-size:.78rem;color:var(--gray-dark)}
+.btn-export{display:flex;align-items:center;gap:8px;background:var(--green);color:white;border:none;border-radius:50px;padding:11px 20px;font-size:.82rem;font-weight:800;transition:var(--tr);white-space:nowrap}
+.btn-export:hover{background:#15803d;transform:translateY(-1px)}
+
+/* MODAL */
+.modal-mask{position:fixed;inset:0;z-index:4000;background:rgba(15,20,32,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:var(--tr)}
+.modal-mask.open{opacity:1;pointer-events:all}
+.modal-box{background:white;border-radius:var(--radius-lg);max-width:480px;width:100%;transform:scale(.96);transition:var(--tr)}
+.modal-mask.open .modal-box{transform:scale(1)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--gray)}
+.modal-hd h3{font-size:.95rem;font-weight:900}
+.modal-close{width:32px;height:32px;border:none;background:var(--off);border-radius:50%;font-size:.85rem;cursor:pointer;color:var(--gray-dark)}
+.modal-bd{padding:20px 22px}
+.modal-bd p{font-size:.85rem;color:var(--gray-dark);line-height:1.6;margin-bottom:16px}
+.modal-ft{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal{padding:10px 20px;border-radius:50px;font-size:.82rem;font-weight:800;border:none;cursor:pointer;transition:var(--tr)}
+.btn-modal-cancel{background:var(--gray);color:var(--gray-dark)}.btn-modal-cancel:hover{background:var(--gray-mid)}
+.btn-modal-danger{background:var(--red);color:white}.btn-modal-danger:hover{background:#c62828}
+.btn-modal-ok{background:var(--blue);color:white}.btn-modal-ok:hover{background:var(--blue-dark)}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo"><i class="fas fa-paw"></i></div>
+    <h2>Painel Administrativo</h2>
+    <p>Agrocampo Pet Shop — Acesso restrito</p>
+    <div class="login-field"><label>Usuário</label><input type="text" id="loginUser" placeholder="admin" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="login-error" id="loginErr">Usuário ou senha incorretos.</div>
+    <button class="btn-login" onclick="doLogin()">Entrar <i class="fas fa-arrow-right"></i></button>
+    <p class="login-hint">Usuário: <strong>admin</strong> · Senha: <strong>admin123</strong></p>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout" id="appLayout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark"><i class="fas fa-paw"></i></div>
+      <div><div class="sb-logo-name">Agrocampo</div><div class="sb-logo-sub">Admin Panel</div></div>
+    </div>
+
+    <div class="sb-section">Geral</div>
+    <div class="sb-item active" onclick="showPage('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
+    <div class="sb-item" onclick="showPage('estoque',this)"><i class="fas fa-boxes"></i> Estoque de Produtos</div>
+    <div class="sb-item" onclick="showPage('pedidos',this)"><i class="fas fa-shopping-bag"></i> Pedidos <span class="sb-badge" id="badgeOrders">0</span></div>
+    <div class="sb-item" onclick="showPage('relatorio',this)"><i class="fas fa-file-excel"></i> Relatórios</div>
+
+    <div class="sb-section">Sistema</div>
+    <div class="sb-item" onclick="window.open('index.html','_blank')"><i class="fas fa-external-link-alt"></i> Ver Site</div>
+
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-av"><i class="fas fa-user"></i></div>
+        <div><div class="sb-uname">Administrador</div><div class="sb-urole">Gestor de Estoque</div></div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Visão geral do sistema</p>
+      </div>
+      <div class="topbar-right">
+        <div class="tb-live"><div class="tb-live-dot"></div> Sincronizado com o site</div>
+        <button class="tb-btn tb-btn-outline" onclick="window.open('index.html','_blank')">
+          <i class="fas fa-external-link-alt"></i> Ver Site
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid" id="statsGrid"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="table-wrap">
+            <div class="table-head"><h3>Produtos Esgotados</h3></div>
+            <div id="dashEsgotados" style="padding:8px 0"></div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-head"><h3>Últimos Pedidos</h3></div>
+            <div id="dashPedidos" style="padding:8px 0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ESTOQUE ===== -->
+      <div class="page" id="page-estoque">
+        <div class="admin-search">
+          <div class="asearch">
+            <i class="fas fa-search"></i>
+            <input type="text" id="estoqueSearch" placeholder="Buscar produto pelo nome…" oninput="renderEstoque()"/>
+          </div>
+          <div class="filter-tabs" id="estoqueTabs">
+            <div class="ftab active" data-cat="todos" onclick="setEstoqueCat(this,'todos')">Todos</div>
+            <div class="ftab" data-cat="racao" onclick="setEstoqueCat(this,'racao')">Ração</div>
+            <div class="ftab" data-cat="petisco" onclick="setEstoqueCat(this,'petisco')">Petiscos</div>
+            <div class="ftab" data-cat="sache" onclick="setEstoqueCat(this,'sache')">Sachês</div>
+            <div class="ftab" data-cat="brinquedo" onclick="setEstoqueCat(this,'brinquedo')">Brinquedos</div>
+            <div class="ftab" data-cat="higiene" onclick="setEstoqueCat(this,'higiene')">Higiene</div>
+            <div class="ftab" data-cat="medicamento" onclick="setEstoqueCat(this,'medicamento')">Farmácia</div>
+            <div class="ftab" data-cat="aquario" onclick="setEstoqueCat(this,'aquario')">Aquários</div>
+            <div class="ftab" data-cat="coleira" onclick="setEstoqueCat(this,'coleira')">Coleiras</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head">
+            <h3>Produtos Cadastrados</h3>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="table-count" id="estoqueCount"></span>
+              <button class="tb-btn tb-btn-primary" onclick="setAllAvailable()"><i class="fas fa-check-double"></i> Marcar Todos Disponíveis</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Espécie</th>
+                <th>Preço</th>
+                <th>Status no Site</th>
+                <th>Ação</th>
+              </tr></thead>
+              <tbody id="estoqueBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PEDIDOS ===== -->
+      <div class="page" id="page-pedidos">
+        <div class="sec-header">
+          <div><h2>Pedidos Recebidos</h2><p>Pedidos realizados pelo site</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="tb-btn tb-btn-outline" onclick="clearOrders()"><i class="fas fa-trash"></i> Limpar Todos</button>
+            <button class="tb-btn tb-btn-primary" onclick="exportOrders()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Pedido</th>
+              <th>Data</th>
+              <th>Itens</th>
+              <th>Total</th>
+              <th>Pagamento</th>
+              <th>Entrega</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr></thead>
+            <tbody id="pedidosBody"></tbody>
+          </table>
+          <div id="pedidosEmpty" class="empty-state" style="display:none"><i class="fas fa-shopping-bag"></i><p>Nenhum pedido recebido ainda.<br/>Os pedidos do site aparecerão aqui automaticamente.</p></div>
+        </div>
+      </div>
+
+      <!-- ===== RELATÓRIOS ===== -->
+      <div class="page" id="page-relatorio">
+        <div class="sec-header"><div><h2>Relatórios</h2><p>Exportar dados do sistema</p></div></div>
+
+        <div class="export-box">
+          <div class="export-box-info">
+            <div class="export-icon">📊</div>
+            <div><h4>Relatório de Estoque</h4><p>Lista completa de produtos com status de disponibilidade</p></div>
+          </div>
+          <button class="btn-export" onclick="exportEstoque()"><i class="fas fa-download"></i> Exportar Excel</button>
+        </div>
+
+        <div class="export-box">
+          <div class="export-box-info">
+            <div class="export-icon">🛒</div>
+            <div><h4>Relatório de Pedidos</h4><p>Todos os pedidos com itens, valores e status</p></div>
+          </div>
+          <button class="btn-export" onclick="exportOrders()"><i class="fas fa-download"></i> Exportar Excel</button>
+        </div>
+
+        <div class="export-box">
+          <div class="export-box-info">
+            <div class="export-icon">📦</div>
+            <div><h4>Produtos Esgotados</h4><p>Lista de produtos marcados como indisponíveis no site</p></div>
+          </div>
+          <button class="btn-export" onclick="exportEsgotados()"><i class="fas fa-download"></i> Exportar Excel</button>
+        </div>
+
+        <!-- Preview table -->
+        <div class="table-wrap" style="margin-top:8px">
+          <div class="table-head"><h3>Prévia — Estoque Atual</h3><span class="table-count" id="relCount"></span></div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr><th>#</th><th>Produto</th><th>Marca</th><th>Categoria</th><th>Preço</th><th>Status</th></tr></thead>
+              <tbody id="relBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MODAL confirm -->
+<div class="modal-mask" id="confirmMask">
+  <div class="modal-box">
+    <div class="modal-hd"><h3 id="confirmTitle">Confirmar ação</h3><button class="modal-close" onclick="closeConfirm()">✕</button></div>
+    <div class="modal-bd">
+      <p id="confirmMsg"></p>
+      <div class="modal-ft">
+        <button class="btn-modal btn-modal-cancel" onclick="closeConfirm()">Cancelar</button>
+        <button class="btn-modal btn-modal-danger" id="confirmOkBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt"></span></div>
+
+<script>
+// ===== AUTH =====
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value.trim();
+  const err=document.getElementById('loginErr');
+  if(u==='admin'&&p==='admin123'){
+    err.classList.remove('show');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appLayout').style.display='flex';
+    init();
+    setTimeout(()=>document.getElementById('loginScreen').style.display='none',400);
+  } else {
+    err.classList.add('show');
+    document.getElementById('loginPass').value='';
+  }
+}
+function doLogout(){
+  document.getElementById('appLayout').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+}
+
+// ===== PRODUCTS DATA (same as index.html) =====
+const PRODS = [
+  {id:1,name:'Ração Golden Special Adulto 15kg',brand:'Golden',cat:'racao',species:'cachorro',e:'🥩',price:129.90},
+  {id:2,name:'Ração Royal Canin Gato Adulto 4kg',brand:'Royal Canin',cat:'racao',species:'gato',e:'😺',price:89.90},
+  {id:3,name:'Sachê Pedigree Carne e Frango 100g',brand:'Pedigree',cat:'sache',species:'cachorro',e:'🥫',price:4.90},
+  {id:4,name:'Sachê Whiskas Atum para Gatos 85g',brand:'Whiskas',cat:'sache',species:'gato',e:'🐟',price:3.90},
+  {id:5,name:'Brinquedo Mordedor Natural Pet 30cm',brand:'PetFun',cat:'brinquedo',species:'cachorro',e:'🦷',price:24.90},
+  {id:6,name:'Brinquedo Kong Classic Médio',brand:'Kong',cat:'brinquedo',species:'cachorro',e:'🎾',price:49.90},
+  {id:7,name:'Shampoo Pet Society Neutro 500ml',brand:'Pet Society',cat:'higiene',species:'cachorro',e:'🛁',price:22.90},
+  {id:8,name:'Antipulgas Frontline Plus Cão Até 10kg',brand:'Frontline',cat:'medicamento',species:'cachorro',e:'💊',price:79.90},
+  {id:9,name:'Ração para Peixes Tropical Colour 40g',brand:'Tropical',cat:'racao',species:'peixe',e:'🐠',price:12.90},
+  {id:10,name:'Aquário Kit Completo 20 Litros',brand:'Aquatek',cat:'aquario',species:'peixe',e:'🐟',price:189.00},
+  {id:11,name:'Coleira Nylon Ajustável Colorida M',brand:'PetStyle',cat:'coleira',species:'cachorro',e:'🦮',price:18.90},
+  {id:12,name:'Ração Golden Gatos Castrados 3kg',brand:'Golden',cat:'racao',species:'gato',e:'🐱',price:59.90},
+  {id:13,name:'Petisco Ossinho Bifinho Carne 500g',brand:'PetBiscoito',cat:'petisco',species:'cachorro',e:'🦴',price:14.90},
+  {id:14,name:"Ração Hill's Aves Domésticas 1kg",brand:"Hill's",cat:'racao',species:'passaro',e:'🦜',price:39.90},
+  {id:15,name:'Areia Sanitária para Gatos 4kg',brand:'PetFresh',cat:'areia',species:'gato',e:'🏖️',price:29.90},
+  {id:16,name:'Caminha Pelúcia Redonda P',brand:'Confort Pet',cat:'cama',species:'cachorro',e:'🛏️',price:59.90},
+  {id:17,name:'Comedouro Inox Antiderrapante M',brand:'PetWare',cat:'alimentacao',species:'cachorro',e:'🥣',price:32.90},
+  {id:18,name:'Bolsa de Transporte Soft Pet M',brand:'CarryPet',cat:'transporte',species:'cachorro',e:'🧳',price:129.00},
+  {id:19,name:'Ração Hamster Roedor Gourmet 500g',brand:'RoeGold',cat:'racao',species:'roedor',e:'🐹',price:19.90},
+  {id:20,name:'Repelente Spray Antipulgas 200ml',brand:'BioVet',cat:'medicamento',species:'cachorro',e:'🪲',price:34.90},
+];
+
+// ===== STORAGE KEYS =====
+const STOCK_KEY   = 'agrocampo_stock';
+const ORDERS_KEY  = 'agrocampo_orders';
+
+function getStock(){try{return JSON.parse(localStorage.getItem(STOCK_KEY)||'{}')}catch(e){return{}}}
+function setStock(s){localStorage.setItem(STOCK_KEY,JSON.stringify(s))}
+function getOrders(){try{return JSON.parse(localStorage.getItem(ORDERS_KEY)||'[]')}catch(e){return[]}}
+function isOk(id){return getStock()[id]!=='esgotado'}
+
+// ===== PAGES =====
+let currentPage='dashboard', estoqueCat='todos';
+
+function showPage(page,el){
+  currentPage=page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const titles={dashboard:'Dashboard',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios'};
+  const subs={dashboard:'Visão geral do sistema',estoque:'Gerencie a disponibilidade dos produtos',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados e planilhas'};
+  document.getElementById('pageTitle').textContent=titles[page]||page;
+  document.getElementById('pageSubtitle').textContent=subs[page]||'';
+  if(page==='dashboard') renderDashboard();
+  if(page==='estoque') renderEstoque();
+  if(page==='pedidos') renderPedidos();
+  if(page==='relatorio') renderRelatorio();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(){
+  const stock=getStock();
+  const orders=getOrders();
+  const esgotados=PRODS.filter(p=>stock[p.id]==='esgotado');
+  const totalRev=orders.reduce((s,o)=>s+(o.total||0),0);
+
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--blue-pale);color:var(--blue)"><i class="fas fa-boxes"></i></div><div class="stat-trend up"><i class="fas fa-arrow-up"></i> 100%</div></div>
+      <div class="stat-val">${PRODS.length}</div>
+      <div class="stat-label">Total de Produtos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--green-pale);color:var(--green)"><i class="fas fa-check-circle"></i></div></div>
+      <div class="stat-val" style="color:var(--green)">${PRODS.length-esgotados.length}</div>
+      <div class="stat-label">Disponíveis no Site</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--red-pale);color:var(--red)"><i class="fas fa-ban"></i></div></div>
+      <div class="stat-val" style="color:var(--red)">${esgotados.length}</div>
+      <div class="stat-label">Produtos Esgotados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:#fff8e1;color:#b45309"><i class="fas fa-shopping-bag"></i></div></div>
+      <div class="stat-val">${orders.length}</div>
+      <div class="stat-label">Pedidos Recebidos</div>
+    </div>`;
+
+  // Esgotados list
+  const de=document.getElementById('dashEsgotados');
+  if(!esgotados.length){
+    de.innerHTML='<div style="padding:24px;text-align:center;color:var(--gray-dark);font-size:.82rem"><i class="fas fa-check-circle" style="color:var(--green);display:block;font-size:1.8rem;margin-bottom:8px"></i>Nenhum produto esgotado!</div>';
+  } else {
+    de.innerHTML=esgotados.slice(0,5).map(p=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--gray)">
+        <div style="font-size:1.5rem">${p.e}</div>
+        <div style="flex:1;font-size:.82rem;font-weight:700">${p.name}</div>
+        <span style="font-size:.68rem;font-weight:800;color:var(--red);background:var(--red-pale);padding:3px 8px;border-radius:50px">ESGOTADO</span>
+      </div>`).join('');
+  }
+
+  // Últimos pedidos
+  const dp=document.getElementById('dashPedidos');
+  const last=orders.slice(-5).reverse();
+  if(!last.length){
+    dp.innerHTML='<div style="padding:24px;text-align:center;color:var(--gray-dark);font-size:.82rem"><i class="fas fa-shopping-bag" style="color:var(--gray-mid);display:block;font-size:1.8rem;margin-bottom:8px"></i>Nenhum pedido ainda.</div>';
+  } else {
+    dp.innerHTML=last.map(o=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--gray)">
+        <div style="flex:1">
+          <div style="font-size:.8rem;font-weight:800">${o.id}</div>
+          <div style="font-size:.72rem;color:var(--gray-dark)">${o.date} ${o.time}</div>
+        </div>
+        <div style="font-size:.85rem;font-weight:900;color:var(--blue)">R$ ${(o.total||0).toFixed(2).replace('.',',')}</div>
+        <span class="order-status aguardando">Aguardando</span>
+      </div>`).join('');
+  }
+
+  document.getElementById('badgeOrders').textContent=orders.length;
+}
+
+// ===== ESTOQUE =====
+function setEstoqueCat(el,cat){
+  estoqueCat=cat;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderEstoque();
+}
+
+function renderEstoque(){
+  const q=document.getElementById('estoqueSearch').value.toLowerCase().trim();
+  let list=[...PRODS];
+  if(estoqueCat!=='todos') list=list.filter(p=>p.cat===estoqueCat);
+  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q));
+  document.getElementById('estoqueCount').textContent=`${list.length} produto(s)`;
+  const tb=document.getElementById('estoqueBody');
+  const catLabel={racao:'Ração',petisco:'Petisco',sache:'Sachê',brinquedo:'Brinquedo',higiene:'Higiene',medicamento:'Farmácia',aquario:'Aquário',coleira:'Coleira',cama:'Cama',alimentacao:'Comedouro',transporte:'Transporte',roupa:'Roupa',areia:'Areia'};
+  const spLabel={cachorro:'🐶 Cachorro',gato:'🐱 Gato',peixe:'🐠 Peixe',passaro:'🦜 Pássaro',roedor:'🐹 Roedor',reptil:'🐢 Réptil'};
+  if(!list.length){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--gray-dark);font-size:.85rem"><i class="fas fa-search" style="display:block;font-size:1.8rem;color:var(--gray-mid);margin-bottom:8px"></i>Nenhum produto encontrado.</td></tr>`;return}
+  tb.innerHTML=list.map(p=>{
+    const ok=isOk(p.id);
+    return`<tr>
+      <td><div class="prod-cell">
+        <div class="prod-thumb-sm">${p.e}</div>
+        <div class="prod-cell-info"><div class="pn">${p.name}</div><div class="pb">${p.brand}</div></div>
+      </div></td>
+      <td><span class="cat-pill">${catLabel[p.cat]||p.cat}</span></td>
+      <td style="font-size:.8rem">${spLabel[p.species]||p.species}</td>
+      <td style="font-weight:800;color:var(--blue)">R$ ${p.price.toFixed(2).replace('.',',')}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="status-dot ${ok?'ok':'no'}"></span>
+          <span style="font-size:.78rem;font-weight:800;color:${ok?'var(--green)':'var(--red)'}">${ok?'Disponível':'Esgotado'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="stock-toggle">
+          <button class="stg-btn ${ok?'active-ok':''}" onclick="setStatus(${p.id},'disponivel')">✓ Disponível</button>
+          <button class="stg-btn ${!ok?'active-no':''}" onclick="setStatus(${p.id},'esgotado')">✕ Esgotado</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setStatus(id, status){
+  const s=getStock();
+  if(status==='esgotado') s[id]='esgotado';
+  else delete s[id];
+  setStock(s);
+  renderEstoque();
+  renderDashboard();
+  toast(status==='esgotado'?'Produto marcado como esgotado no site!':'Produto disponível no site!', status==='esgotado'?'red':'green');
+}
+
+function setAllAvailable(){
+  showConfirm('Marcar todos como disponíveis?','Todos os produtos serão marcados como disponíveis no site. Deseja continuar?',()=>{
+    setStock({});
+    renderEstoque();
+    renderDashboard();
+    toast('Todos os produtos estão disponíveis!','green');
+  });
+}
+
+// ===== PEDIDOS =====
+function renderPedidos(){
+  const orders=getOrders().reverse();
+  document.getElementById('badgeOrders').textContent=orders.length;
+  const tb=document.getElementById('pedidosBody');
+  const empty=document.getElementById('pedidosEmpty');
+  if(!orders.length){tb.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  const payLabel={pix:'PIX',dinheiro:'Dinheiro',cartao:'Cartão'};
+  const delLabel={delivery:'Delivery',retirada:'Retirada'};
+  tb.innerHTML=orders.map((o,i)=>`
+    <tr>
+      <td style="font-family:monospace;font-size:.78rem;font-weight:700;color:var(--blue)">${o.id}</td>
+      <td style="font-size:.78rem">${o.date}<br/><span style="color:var(--gray-dark)">${o.time}</span></td>
+      <td style="font-size:.78rem">${(o.items||[]).map(x=>`${x.name.substring(0,20)}… ×${x.qty}`).join('<br/>')}</td>
+      <td style="font-weight:900;color:var(--blue)">R$ ${(o.total||0).toFixed(2).replace('.',',')}</td>
+      <td style="font-size:.78rem;font-weight:700">${payLabel[o.payment]||o.payment||'—'}</td>
+      <td style="font-size:.78rem;font-weight:700">${delLabel[o.delivery]||o.delivery||'—'}</td>
+      <td><span class="order-status aguardando">Aguardando</span></td>
+      <td>
+        <div class="order-actions">
+          <button class="act-btn" title="Confirmar pedido" onclick="changeOrderStatus(${i},'confirmado')"><i class="fas fa-check"></i></button>
+          <button class="act-btn danger" title="Cancelar" onclick="changeOrderStatus(${i},'cancelado')"><i class="fas fa-times"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function changeOrderStatus(i,status){
+  const orders=getOrders().reverse();
+  if(orders[i]){
+    orders[i].status=status;
+    localStorage.setItem(ORDERS_KEY,JSON.stringify(orders.reverse()));
+    renderPedidos();
+    toast(status==='confirmado'?'Pedido confirmado!':'Pedido cancelado.',status==='confirmado'?'green':'red');
+  }
+}
+
+function clearOrders(){
+  showConfirm('Limpar todos os pedidos?','Esta ação removerá todos os pedidos registrados. Não poderá ser desfeita.',()=>{
+    localStorage.removeItem(ORDERS_KEY);
+    renderPedidos();
+    renderDashboard();
+    toast('Pedidos removidos.','red');
+  });
+}
+
+// ===== RELATÓRIO =====
+function renderRelatorio(){
+  const stock=getStock();
+  const list=PRODS;
+  document.getElementById('relCount').textContent=`${list.length} produtos`;
+  document.getElementById('relBody').innerHTML=list.map((p,i)=>{
+    const ok=stock[p.id]!=='esgotado';
+    return`<tr>
+      <td style="font-size:.78rem;color:var(--gray-dark)">${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.2rem">${p.e}</span><span style="font-size:.8rem;font-weight:700">${p.name}</span></div></td>
+      <td style="font-size:.78rem">${p.brand}</td>
+      <td><span class="cat-pill">${p.cat}</span></td>
+      <td style="font-weight:800;color:var(--blue)">R$ ${p.price.toFixed(2).replace('.',',')}</td>
+      <td><span style="font-size:.72rem;font-weight:800;color:${ok?'var(--green)':'var(--red)'};background:${ok?'var(--green-pale)':'var(--red-pale)'};padding:3px 10px;border-radius:50px">${ok?'Disponível':'Esgotado'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== EXCEL EXPORTS =====
+function exportEstoque(){
+  const stock=getStock();
+  const rows=[['#','Produto','Marca','Categoria','Espécie','Preço (R$)','Status']];
+  PRODS.forEach((p,i)=>{
+    rows.push([i+1,p.name,p.brand,p.cat,p.species,p.price.toFixed(2),stock[p.id]==='esgotado'?'Esgotado':'Disponível']);
+  });
+  downloadCSV(rows,'agrocampo_estoque_'+today()+'.csv');
+  toast('Planilha de estoque exportada!','green');
+}
+
+function exportOrders(){
+  const orders=getOrders();
+  if(!orders.length){toast('Nenhum pedido para exportar.','red');return}
+  const rows=[['Pedido','Data','Hora','Itens','Total (R$)','Pagamento','Entrega','Status']];
+  orders.forEach(o=>{
+    const itens=(o.items||[]).map(x=>`${x.name} x${x.qty}`).join(' | ');
+    rows.push([o.id,o.date,o.time,itens,(o.total||0).toFixed(2),o.payment||'',o.delivery||'',o.status||'Aguardando']);
+  });
+  downloadCSV(rows,'agrocampo_pedidos_'+today()+'.csv');
+  toast('Planilha de pedidos exportada!','green');
+}
+
+function exportEsgotados(){
+  const stock=getStock();
+  const esg=PRODS.filter(p=>stock[p.id]==='esgotado');
+  if(!esg.length){toast('Nenhum produto esgotado!','red');return}
+  const rows=[['#','Produto','Marca','Categoria','Preço (R$)']];
+  esg.forEach((p,i)=>rows.push([i+1,p.name,p.brand,p.cat,p.price.toFixed(2)]));
+  downloadCSV(rows,'agrocampo_esgotados_'+today()+'.csv');
+  toast('Lista de esgotados exportada!','green');
+}
+
+function downloadCSV(rows, filename){
+  const bom='\uFEFF';
+  const csv=bom+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+
+function today(){const d=new Date();return`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`}
+
+// ===== CONFIRM MODAL =====
+let _confirmCb=null;
+function showConfirm(title,msg,cb){
+  _confirmCb=cb;
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').textContent=msg;
+  document.getElementById('confirmMask').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick=()=>{closeConfirm();if(_confirmCb)_confirmCb()};
+}
+function closeConfirm(){document.getElementById('confirmMask').classList.remove('open')}
+
+// ===== TOAST =====
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.className='toast'+(type?' '+type:'');
+  document.getElementById('toastTxt').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ===== INIT =====
+function init(){
+  renderDashboard();
+  // Atualiza badge de pedidos em tempo real
+  window.addEventListener('storage',e=>{
+    if(e.key===ORDERS_KEY){renderDashboard();if(currentPage==='pedidos')renderPedidos()}
+  });
+}
+
+// Enter no login
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin()});
+</script>
+</body>
+</html>
