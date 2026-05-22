@@ -551,21 +551,20 @@ const PRODS = [
   {id:20,name:'Repelente Spray Antipulgas 200ml',brand:'BioVet',cat:'medicamento',species:'cachorro',e:'🪲',price:34.90,old:null,tag:null},
 ];
 
-// ===== ESTOQUE (sincronizado via localStorage) =====
-const STOCK_KEY = 'agrocampo_stock';
+// ===== ESTOQUE E PRODUTOS CUSTOMIZADOS (sincronizado via localStorage) =====
+const STOCK_KEY  = 'agrocampo_stock';
+const CUSTOM_KEY = 'agrocampo_custom_products';
 
-function getStock(){
-  try{ return JSON.parse(localStorage.getItem(STOCK_KEY)||'{}') }catch(e){return{}}
-}
+function getStock(){try{return JSON.parse(localStorage.getItem(STOCK_KEY)||'{}')}catch(e){return{}}}
+function getCustomProds(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]')}catch(e){return[]}}
+function isAvailable(id){return getStock()[id]!=='esgotado'}
 
-function isAvailable(id){
-  const s = getStock();
-  return s[id] !== 'esgotado';
-}
+// Mescla produtos base + personalizados
+function getAllProds(){return[...PRODS,...getCustomProds()]}
 
-// Ouvir mudanças do admin em outra aba
+// Ouvir mudanças do admin (mesma aba ou aba diferente)
 window.addEventListener('storage', e => {
-  if(e.key === STOCK_KEY) renderProds(filtered());
+  if(e.key===STOCK_KEY||e.key===CUSTOM_KEY) renderProds(filtered());
 });
 
 // ===== RENDER PRODUTOS =====
@@ -598,9 +597,9 @@ function renderProds(list){
 }
 
 function filtered(){
-  let l=[...PRODS];
+  let l=[...getAllProds()];
   if(af.tag) l=l.filter(p=>p.tag&&p.tag===af.tag);
-  if(af.sp&&af.sp!=='todos') l=l.filter(p=>p.species===af.sp);
+  if(af.sp&&af.sp!=='todos') l=l.filter(p=>p.species===af.sp||p.species==='todos');
   if(af.cat&&af.cat!=='todos') l=l.filter(p=>p.cat===af.cat);
   return l;
 }
@@ -633,9 +632,15 @@ function filterByTag(tag){
 }
 
 function doSearch(q){
+  // Sincroniza os dois campos de busca
+  const desktop=document.getElementById('searchInput');
+  const mobile=document.getElementById('searchInputMobile');
+  if(document.activeElement!==desktop) desktop.value=q;
+  if(document.activeElement!==mobile) mobile.value=q;
+
   const t=q.trim().toLowerCase();
-  if(!t){renderProds(PRODS);document.getElementById('prodsTitle').textContent='Produtos em Destaque';document.getElementById('prodsSub').textContent='Qualidade e variedade para seu pet';return}
-  const r=PRODS.filter(p=>p.name.toLowerCase().includes(t)||p.brand.toLowerCase().includes(t)||p.cat.toLowerCase().includes(t)||p.species.toLowerCase().includes(t));
+  if(!t){renderProds(getAllProds());document.getElementById('prodsTitle').textContent='Produtos em Destaque';document.getElementById('prodsSub').textContent='Qualidade e variedade para seu pet';return}
+  const r=getAllProds().filter(p=>p.name.toLowerCase().includes(t)||p.brand.toLowerCase().includes(t)||p.cat.toLowerCase().includes(t)||(p.species&&p.species.toLowerCase().includes(t)));
   document.getElementById('prodsTitle').textContent=`Resultados para "${q}"`;
   document.getElementById('prodsSub').textContent=`${r.length} produto(s) encontrado(s)`;
   renderProds(r); scrollSec('produtos');
