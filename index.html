@@ -557,7 +557,7 @@ const CUSTOM_KEY = 'agrocampo_custom_products';
 
 function getStock(){try{return JSON.parse(localStorage.getItem(STOCK_KEY)||'{}')}catch(e){return{}}}
 function getCustomProds(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]')}catch(e){return[]}}
-function isAvailable(id){return getStock()[id]!=='esgotado'}
+function isAvailable(id){return getStock()[id]!=='esgotado'&&getStock()[String(id)]!=='esgotado'}
 
 // Mescla produtos base + personalizados
 function getAllProds(){return[...PRODS,...getCustomProds()]}
@@ -575,19 +575,23 @@ function renderProds(list){
   if(!list.length){g.innerHTML='<div class="no-results"><i class="fas fa-search"></i>Nenhum produto encontrado.</div>';return}
   g.innerHTML=list.map(p=>{
     const ok=isAvailable(p.id);
+    // Thumb: imagem real se tiver, senão emoji
+    const thumbInner = p.imgdata
+      ? `<img src="${p.imgdata}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+      : `<span style="font-size:4rem">${p.e||'📦'}</span>`;
     return`<div class="prod-card${ok?'':' esgotado'} rv">
-      <div class="prod-thumb">
+      <div class="prod-thumb" style="${p.imgdata?'padding:0;overflow:hidden':''}">
         ${!ok?'<span class="prod-tag esgotado-tag">ESGOTADO</span>':(p.tag?`<span class="prod-tag ${p.tag==='NOVO'?'novo':''}">${p.tag}</span>`:'')}
-        ${p.e}
+        ${thumbInner}
       </div>
       <div class="prod-body">
         <div class="prod-brand">${p.brand}</div>
         <div class="prod-name">${p.name}</div>
-        ${p.old?`<div class="prod-old">R$ ${p.old.toFixed(2).replace('.',',')}</div>`:''}
-        <div class="prod-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+        ${p.old?`<div class="prod-old">R$ ${(+p.old).toFixed(2).replace('.',',')}</div>`:''}
+        <div class="prod-price">R$ ${(+p.price).toFixed(2).replace('.',',')}</div>
         <div class="prod-inst">${ok?'em até 3× sem juros':'<span style="color:var(--red)">Produto esgotado no momento.</span>'}</div>
         ${ok
-          ?`<button class="btn-add" onclick="addCart(${p.id})"><i class="fas fa-plus"></i> Adicionar</button>`
+          ?`<button class="btn-add" onclick="addCart(${JSON.stringify(p.id)})"><i class="fas fa-plus"></i> Adicionar</button>`
           :`<button class="btn-esgotado" disabled><i class="fas fa-ban"></i> Indisponível</button>`
         }
       </div>
@@ -649,8 +653,9 @@ function doSearch(q){
 // ===== CART =====
 function addCart(id){
   if(!isAvailable(id)){toast('Produto esgotado!');return}
-  const p=PRODS.find(x=>x.id===id);
-  const ex=cart.find(x=>x.id===id);
+  const p=getAllProds().find(x=>String(x.id)===String(id));
+  if(!p)return;
+  const ex=cart.find(x=>String(x.id)===String(id));
   if(ex) ex.qty++; else cart.push({...p,qty:1});
   updCart(); openDrawer(); toast(`${p.name.substring(0,30)}… adicionado!`);
 }
@@ -662,11 +667,28 @@ function updCart(){
   const bd=document.getElementById('drawerBody'), ft=document.getElementById('drawerFt');
   if(!cart.length){bd.innerHTML='<div class="cart-empty-state"><i class="fas fa-shopping-bag"></i><p>Sua sacola está vazia.</p></div>';ft.style.display='none';return}
   ft.style.display='block';
-  bd.innerHTML=cart.map(c=>`<div class="ci"><div class="ci-thumb">${c.e}</div><div class="ci-info"><div class="ci-name">${c.name}</div><div class="ci-price">${fmt(c.price*c.qty)}</div><div class="ci-qty"><button onclick="chgQty(${c.id},-1)">−</button><span>${c.qty}</span><button onclick="chgQty(${c.id},1)">+</button></div></div><button class="ci-del" onclick="rmItem(${c.id})"><i class="fas fa-trash"></i></button></div>`).join('');
+  bd.innerHTML=cart.map(c=>{
+    const thumbHtml=c.imgdata
+      ?`<img src="${c.imgdata}" alt="${c.name}" style="width:58px;height:58px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0"/>`
+      :`<div class="ci-thumb">${c.e||'📦'}</div>`;
+    return`<div class="ci">
+      ${thumbHtml}
+      <div class="ci-info">
+        <div class="ci-name">${c.name}</div>
+        <div class="ci-price">${fmt(c.price*c.qty)}</div>
+        <div class="ci-qty">
+          <button onclick="chgQty('${c.id}',-1)">−</button>
+          <span>${c.qty}</span>
+          <button onclick="chgQty('${c.id}',1)">+</button>
+        </div>
+      </div>
+      <button class="ci-del" onclick="rmItem('${c.id}')"><i class="fas fa-trash"></i></button>
+    </div>`;
+  }).join('');
 }
 
-function chgQty(id,d){const i=cart.find(c=>c.id===id);if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(c=>c.id!==id);updCart()}
-function rmItem(id){cart=cart.filter(c=>c.id!==id);updCart()}
+function chgQty(id,d){const i=cart.find(c=>String(c.id)===String(id));if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(c=>String(c.id)!==String(id));updCart()}
+function rmItem(id){cart=cart.filter(c=>String(c.id)!==String(id));updCart()}
 function openDrawer(){document.getElementById('drawerMask').classList.add('open')}
 function closeDrawer(){document.getElementById('drawerMask').classList.remove('open')}
 function handleMaskClick(e){if(e.target===e.currentTarget)closeDrawer()}
@@ -749,7 +771,7 @@ function mskCep(el){let v=el.value.replace(/\D/g,'');if(v.length>5)v=v.slice(0,5
 function toast(msg){const t=document.getElementById('toast');document.getElementById('toastTxt').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
 function scrollSec(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
 function initRv(){const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.08});document.querySelectorAll('.rv:not(.in)').forEach(el=>obs.observe(el))}
-document.addEventListener('DOMContentLoaded',()=>{renderProds(PRODS);updCart();initRv()});
+document.addEventListener('DOMContentLoaded',()=>{renderProds(getAllProds());updCart();initRv()});
 </script>
 </body>
 </html>
