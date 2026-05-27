@@ -424,13 +424,35 @@ tr:hover td{background:#fafbfd}
           </div>
 
           <div class="fg" style="margin-bottom:14px">
+            <label>Imagem do Produto <span style="font-weight:400;color:var(--gray-dark)">(opcional)</span></label>
+            <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              <!-- Preview -->
+              <div id="imgPreviewWrap" style="width:90px;height:90px;background:var(--off);border:1.5px dashed var(--gray-mid);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative">
+                <span id="imgPreviewEmoji" style="font-size:2.5rem">📷</span>
+                <img id="imgPreviewImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:var(--radius)"/>
+              </div>
+              <div style="flex:1;min-width:180px">
+                <label for="f-pimg" style="display:inline-flex;align-items:center;gap:7px;background:var(--blue-pale);color:var(--blue);border:1.5px solid var(--blue-light);border-radius:50px;padding:9px 18px;font-size:.8rem;font-weight:800;cursor:pointer;transition:var(--tr)" onmouseover="this.style.background='var(--blue)';this.style.color='white'" onmouseout="this.style.background='var(--blue-pale)';this.style.color='var(--blue)'">
+                  <i class="fas fa-upload"></i> Selecionar Imagem
+                </label>
+                <input type="file" id="f-pimg" accept="image/*" style="display:none" onchange="handleImgUpload(this)"/>
+                <p class="hint" style="margin-top:8px">JPG, PNG ou WEBP. Tamanho recomendado: 400×400px.<br/>Se não adicionar imagem, o emoji será exibido.</p>
+                <button type="button" id="btnRemoveImg" onclick="removeImg()" style="display:none;margin-top:8px;background:none;border:1.5px solid var(--red);color:var(--red);border-radius:50px;padding:5px 14px;font-size:.72rem;font-weight:800;cursor:pointer">
+                  <i class="fas fa-times"></i> Remover imagem
+                </button>
+              </div>
+            </div>
+            <input type="hidden" id="f-pimgdata"/>
+          </div>
+
+          <div class="fg" style="margin-bottom:14px">
             <label>Emoji / Ícone do Produto *</label>
             <div class="emoji-row">
               <div class="emoji-preview" id="emojiPreview">📦</div>
               <div style="flex:1">
                 <input type="text" id="f-pemoji" placeholder="Cole um emoji aqui: 🥩 🐶 🎾 🛁 💊"
                        oninput="document.getElementById('emojiPreview').textContent=this.value||'📦'"/>
-                <p class="hint" style="margin-top:6px">Cole qualquer emoji do teclado ou copie: 🥩 😺 🥫 🐟 🦷 🎾 🛁 💊 🐠 🐟 🦮 🐱 🦴 🦜 🏖️ 🛏️ 🥣 🧳 🐹 🪲 📦</p>
+                <p class="hint" style="margin-top:6px">Usado como fallback se não houver imagem. Cole qualquer emoji: 🥩 😺 🥫 🐟 🦷 🎾 🛁 💊 🐠 🐟 🦮 🐱 🦴 🦜 🏖️ 🛏️ 🥣 🧳 🐹 🪲 📦</p>
               </div>
             </div>
           </div>
@@ -769,6 +791,47 @@ function renderDashboard(){
 }
 
 // ============================================================
+// IMAGE UPLOAD
+// ============================================================
+function handleImgUpload(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>2*1024*1024){toast('Imagem muito grande! Use imagens menores que 2MB.','red');input.value='';return}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const data=e.target.result;
+    document.getElementById('f-pimgdata').value=data;
+    // Show preview
+    document.getElementById('imgPreviewEmoji').style.display='none';
+    const img=document.getElementById('imgPreviewImg');
+    img.src=data;img.style.display='block';
+    document.getElementById('btnRemoveImg').style.display='inline-flex';
+    toast('Imagem carregada com sucesso!','green');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImg(){
+  document.getElementById('f-pimgdata').value='';
+  document.getElementById('f-pimg').value='';
+  document.getElementById('imgPreviewImg').style.display='none';
+  document.getElementById('imgPreviewImg').src='';
+  document.getElementById('imgPreviewEmoji').style.display='block';
+  document.getElementById('btnRemoveImg').style.display='none';
+}
+
+function setImgPreview(data){
+  if(data){
+    document.getElementById('imgPreviewEmoji').style.display='none';
+    const img=document.getElementById('imgPreviewImg');
+    img.src=data;img.style.display='block';
+    document.getElementById('btnRemoveImg').style.display='inline-flex';
+  }else{
+    removeImg();
+  }
+}
+
+// ============================================================
 // PRODUTOS CRUD
 // ============================================================
 let editingProdId = null;
@@ -782,29 +845,27 @@ function saveProduct(){
   const cat=document.getElementById('f-pcat').value;
   const species=document.getElementById('f-pspecies').value;
   const e=document.getElementById('f-pemoji').value.trim()||'📦';
+  const imgdata=document.getElementById('f-pimgdata').value||null;
 
   if(!name||!brand||!price||!cat||!species){toast('Preencha todos os campos obrigatórios!','red');return}
 
   const customs=getCustom();
 
   if(editingProdId!==null){
-    // EDITAR
     const idx=customs.findIndex(p=>p.id===editingProdId);
     if(idx>-1){
-      customs[idx]={...customs[idx],name,brand,price,old,tag,cat,species,e};
+      customs[idx]={...customs[idx],name,brand,price,old,tag,cat,species,e,imgdata};
       setCustom(customs);
       toast('Produto atualizado com sucesso!','green');
     }
     cancelEdit();
   }else{
-    // NOVO
     const newId='c_'+Date.now();
-    customs.push({id:newId,name,brand,price,old,tag,cat,species,e,custom:true});
+    customs.push({id:newId,name,brand,price,old,tag,cat,species,e,imgdata,custom:true});
     setCustom(customs);
     toast('Produto cadastrado e já disponível no site!','green');
     clearForm();
   }
-
   renderProdList();
   renderDashboard();
 }
@@ -824,6 +885,8 @@ function editProduct(id){
   document.getElementById('f-pspecies').value=p.species;
   document.getElementById('f-pemoji').value=p.e;
   document.getElementById('emojiPreview').textContent=p.e;
+  document.getElementById('f-pimgdata').value=p.imgdata||'';
+  setImgPreview(p.imgdata||null);
   document.getElementById('formTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Produto';
   document.getElementById('saveBtnText').textContent='Salvar Alterações';
   document.getElementById('cancelBtn').style.display='flex';
@@ -835,14 +898,11 @@ function deleteProduct(id){
   const p=all.find(x=>x.id===id);
   if(!p){return}
   if(!p.custom){toast('Produtos padrão do sistema não podem ser excluídos.','yellow');return}
-
   showConfirm('Excluir produto?',`Deseja excluir "${p.name}"? Esta ação não pode ser desfeita.`,()=>{
     const customs=getCustom().filter(x=>x.id!==id);
     setCustom(customs);
-    // Remove do estoque também
     const s=getStock();delete s[id];setStock(s);
-    renderProdList();
-    renderDashboard();
+    renderProdList();renderDashboard();
     toast('Produto excluído!','red');
   });
 }
@@ -861,6 +921,9 @@ function clearForm(){
   document.getElementById('f-pcat').value='';
   document.getElementById('f-pspecies').value='';
   document.getElementById('emojiPreview').textContent='📦';
+  document.getElementById('f-pimgdata').value='';
+  document.getElementById('f-pimg').value='';
+  removeImg();
 }
 
 function renderProdList(){
@@ -878,10 +941,13 @@ function renderProdList(){
 
   tb.innerHTML=list.map(p=>{
     const ok=stock[p.id]!=='esgotado';
+    const thumbHtml=p.imgdata
+      ?`<img src="${p.imgdata}" alt="${p.name}" style="width:42px;height:42px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--gray)"/>`
+      :`<div class="prod-thumb-sm">${p.e}</div>`;
     return`<tr>
       <td><div class="prod-cell">
-        <div class="prod-thumb-sm">${p.e}</div>
-        <div><div class="pn">${p.name}</div><div class="pb">${p.brand} ${p.custom?'<span style="color:var(--blue);font-size:.65rem;font-weight:800">● PERSONALIZADO</span>':''}</div></div>
+        ${thumbHtml}
+        <div><div class="pn">${p.name}</div><div class="pb">${p.brand} ${p.custom?'<span style="color:var(--blue);font-size:.62rem;font-weight:800">● PERSONALIZADO</span>':''}</div></div>
       </div></td>
       <td><span class="cat-pill ${p.custom?'custom':''}">${CAT_LABEL[p.cat]||p.cat}</span></td>
       <td style="font-weight:900;color:var(--blue);white-space:nowrap">
