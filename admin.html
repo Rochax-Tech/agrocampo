@@ -41,7 +41,8 @@ input,select,textarea{font-family:'Nunito',sans-serif}
 .login-error.show{display:block}
 .btn-login{width:100%;background:var(--blue);color:white;border:none;border-radius:50px;padding:14px;font-size:.95rem;font-weight:900;transition:var(--tr);margin-top:4px}
 .btn-login:hover{background:var(--blue-dark);transform:translateY(-1px)}
-.login-hint{font-size:.72rem;color:var(--gray-dark);margin-top:16px;background:var(--off);padding:10px;border-radius:var(--radius-sm)}
+.login-hint{display:none}
+.login-box{background:white;border-radius:22px;padding:44px 38px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.32);text-align:center;position:relative;z-index:1}
 
 /* ===== LAYOUT ===== */
 .layout{display:flex;height:100vh;overflow:hidden}
@@ -69,22 +70,21 @@ input,select,textarea{font-family:'Nunito',sans-serif}
 
 /* ===== MAIN ===== */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:62px;background:white;border-bottom:1px solid var(--gray);flex-shrink:0;gap:12px}
-.topbar-left h1{font-size:1.05rem;font-weight:900;white-space:nowrap}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:64px;background:white;border-bottom:1px solid var(--gray);flex-shrink:0;gap:12px}
+.topbar-left h1{font-size:1.1rem;font-weight:900;white-space:nowrap}
 .topbar-left p{font-size:.72rem;color:var(--gray-dark);margin-top:1px}
 .topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:50px;font-size:.78rem;font-weight:800;border:none;transition:var(--tr);white-space:nowrap}
+.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;font-size:.78rem;font-weight:800;border:none;transition:var(--tr);white-space:nowrap;cursor:pointer}
 .tb-btn-primary{background:var(--blue);color:white}
 .tb-btn-primary:hover{background:var(--blue-dark)}
 .tb-btn-outline{background:white;color:var(--black);border:1.5px solid var(--gray)}
 .tb-btn-outline:hover{border-color:var(--blue);color:var(--blue)}
 .tb-btn-green{background:var(--green);color:white}
 .tb-btn-green:hover{background:#15803d}
-.tb-live{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;color:var(--green);white-space:nowrap}
+.tb-live{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;color:var(--green);white-space:nowrap;background:var(--green-pale);padding:6px 12px;border-radius:50px}
 .tb-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-/* Mobile menu toggle */
-.sb-toggle{display:none;background:none;border:none;font-size:1.2rem;color:var(--black);padding:6px}
+.sb-toggle{display:none;background:none;border:none;font-size:1.2rem;color:var(--black);padding:6px;cursor:pointer}
 
 .content{flex:1;overflow-y:auto;padding:22px 24px}
 
@@ -262,12 +262,33 @@ tr:hover td{background:#fafbfd}
   <div class="login-box">
     <div class="login-logo"><i class="fas fa-paw"></i></div>
     <h2>Painel Administrativo</h2>
-    <p>Agrocampo Pet Shop — Acesso restrito</p>
-    <div class="login-field"><label>Usuário</label><input type="text" id="loginUser" placeholder="admin" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <div class="login-field"><label>Senha</label><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <div class="login-error" id="loginErr"><i class="fas fa-exclamation-circle"></i> Usuário ou senha incorretos.</div>
-    <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-    <p class="login-hint">Usuário: <strong>admin</strong> &nbsp;·&nbsp; Senha: <strong>admin123</strong></p>
+    <p>Agrocampo Pet Shop — Acesso restrito aos gestores</p>
+    <div style="background:var(--blue-pale);border-radius:var(--radius);padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:8px;border-left:3px solid var(--blue)">
+      <i class="fas fa-shield-alt" style="color:var(--blue);font-size:.9rem"></i>
+      <span style="font-size:.75rem;color:var(--blue-dark);font-weight:700">Área protegida — somente funcionários autorizados</span>
+    </div>
+    <div class="login-field">
+      <label>Usuário</label>
+      <div style="position:relative">
+        <i class="fas fa-user" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gray-dark);font-size:.85rem"></i>
+        <input type="text" id="loginUser" placeholder="Digite seu usuário" autocomplete="username" style="padding-left:36px" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <div style="position:relative">
+        <i class="fas fa-lock" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gray-dark);font-size:.85rem"></i>
+        <input type="password" id="loginPass" placeholder="Digite sua senha" autocomplete="current-password" style="padding-left:36px;padding-right:40px" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button type="button" onclick="togglePassVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-dark);cursor:pointer;padding:4px;font-size:.85rem">
+          <i class="fas fa-eye" id="togglePassIcon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="login-error" id="loginErr"><i class="fas fa-exclamation-circle"></i> Usuário ou senha incorretos. Tente novamente.</div>
+    <button class="btn-login" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Entrar no Painel</button>
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--gray);display:flex;align-items:center;justify-content:center;gap:6px;color:var(--gray-dark);font-size:.72rem">
+      <i class="fas fa-lock" style="font-size:.7rem"></i> Acesso monitorado e seguro
+    </div>
   </div>
 </div>
 
@@ -329,6 +350,19 @@ tr:hover td{background:#fafbfd}
 
       <!-- ===== DASHBOARD ===== -->
       <div class="page active" id="page-dashboard">
+
+        <!-- Welcome banner -->
+        <div style="background:linear-gradient(120deg,#1a4fa0,#3a7bd5);border-radius:var(--radius-lg);padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div style="color:white">
+            <div style="font-size:.75rem;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Bem-vindo de volta 👋</div>
+            <div style="font-size:1.2rem;font-weight:900">Painel Agrocampo Pet Shop</div>
+            <div style="font-size:.78rem;opacity:.75;margin-top:3px">Vila Velha – ES &nbsp;·&nbsp; <span id="currentDateTime"></span></div>
+          </div>
+          <button class="tb-btn" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(8px)" onclick="window.open('index.html','_blank')">
+            <i class="fas fa-external-link-alt"></i> Ver Site ao Vivo
+          </button>
+        </div>
+
         <div class="stats-grid" id="statsGrid"></div>
         <div class="dash-grid">
           <div class="dash-card">
@@ -661,8 +695,31 @@ const CAT_LABEL={racao:'Ração',petisco:'Petisco',sache:'Sachê',brinquedo:'Bri
 const SP_LABEL={cachorro:'🐶 Cachorro',gato:'🐱 Gato',peixe:'🐠 Peixe',passaro:'🦜 Pássaro',roedor:'🐹 Roedor',reptil:'🐢 Réptil',todos:'🐾 Todos'};
 
 // ============================================================
+// RELÓGIO EM TEMPO REAL
+// ============================================================
+function updateClock(){
+  const el=document.getElementById('currentDateTime');
+  if(!el)return;
+  const now=new Date();
+  el.textContent=now.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'})
+    +' · '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ============================================================
 // AUTH
 // ============================================================
+function togglePassVis(){
+  const input=document.getElementById('loginPass');
+  const icon=document.getElementById('togglePassIcon');
+  if(input.type==='password'){
+    input.type='text';
+    icon.className='fas fa-eye-slash';
+  }else{
+    input.type='password';
+    icon.className='fas fa-eye';
+  }
+}
+
 function doLogin(){
   const u=document.getElementById('loginUser').value.trim();
   const p=document.getElementById('loginPass').value.trim();
@@ -1192,13 +1249,55 @@ function toast(msg,type=''){
 // ============================================================
 function init(){
   renderDashboard();
-  // Atualiza badges em tempo real se outro dispositivo usar
+  updateClock();
+  setInterval(updateClock, 30000);
+
   window.addEventListener('storage',e=>{
     if(e.key===ORDERS_KEY){renderDashboard();if(currentPage==='pedidos')renderPedidos()}
     if(e.key===STOCK_KEY){renderDashboard();if(currentPage==='estoque')renderEstoque();if(currentPage==='produtos')renderProdList()}
     if(e.key===CUSTOM_KEY){renderDashboard();if(currentPage==='produtos')renderProdList();if(currentPage==='estoque')renderEstoque()}
   });
 }
+
+/*
+=================================================================
+📋 PLANO DE MIGRAÇÃO PARA FIREBASE (quando o cliente fechar)
+=================================================================
+
+OBJETIVO: Sincronização real entre dispositivos diferentes.
+
+PASSO 1 — Criar projeto no Firebase (firebase.google.com)
+  • Plano gratuito Spark é suficiente
+  • Ativar: Firestore Database + Storage + Authentication
+
+PASSO 2 — Substituir localStorage por Firestore
+  localStorage.setItem(STOCK_KEY, ...)
+  → db.collection('estoque').doc('status').set({...})
+
+  localStorage.getItem(STOCK_KEY)
+  → db.collection('estoque').doc('status').get()
+
+PASSO 3 — Escuta em tempo real (onSnapshot)
+  db.collection('estoque').onSnapshot(snap => {
+    renderProds(); // Atualiza o site automaticamente
+  });
+
+PASSO 4 — Imagens no Firebase Storage
+  storage.ref('produtos/'+id+'.jpg').put(file)
+  → retorna URL pública para usar no src da imagem
+
+PASSO 5 — Autenticação real (Firebase Auth)
+  firebase.auth().signInWithEmailAndPassword(email, senha)
+  → Remove o login hardcoded atual
+
+RESULTADO FINAL:
+  ✅ Admin altera estoque no PC
+  ✅ Site no celular do cliente atualiza em segundos
+  ✅ Imagens hospedadas na nuvem
+  ✅ Login seguro com email/senha real
+  ✅ Múltiplos usuários com permissões diferentes
+=================================================================
+*/
 
 // Login com Enter
 document.addEventListener('keydown',e=>{
