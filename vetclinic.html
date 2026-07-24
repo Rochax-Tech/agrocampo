@@ -200,11 +200,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
 <header id="header">
   <div class="header-top">
     <div class="logo-wrap">
-      <div class="logo-mark"><i class="fas fa-shield-heart"></i></div>
-      <div class="logo-text">
-        <div class="logo-name">Vet Clinic Saúde</div>
-        <div class="logo-sub">Clínica Veterinária</div>
-      </div>
+      <img src="images/logo-vetclinic-icon.jpeg" alt="Vet Clinic Saúde" class="vetclinic-logo-img" style="height:46px;width:auto;border-radius:10px"/>
     </div>
     <nav class="nav-links">
       <a href="#servicos">Serviços</a>
@@ -240,7 +236,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
     </div>
     <div class="hero-img-wrap">
       <div class="hero-img-frame">
-        <img src="images/especie-cachorro.jpg" alt="Pet saudável"/>
+        <img src="images/vetclinic-10anos.jpg" alt="Pet saudável" id="vetclinic-hero"/>
       </div>
       <div class="hero-stat-card">
         <div class="hero-stat-icon"><i class="fas fa-heart-circle-check"></i></div>
@@ -364,7 +360,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
 <section id="sobre" class="sec">
   <div class="about-wrap">
     <div class="about-img rv">
-      <img src="images/especie-gato.jpg" alt="Sobre a Vet Clinic Saúde"/>
+      <img src="images/especie-gato.jpg" alt="Sobre a Vet Clinic Saúde" id="vetclinic-sobre"/>
     </div>
     <div class="rv">
       <span class="sec-label">Sobre Nós</span>
@@ -427,12 +423,12 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
   <div class="footer-inner">
     <div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div class="logo-mark"><i class="fas fa-shield-heart"></i></div>
+        <img src="images/logo-vetclinic-icon.jpeg" alt="Vet Clinic Saúde" class="vetclinic-logo-img" style="height:40px;width:auto;border-radius:9px"/>
         <span class="ft-logo-name">Vet Clinic Saúde</span>
       </div>
       <p>Clínica veterinária parceira da Agrocampo Pet Shop, em Vila Velha – ES. Cuidando da saúde do seu pet com dedicação.</p>
       <div class="ft-socials">
-        <a href="https://www.instagram.com" target="_blank" class="ft-s"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.instagram.com/vetclinicsaude/" target="_blank" class="ft-s"><i class="fab fa-instagram"></i></a>
         <a href="https://wa.me/5527988840319" target="_blank" class="ft-s"><i class="fab fa-whatsapp"></i></a>
         <a href="https://www.facebook.com" target="_blank" class="ft-s"><i class="fab fa-facebook-f"></i></a>
       </div>
@@ -472,7 +468,35 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
 <a href="https://wa.me/5527988840319" target="_blank" class="float-wpp"><i class="fab fa-whatsapp"></i></a>
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt"></span></div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDjBc97cakzwBP1gGMJ2OXlLo0g5ovw_8U",
+  authDomain: "agrocampo-32451.firebaseapp.com",
+  projectId: "agrocampo-32451",
+  storageBucket: "agrocampo-32451.firebasestorage.app",
+  messagingSenderId: "814835854391",
+  appId: "1:814835854391:web:6743838b707c06eb0aa3b2"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Ouve as imagens de design cadastradas no painel admin (logo, +10 anos, sobre nós)
+onSnapshot(collection(db,'design'), snap => {
+  snap.forEach(d => {
+    const data = d.data().data;
+    if(!data) return;
+    if(d.id==='logo-vetclinic'){
+      document.querySelectorAll('.vetclinic-logo-img').forEach(el=>el.src=data);
+    } else {
+      const el=document.getElementById(d.id);
+      if(el) el.src=data;
+    }
+  });
+}, err => console.error('Erro ao ouvir imagens de design:', err));
+
 function initRv(){
   const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.1});
   document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
