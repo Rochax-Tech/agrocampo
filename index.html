@@ -23,9 +23,9 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 
 /* ===== HEADER ===== */
 #header{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--white);box-shadow:0 1px 0 var(--gray)}
-.header-top{display:flex;align-items:center;gap:20px;padding:0 32px;height:76px;max-width:1360px;margin:0 auto}
+.header-top{display:flex;align-items:center;gap:20px;padding:0 32px;height:104px;max-width:1360px;margin:0 auto}
 .logo{display:flex;align-items:center;gap:11px;flex-shrink:0;cursor:pointer}
-.logo-img{height:64px;width:auto;object-fit:contain}
+.logo-img{height:88px;width:auto;object-fit:contain}
 .logo-mark{width:42px;height:42px;background:linear-gradient(145deg,var(--blue-light),var(--blue));border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(47,95,216,.28)}
 .logo-mark i{color:white;font-size:1.15rem}
 .logo-name{font-family:'Sora',sans-serif;font-size:1.32rem;font-weight:800;color:var(--navy);letter-spacing:-.02em}
@@ -60,7 +60,7 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .nav-item.promo:hover{color:#c62828}
 
 /* ===== CARROSSEL (moldura em card) ===== */
-.carousel{margin:158px auto 0;max-width:1360px;padding:20px 32px 34px;position:relative}
+.carousel{margin:186px auto 0;max-width:1360px;padding:20px 32px 34px;position:relative}
 .carousel-frame{position:relative}
 .carousel-rating-badge{position:absolute;left:24px;bottom:-24px;background:white;border-radius:18px;padding:14px 20px;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:12px;z-index:6}
 .crb-stars{color:var(--yellow);font-size:1rem;letter-spacing:1px;line-height:1}
@@ -68,7 +68,7 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .crb-info span{font-size:.72rem;color:var(--gray-dark);font-weight:600}
 .carousel-track{display:flex;border-radius:var(--radius-lg);overflow:hidden;transition:transform .55s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-md);aspect-ratio:16/6}
 .carousel-slide{min-width:100%;height:100%;cursor:pointer;position:relative}
-.carousel-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;display:block;background:linear-gradient(120deg,var(--navy),var(--blue))}
 .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:white;border:none;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--navy);cursor:pointer;transition:var(--tr);z-index:5;box-shadow:var(--shadow-md)}
 .carousel-arrow:hover{background:var(--navy);color:white;transform:translateY(-50%) scale(1.08)}
 .carousel-prev{left:44px}.carousel-next{right:44px}
@@ -94,7 +94,7 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .species-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .sp-card{position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;aspect-ratio:4/3;transition:var(--tr);box-shadow:var(--shadow)}
 .sp-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-md)}
-.sp-card img{width:100%;height:100%;object-fit:cover;display:block;transition:var(--tr)}
+.sp-card img{width:100%;height:100%;object-fit:cover;display:block;transition:var(--tr);background:var(--off)}
 .sp-card:hover img{transform:scale(1.08)}
 .sp-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(14,27,61,.82) 0%,rgba(14,27,61,0) 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:22px;color:white}
 .sp-card-name{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800}
@@ -303,17 +303,17 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 }
 @media(max-width:840px){
   .utility-bar{display:none}
-  .header-top{padding:0 14px;height:60px;gap:10px}
+  .header-top{padding:0 14px;height:76px;gap:10px}
   .logo-sub{display:none}
   .logo-name{font-size:1.1rem}
-  .logo-img{height:46px}
+  .logo-img{height:60px}
   .logo-mark{width:36px;height:36px}
   .search-wrap{display:none}
   .h-btn-wpp{display:none}
   .h-btn[title="Instagram"]{display:none}
   .h-btn-cart{padding:8px 14px;font-size:.8rem}
   .mobile-search{display:block}
-  .carousel{margin-top:172px;padding:14px 14px 40px}
+  .carousel{margin-top:188px;padding:14px 14px 40px}
   .carousel-rating-badge{left:24px;padding:10px 14px;gap:8px;border-radius:14px}
   .crb-info strong{font-size:.88rem}
   .crb-info span{font-size:.62rem}
@@ -355,7 +355,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   </div>
   <div class="header-top">
     <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-      <img src="images/logo-agrocampo.jpeg" alt="Agrocampo" class="logo-img" id="siteLogo"/>
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Agrocampo" class="logo-img" id="siteLogo"/>
     </div>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Buscar produtos, rações, acessórios…" oninput="doSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
@@ -399,16 +399,16 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   <div class="carousel-frame">
     <div class="carousel-track" id="carouselTrack">
       <div class="carousel-slide" onclick="carouselClick('boas-vindas')">
-        <img src="images/banner-boas-vindas.jpeg" alt="Bem-vindo à Agrocampo" loading="eager" id="banner-boas-vindas"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Bem-vindo à Agrocampo" loading="eager" id="banner-boas-vindas"/>
       </div>
       <div class="carousel-slide" onclick="carouselClick('clinica')">
-        <img src="images/banner-clinica.jpeg" alt="Vet Clinic Saúde" loading="lazy" id="banner-clinica"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Vet Clinic Saúde" loading="lazy" id="banner-clinica"/>
       </div>
       <div class="carousel-slide" onclick="carouselClick('ofertas')">
-        <img src="images/banner-ofertas.jpeg" alt="Ofertas e Promoções" loading="lazy" id="banner-ofertas"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Ofertas e Promoções" loading="lazy" id="banner-ofertas"/>
       </div>
       <div class="carousel-slide" onclick="carouselClick('jardinagem')">
-        <img src="images/banner-jardinagem.jpeg" alt="Tudo para seu Jardim" loading="lazy" id="banner-jardinagem"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Tudo para seu Jardim" loading="lazy" id="banner-jardinagem"/>
       </div>
     </div>
     <button class="carousel-arrow carousel-prev" onclick="carouselMove(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -439,15 +439,15 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
     <div class="sec-hd rv"><div class="sec-row"><div><h2>Compre por Espécie</h2><p>Encontre tudo para o seu companheiro</p></div></div></div>
     <div class="species-grid">
       <div class="sp-card rv" onclick="filterBySpecies(null,'cachorro')">
-        <img src="images/especie-cachorro.jpg" alt="Cachorro" id="especie-cachorro"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Cachorro" id="especie-cachorro"/>
         <div class="sp-card-overlay"><span class="sp-card-name">Cachorro</span><span class="sp-card-count">Ver produtos</span></div>
       </div>
       <div class="sp-card rv" onclick="filterBySpecies(null,'gato')">
-        <img src="images/especie-gato.jpg" alt="Gato" id="especie-gato"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Gato" id="especie-gato"/>
         <div class="sp-card-overlay"><span class="sp-card-name">Gato</span><span class="sp-card-count">Ver produtos</span></div>
       </div>
       <div class="sp-card rv" onclick="filterBySpecies(null,'peixe')">
-        <img src="images/especie-peixe.jpg" alt="Peixe" id="especie-peixe"/>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Peixe" id="especie-peixe"/>
         <div class="sp-card-overlay"><span class="sp-card-name">Peixes</span><span class="sp-card-count">Ver produtos</span></div>
       </div>
     </div>
@@ -537,7 +537,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 <footer id="footer">
   <div class="footer-inner">
     <div class="ft-logo">
-      <div style="display:flex;align-items:center;gap:10px"><img src="images/logo-agrocampo.jpeg" alt="Agrocampo" style="height:38px;width:auto;background:white;padding:4px 8px;border-radius:8px" id="siteLogoFooter"/></div>
+      <div style="display:flex;align-items:center;gap:10px"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Agrocampo" style="height:38px;width:auto;background:white;padding:4px 8px;border-radius:8px" id="siteLogoFooter"/></div>
       <p>Sua pet shop de confiança em Vila Velha – ES. Cuidando do seu pet com amor e qualidade há mais de 10 anos.</p>
       <div class="ft-socials">
         <a href="https://www.instagram.com" target="_blank" class="ft-s"><i class="fab fa-instagram"></i></a>
@@ -633,7 +633,9 @@ let customProdsCache = [];  // produtos cadastrados pelo painel admin
 function isAvailable(id){ return stockCache[id] !== true; }
 
 // Mescla produtos base + personalizados cadastrados no admin
-function getAllProds(){ return [...PRODS, ...customProdsCache]; }
+// getAllProds() retorna somente os produtos do Firebase — os 26 produtos de demonstração
+// só aparecem depois que forem importados pelo botão no painel administrativo.
+function getAllProds(){ return [...customProdsCache]; }
 
 // Ouve o estoque em tempo real — qualquer dispositivo que alterar reflete aqui na hora
 onSnapshot(collection(db,'estoque'), snap => {
