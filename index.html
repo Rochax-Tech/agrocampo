@@ -66,8 +66,9 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .crb-stars{color:var(--yellow);font-size:1rem;letter-spacing:1px;line-height:1}
 .crb-info strong{display:block;font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:var(--navy)}
 .crb-info span{font-size:.72rem;color:var(--gray-dark);font-weight:600}
-.carousel-track{display:flex;border-radius:0;overflow:hidden;transition:transform .55s cubic-bezier(.4,0,.2,1);aspect-ratio:16/9}
-.carousel-slide{min-width:100%;height:100%;cursor:pointer;position:relative}
+.carousel-track{position:relative;overflow:hidden;aspect-ratio:16/9}
+.carousel-slide{position:absolute;inset:0;width:100%;height:100%;cursor:pointer;opacity:0;visibility:hidden;transition:opacity .6s ease;z-index:1}
+.carousel-slide.active{opacity:1;visibility:visible;z-index:2}
 .carousel-slide img{width:100%;height:100%;object-fit:cover;display:block;background:linear-gradient(120deg,var(--navy),var(--blue))}
 .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:white;border:none;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--navy);cursor:pointer;transition:var(--tr);z-index:5;box-shadow:var(--shadow-md)}
 .carousel-arrow:hover{background:var(--navy);color:white;transform:translateY(-50%) scale(1.08)}
@@ -398,7 +399,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 <section class="carousel" id="heroCarousel">
   <div class="carousel-frame">
     <div class="carousel-track" id="carouselTrack">
-      <div class="carousel-slide" onclick="carouselClick('boas-vindas')">
+      <div class="carousel-slide active" onclick="carouselClick('boas-vindas')">
         <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Bem-vindo à Agrocampo" loading="eager" id="banner-boas-vindas"/>
       </div>
       <div class="carousel-slide" onclick="carouselClick('clinica')">
@@ -673,7 +674,7 @@ let cart=[], af={cat:'todos',sp:'todos',tag:''};
 let carouselIdx=0;
 const carouselTotal=4;
 function updateCarousel(){
-  document.getElementById('carouselTrack').style.transform=`translateX(-${carouselIdx*100}%)`;
+  document.querySelectorAll('.carousel-slide').forEach((s,i)=>s.classList.toggle('active',i===carouselIdx));
   document.querySelectorAll('.cdot').forEach((d,i)=>d.classList.toggle('active',i===carouselIdx));
 }
 function carouselMove(dir){
