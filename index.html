@@ -60,7 +60,12 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .nav-item.promo:hover{color:#c62828}
 
 /* ===== CARROSSEL (moldura em card) ===== */
-.carousel{margin:158px auto 0;max-width:1360px;padding:20px 32px 0;position:relative}
+.carousel{margin:158px auto 0;max-width:1360px;padding:20px 32px 34px;position:relative}
+.carousel-frame{position:relative}
+.carousel-rating-badge{position:absolute;left:24px;bottom:-24px;background:white;border-radius:18px;padding:14px 20px;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:12px;z-index:6}
+.crb-stars{color:var(--yellow);font-size:1rem;letter-spacing:1px;line-height:1}
+.crb-info strong{display:block;font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:var(--navy)}
+.crb-info span{font-size:.72rem;color:var(--gray-dark);font-weight:600}
 .carousel-track{display:flex;border-radius:var(--radius-lg);overflow:hidden;transition:transform .55s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-md);aspect-ratio:16/6}
 .carousel-slide{min-width:100%;height:100%;cursor:pointer;position:relative}
 .carousel-slide img{width:100%;height:100%;object-fit:cover;display:block}
@@ -98,34 +103,38 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .sp-card:hover .sp-card-count::after{transform:translateX(4px)}
 
 /* ===== CATEGORIAS (pílulas com ícone circular) ===== */
-.cats-strip{display:flex;gap:16px;overflow-x:auto;padding-bottom:6px}
+.cats-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
 .cats-strip::-webkit-scrollbar{height:5px}
-.cat-item{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:var(--tr);flex-shrink:0;width:96px}
-.cat-e{width:76px;height:76px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:2rem;transition:var(--tr);border:2px solid transparent}
-.cat-item:hover .cat-e{transform:translateY(-4px);border-color:var(--blue-light)}
-.cat-item.active .cat-e{background:var(--navy);border-color:var(--yellow)}
-.cat-label{font-size:.74rem;font-weight:700;color:var(--navy);text-align:center;line-height:1.25}
+.cat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:var(--tr);flex-shrink:0;width:118px;height:118px;border-radius:var(--radius-lg);position:relative;overflow:hidden}
+.cat-item:nth-child(4n+1){background:linear-gradient(150deg,var(--navy),#1c3568)}
+.cat-item:nth-child(4n+2){background:linear-gradient(150deg,var(--blue),var(--blue-dark))}
+.cat-item:nth-child(4n+3){background:linear-gradient(150deg,#3a4a7a,var(--navy))}
+.cat-item:nth-child(4n+4){background:linear-gradient(150deg,var(--blue-light),var(--blue))}
+.cat-item::after{content:'';position:absolute;top:-20px;right:-20px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.08)}
+.cat-item:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
+.cat-item.active{outline:3px solid var(--yellow);outline-offset:2px}
+.cat-e{font-size:2rem;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}
+.cat-label{font-size:.72rem;font-weight:800;color:white;text-align:center;line-height:1.2;position:relative;z-index:1;padding:0 8px}
 
 /* ===== PRODUTOS ===== */
 .products-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
-.prod-card{background:white;border:1px solid var(--gray);border-radius:var(--radius-lg);overflow:hidden;transition:var(--tr);display:flex;flex-direction:column}
-.prod-card:hover{box-shadow:var(--shadow-md);transform:translateY(-5px);border-color:transparent}
+.prod-card{background:white;border:none;border-radius:var(--radius-lg);overflow:visible;transition:var(--tr);display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(14,27,61,.08);position:relative}
+.prod-card:hover{box-shadow:var(--shadow-md);transform:translateY(-5px)}
 .prod-card.esgotado{opacity:.65}
-.prod-card.esgotado:hover{transform:none;box-shadow:none;border-color:var(--gray)}
-.prod-thumb{height:170px;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative}
+.prod-card.esgotado:hover{transform:none;box-shadow:0 1px 3px rgba(14,27,61,.08)}
+.prod-thumb{height:170px;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden}
 .prod-tag{position:absolute;top:12px;left:12px;background:var(--red);color:white;font-size:.63rem;font-weight:900;padding:4px 10px;border-radius:50px;letter-spacing:.05em;text-transform:uppercase;box-shadow:0 4px 10px rgba(229,55,58,.3)}
 .prod-tag.novo{background:var(--navy)}
 .prod-tag.esgotado-tag{background:#9e9e9e}
-.prod-body{padding:16px}
+.btn-add-float{position:absolute;top:150px;right:14px;width:42px;height:42px;border-radius:50%;background:var(--navy);color:white;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:var(--shadow-md);transition:var(--tr);z-index:2;cursor:pointer}
+.btn-add-float:hover{background:var(--blue);transform:scale(1.1)}
+.btn-add-float:disabled{background:var(--gray-mid);cursor:not-allowed}
+.prod-body{padding:26px 16px 16px;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
 .prod-brand{font-size:.68rem;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:800}
 .prod-name{font-size:.85rem;font-weight:700;line-height:1.4;margin-bottom:12px;color:var(--black)}
 .prod-old{font-size:.74rem;color:var(--gray-dark);text-decoration:line-through;line-height:1}
 .prod-price{font-family:'Sora',sans-serif;font-size:1.22rem;font-weight:800;color:var(--navy);line-height:1.25}
-.prod-inst{font-size:.7rem;color:var(--gray-dark);margin-top:2px;margin-bottom:12px}
-.btn-add{background:var(--off);color:var(--navy);border:1.5px solid var(--gray);border-radius:50px;padding:10px;font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--tr);width:100%}
-.btn-add:hover{background:var(--navy);color:white;border-color:var(--navy)}
-.btn-add:active{transform:scale(.97)}
-.btn-esgotado{margin-top:0;background:var(--gray);color:var(--gray-dark);border:none;border-radius:50px;padding:10px;font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;cursor:not-allowed;width:100%}
+.prod-inst{font-size:.7rem;color:var(--gray-dark);margin-top:2px}
 .no-results{grid-column:1/-1;text-align:center;padding:56px;color:var(--gray-dark);font-size:.9rem}
 .no-results i{font-size:2.5rem;color:var(--gray-mid);display:block;margin-bottom:10px}
 
@@ -148,6 +157,11 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .svc-body{padding:20px}
 .svc-price{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:var(--navy);margin-bottom:15px;display:block}
 .btn-svc{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;border-radius:50px;padding:11px 20px;font-size:.82rem;font-weight:800;transition:var(--tr)}
+.clinic-cta{margin-top:24px;display:flex;align-items:center;justify-content:center;gap:12px;background:linear-gradient(90deg,var(--navy),var(--blue-dark));color:white;border-radius:var(--radius-lg);padding:20px 28px;font-weight:800;font-size:.95rem;transition:var(--tr);text-align:center}
+.clinic-cta:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.clinic-cta i:first-child{color:var(--yellow);font-size:1.2rem}
+.clinic-cta i:last-child{transition:var(--tr)}
+.clinic-cta:hover i:last-child{transform:translateX(5px)}
 .btn-svc:hover{background:#1dba58;transform:translateY(-1px)}
 
 /* ===== REVIEWS ===== */
@@ -272,8 +286,11 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 .btn-wpp-suc:hover{background:#1dba58}
 .btn-next{width:100%;background:var(--navy);color:white;border:none;border-radius:50px;padding:15px;font-size:.91rem;font-weight:800;transition:var(--tr);margin-top:7px}
 .btn-next:hover{background:var(--blue)}
-.float-wpp{position:fixed;bottom:24px;right:24px;z-index:900;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:white;font-size:1.55rem;border:none;box-shadow:0 6px 22px rgba(37,211,102,.5);transition:var(--tr)}
-.float-wpp:hover{transform:scale(1.09)}
+.float-group{position:fixed;bottom:22px;right:22px;z-index:900;display:flex;flex-direction:column;gap:10px;align-items:center}
+.float-btn{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.25rem;border:none;transition:var(--tr);text-decoration:none}
+.float-btn:hover{transform:scale(1.1)}
+.float-wpp{background:#25D366;box-shadow:0 5px 18px rgba(37,211,102,.5)}
+.float-ig{background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);box-shadow:0 5px 18px rgba(214,36,159,.4)}
 .toast{position:fixed;bottom:92px;right:24px;z-index:5000;background:var(--navy);color:white;padding:12px 21px;border-radius:50px;font-size:.83rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:8px;transform:translateY(16px);opacity:0;pointer-events:none;transition:var(--tr)}
 .toast.show{transform:translateY(0);opacity:1}
 .rv{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
@@ -296,7 +313,11 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   .h-btn[title="Instagram"]{display:none}
   .h-btn-cart{padding:8px 14px;font-size:.8rem}
   .mobile-search{display:block}
-  .carousel{margin-top:172px;padding:14px 14px 0}
+  .carousel{margin-top:172px;padding:14px 14px 40px}
+  .carousel-rating-badge{left:24px;padding:10px 14px;gap:8px;border-radius:14px}
+  .crb-info strong{font-size:.88rem}
+  .crb-info span{font-size:.62rem}
+  .crb-stars{font-size:.8rem}
   .carousel-track{aspect-ratio:4/3.4}
   .carousel-slide img{object-position:left center}
   .carousel-arrow{width:36px;height:36px;font-size:.85rem}
@@ -312,13 +333,15 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   .sec{padding:44px 16px}
   .frow{grid-template-columns:1fr}
   .strip{gap:20px;padding:14px 16px}
+  .clinic-cta{flex-wrap:wrap;padding:16px 20px;font-size:.85rem}
 }
 @media(max-width:520px){
   .products-grid{grid-template-columns:1fr}
   .pay-opts{grid-template-columns:1fr}
   .pay-opt{flex-direction:row;gap:12px;padding:14px}
-  .cat-item{width:82px}
-  .cat-e{width:66px;height:66px;font-size:1.7rem}
+  .cat-item{width:96px;height:96px}
+  .cat-e{font-size:1.6rem}
+  .cat-label{font-size:.66rem}
 }
 </style>
 </head>
@@ -339,7 +362,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
       <button onclick="doSearch(document.getElementById('searchInput').value)"><i class="fas fa-search"></i></button>
     </div>
     <div class="h-actions">
-      <a href="https://www.instagram.com" target="_blank" class="h-btn"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.instagram.com" target="_blank" class="h-btn" style="background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);border:none;color:white;width:42px;height:42px;padding:0;justify-content:center"><i class="fab fa-instagram"></i></a>
       <button class="h-btn h-btn-cart" onclick="openDrawer()"><i class="fas fa-shopping-bag"></i> Sacola <span class="cart-count" id="cartCount">0</span></button>
       <a href="https://wa.me/5527988840319" target="_blank" class="h-btn h-btn-wpp"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
     </div>
@@ -373,27 +396,33 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 </header>
 
 <section class="carousel" id="heroCarousel">
-  <div class="carousel-track" id="carouselTrack">
-    <div class="carousel-slide" onclick="carouselClick('boas-vindas')">
-      <img src="images/banner-boas-vindas.jpeg" alt="Bem-vindo à Agrocampo" loading="eager" id="banner-boas-vindas"/>
+  <div class="carousel-frame">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="carousel-slide" onclick="carouselClick('boas-vindas')">
+        <img src="images/banner-boas-vindas.jpeg" alt="Bem-vindo à Agrocampo" loading="eager" id="banner-boas-vindas"/>
+      </div>
+      <div class="carousel-slide" onclick="carouselClick('clinica')">
+        <img src="images/banner-clinica.jpeg" alt="Vet Clinic Saúde" loading="lazy" id="banner-clinica"/>
+      </div>
+      <div class="carousel-slide" onclick="carouselClick('ofertas')">
+        <img src="images/banner-ofertas.jpeg" alt="Ofertas e Promoções" loading="lazy" id="banner-ofertas"/>
+      </div>
+      <div class="carousel-slide" onclick="carouselClick('jardinagem')">
+        <img src="images/banner-jardinagem.jpeg" alt="Tudo para seu Jardim" loading="lazy" id="banner-jardinagem"/>
+      </div>
     </div>
-    <div class="carousel-slide" onclick="carouselClick('clinica')">
-      <img src="images/banner-clinica.jpeg" alt="Vet Clinic Saúde" loading="lazy" id="banner-clinica"/>
-    </div>
-    <div class="carousel-slide" onclick="carouselClick('ofertas')">
-      <img src="images/banner-ofertas.jpeg" alt="Ofertas e Promoções" loading="lazy" id="banner-ofertas"/>
-    </div>
-    <div class="carousel-slide" onclick="carouselClick('jardinagem')">
-      <img src="images/banner-jardinagem.jpeg" alt="Tudo para seu Jardim" loading="lazy" id="banner-jardinagem"/>
+    <button class="carousel-arrow carousel-prev" onclick="carouselMove(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button class="carousel-arrow carousel-next" onclick="carouselMove(1)"><i class="fas fa-chevron-right"></i></button>
+    <div class="carousel-dots" id="carouselDots">
+      <span class="cdot active" onclick="carouselGo(0)"></span>
+      <span class="cdot" onclick="carouselGo(1)"></span>
+      <span class="cdot" onclick="carouselGo(2)"></span>
+      <span class="cdot" onclick="carouselGo(3)"></span>
     </div>
   </div>
-  <button class="carousel-arrow carousel-prev" onclick="carouselMove(-1)"><i class="fas fa-chevron-left"></i></button>
-  <button class="carousel-arrow carousel-next" onclick="carouselMove(1)"><i class="fas fa-chevron-right"></i></button>
-  <div class="carousel-dots" id="carouselDots">
-    <span class="cdot active" onclick="carouselGo(0)"></span>
-    <span class="cdot" onclick="carouselGo(1)"></span>
-    <span class="cdot" onclick="carouselGo(2)"></span>
-    <span class="cdot" onclick="carouselGo(3)"></span>
+  <div class="carousel-rating-badge">
+    <span class="crb-stars">★★★★★</span>
+    <div class="crb-info"><strong>4,6 / 5,0</strong><span>225 avaliações no Google</span></div>
   </div>
 </section>
 
@@ -402,7 +431,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   <div class="strip-i"><i class="fas fa-heart"></i> Ótimo atendimento</div>
   <div class="strip-i"><i class="fas fa-medal"></i> Rações de qualidade</div>
   <div class="strip-i"><i class="fas fa-truck"></i> Entrega em Vila Velha</div>
-  <div class="strip-i"><i class="fas fa-stethoscope"></i> Consultório veterinário</div>
+  <div class="strip-i"><i class="fas fa-stethoscope"></i> Parceria com clínica veterinária</div>
 </div>
 
 <section id="especies">
@@ -468,7 +497,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
       <div class="why-card rv"><div class="why-icon"><i class="fas fa-heart"></i></div><div class="why-text"><h4>Atendimento especializado</h4><p>Equipe apaixonada com orientação personalizada para cada caso.</p></div></div>
       <div class="why-card rv"><div class="why-icon"><i class="fas fa-medal"></i></div><div class="why-text"><h4>Qualidade garantida</h4><p>Somente marcas renomadas com procedência assegurada.</p></div></div>
       <div class="why-card rv"><div class="why-icon"><i class="fas fa-truck"></i></div><div class="why-text"><h4>Entrega rápida</h4><p>Delivery ágil em Vila Velha e região.</p></div></div>
-      <div class="why-card rv"><div class="why-icon"><i class="fas fa-stethoscope"></i></div><div class="why-text"><h4>Consultório veterinário</h4><p>Consultas, vacinas e cuidados preventivos no local.</p></div></div>
+      <div class="why-card rv"><div class="why-icon"><i class="fas fa-credit-card"></i></div><div class="why-text"><h4>Pagamento facilitado</h4><p>PIX, cartão ou dinheiro — você escolhe na entrega ou retirada.</p></div></div>
       <div class="why-card rv"><div class="why-icon"><i class="fas fa-star"></i></div><div class="why-text"><h4>4,6 ★ no Google</h4><p>225 avaliações verificadas — a mais bem avaliada da região.</p></div></div>
     </div>
   </div>
@@ -478,13 +507,16 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   <div style="max-width:1320px;margin:0 auto;padding:0 32px">
     <div class="sec-hd rv"><div class="sec-row"><div><h2>Serviços Pet Shop</h2><p>Agendamento direto pelo WhatsApp</p></div></div></div>
     <div class="svc-grid">
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🛁</div><div><h3>Banho Completo</h3><p>Com secagem e perfume</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 45,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar um banho." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">✂️</div><div><h3>Tosa Profissional</h3><p>Higiênica ou estética</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 55,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🩺</div><div><h3>Consultório Veterinário</h3><p>Consultas e vacinação</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 80,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma consulta veterinária." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🎁</div><div><h3>Planos Pet</h3><p>Banho + tosa mensais</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 120,00/mês</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de saber sobre os Planos Pet." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Consultar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🐾</div><div><h3>Combo Banho + Tosa</h3><p>Com hidratação de pelagem</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 90,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar o Combo Banho e Tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">💉</div><div><h3>Vacinação</h3><p>Calendário atualizado</p></div></div><div class="svc-body"><span class="svc-price">A partir de R$ 65,00</span><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar vacinação para meu pet." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🛁</div><div><h3>Banho Completo</h3><p>Com secagem e perfume</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar um banho." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">✂️</div><div><h3>Tosa Profissional</h3><p>Higiênica ou estética</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🎁</div><div><h3>Planos Pet</h3><p>Banho + tosa mensais</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de saber sobre os Planos Pet." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Consultar</a></div></div>
+      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🐾</div><div><h3>Combo Banho + Tosa</h3><p>Com hidratação de pelagem</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar o Combo Banho e Tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
     </div>
+    <a href="vetclinic.html" target="_blank" class="clinic-cta rv">
+      <i class="fas fa-stethoscope"></i>
+      <span>Temos Clínica Veterinária — clique aqui para acessar</span>
+      <i class="fas fa-arrow-right"></i>
+    </a>
   </div>
 </section>
 
@@ -521,7 +553,10 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   <div class="footer-bottom"><span>© 2025 Agrocampo Pet Shop — Todos os direitos reservados.</span><span>Feito com <span>♥</span> para os pets de Vila Velha</span></div>
 </footer>
 
-<a href="https://wa.me/5527988840319" target="_blank" class="float-wpp"><i class="fab fa-whatsapp"></i></a>
+<div class="float-group">
+  <a href="https://www.instagram.com" target="_blank" class="float-btn float-ig"><i class="fab fa-instagram"></i></a>
+  <a href="https://wa.me/5527988840319" target="_blank" class="float-btn float-wpp"><i class="fab fa-whatsapp"></i></a>
+</div>
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt"></span></div>
 
 <div class="drawer-mask" id="drawerMask" onclick="handleMaskClick(event)">
@@ -679,16 +714,16 @@ function renderProds(list){
         ${!ok?'<span class="prod-tag esgotado-tag">ESGOTADO</span>':(p.tag?`<span class="prod-tag ${p.tag==='NOVO'?'novo':''}">${p.tag}</span>`:'')}
         ${thumbInner}
       </div>
+      ${ok
+        ?`<button class="btn-add-float" onclick="addCart(${JSON.stringify(p.id)})" title="Adicionar à sacola"><i class="fas fa-plus"></i></button>`
+        :`<button class="btn-add-float" disabled title="Indisponível"><i class="fas fa-ban"></i></button>`
+      }
       <div class="prod-body">
         <div class="prod-brand">${p.brand}</div>
         <div class="prod-name">${p.name}</div>
         ${p.old?`<div class="prod-old">R$ ${(+p.old).toFixed(2).replace('.',',')}</div>`:''}
         <div class="prod-price">R$ ${(+p.price).toFixed(2).replace('.',',')}</div>
         <div class="prod-inst">${ok?'em até 3× sem juros':'<span style="color:var(--red)">Produto esgotado no momento.</span>'}</div>
-        ${ok
-          ?`<button class="btn-add" onclick="addCart(${JSON.stringify(p.id)})"><i class="fas fa-plus"></i> Adicionar</button>`
-          :`<button class="btn-esgotado" disabled><i class="fas fa-ban"></i> Indisponível</button>`
-        }
       </div>
     </div>`;
   }).join('');
