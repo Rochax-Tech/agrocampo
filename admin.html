@@ -186,6 +186,15 @@ tr:hover td{background:#fafbfd}
 .fg .hint{font-size:.68rem;color:var(--gray-dark);margin-top:2px}
 .emoji-preview{width:64px;height:64px;background:var(--off);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:2.5rem;border:1.5px solid var(--gray);flex-shrink:0}
 .emoji-row{display:flex;align-items:center;gap:10px}
+
+/* DESIGN SLOTS */
+.design-slot{display:flex;align-items:center;gap:18px;padding:16px 0;border-bottom:1px solid var(--gray)}
+.design-slot:last-child{border-bottom:none;padding-bottom:0}
+.design-preview{width:120px;height:76px;border-radius:var(--radius-sm);background:var(--off);border:1.5px dashed var(--gray-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;text-align:center}
+.design-preview span{font-size:.66rem;color:var(--gray-dark);font-weight:700;line-height:1.4}
+.design-preview img{width:100%;height:100%;object-fit:cover}
+.design-slot-actions{flex:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.design-slot-label{width:100%;font-size:.84rem;font-weight:800;color:var(--black);margin-bottom:2px}
 .form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .btn-form-save{display:flex;align-items:center;gap:7px;background:var(--blue);color:white;border:none;border-radius:50px;padding:11px 22px;font-size:.85rem;font-weight:800;transition:var(--tr)}
 .btn-form-save:hover{background:var(--blue-dark)}
@@ -313,6 +322,9 @@ tr:hover td{background:#fafbfd}
 
     <div class="sb-section">Dados</div>
     <div class="sb-item" onclick="showPage('relatorio',this)"><i class="fas fa-file-excel"></i> Relatórios</div>
+
+    <div class="sb-section">Aparência</div>
+    <div class="sb-item" onclick="showPage('design',this)"><i class="fas fa-image"></i> Design do Site</div>
 
     <div class="sb-section">Sistema</div>
     <div class="sb-item" onclick="window.open('index.html','_blank')"><i class="fas fa-external-link-alt"></i> Ver Site</div>
@@ -624,6 +636,124 @@ tr:hover td{background:#fafbfd}
         </div>
       </div>
 
+      <!-- ===== DESIGN DO SITE ===== -->
+      <div class="page" id="page-design">
+        <div class="sec-header">
+          <div class="sec-header-text"><h2>Design do Site</h2><p>Troque a logo, os banners do carrossel e as fotos de espécie exibidas no site</p></div>
+        </div>
+
+        <!-- LOGO -->
+        <div class="prod-form-wrap">
+          <h3><i class="fas fa-image" style="color:var(--blue)"></i> Logo da Loja</h3>
+          <div class="design-slot">
+            <div class="design-preview" id="dp-logo"><span>Sem imagem<br/>personalizada</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Aparece no cabeçalho e rodapé do site</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Logo
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'logo')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('logo')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BANNERS DO CARROSSEL -->
+        <div class="prod-form-wrap">
+          <h3><i class="fas fa-images" style="color:var(--blue)"></i> Banners do Carrossel</h3>
+          <p style="font-size:.8rem;color:var(--gray-dark);margin-bottom:18px">Ordem de exibição no site: Bem-vindos → Clínica Veterinária → Ofertas → Jardinagem</p>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-banner-boas-vindas"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">1. Banner de Boas-vindas</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'banner-boas-vindas')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('banner-boas-vindas')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-banner-clinica"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">2. Banner Vet Clinic Saúde</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'banner-clinica')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('banner-clinica')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-banner-ofertas"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">3. Banner de Ofertas e Produtos</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'banner-ofertas')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('banner-ofertas')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-banner-jardinagem"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">4. Banner de Jardinagem</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'banner-jardinagem')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('banner-jardinagem')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPRE POR ESPÉCIE -->
+        <div class="prod-form-wrap">
+          <h3><i class="fas fa-paw" style="color:var(--blue)"></i> Fotos — Compre por Espécie</h3>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-especie-cachorro"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Cachorro</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'especie-cachorro')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('especie-cachorro')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-especie-gato"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Gato</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'especie-gato')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('especie-gato')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-especie-peixe"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Peixes</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'especie-peixe')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('especie-peixe')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /layout -->
@@ -709,6 +839,7 @@ const BASE_PRODS = [
 let stockCache = {};       // { id: true } => esgotado
 let customCache = [];      // produtos cadastrados no painel
 let ordersCache = [];      // pedidos recebidos do site
+let designCache = {};      // { logo: base64, banner-boas-vindas: base64, ... }
 
 function isOk(id){ return stockCache[id] !== true; }
 function fmt(v){return'R$ '+(+v).toFixed(2).replace('.',',')}
@@ -735,6 +866,13 @@ onSnapshot(query(collection(db,'pedidos'), orderBy('createdAt','desc')), snap =>
   ordersCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   if(isLoggedIn){ renderDashboard(); if(currentPage==='pedidos')renderPedidos(); }
 }, err => console.error('Erro ao ouvir pedidos:', err));
+
+onSnapshot(collection(db,'design'), snap => {
+  const dc = {};
+  snap.forEach(d => { dc[d.id] = d.data().data; });
+  designCache = dc;
+  if(isLoggedIn && currentPage==='design') renderDesignPage();
+}, err => console.error('Erro ao ouvir design:', err));
 
 // ============================================================
 // RELÓGIO EM TEMPO REAL
@@ -831,8 +969,8 @@ function showPage(page,el){
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
   if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios'};
-  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados em planilha'};
+  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios',design:'Design do Site'};
+  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados em planilha',design:'Troque logo, banners e fotos de espécie'};
   document.getElementById('pageTitle').textContent=titles[page]||page;
   document.getElementById('pageSubtitle').textContent=subs[page]||'';
   closeSidebar();
@@ -841,6 +979,7 @@ function showPage(page,el){
   if(page==='estoque')renderEstoque();
   if(page==='pedidos')renderPedidos();
   if(page==='relatorio')renderRelatorio();
+  if(page==='design')renderDesignPage();
 }
 
 // ============================================================
@@ -930,6 +1069,56 @@ function handleImgUpload(input){
     input.value='';
   };
   reader.readAsDataURL(file);
+}
+
+// ============================================================
+// DESIGN DO SITE (logo, banners, fotos de espécie)
+// ============================================================
+const DESIGN_KEYS=['logo','banner-boas-vindas','banner-clinica','banner-ofertas','banner-jardinagem','especie-cachorro','especie-gato','especie-peixe'];
+
+function renderDesignPage(){
+  DESIGN_KEYS.forEach(key=>{
+    const el=document.getElementById('dp-'+key);
+    if(!el)return;
+    const data=designCache[key];
+    el.innerHTML = data
+      ? `<img src="${data}" alt="${key}"/>`
+      : `<span>Padrão do<br/>repositório</span>`;
+  });
+}
+
+async function handleDesignUpload(input,key){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>500*1024){toast('Imagem muito grande! Use imagens menores que 500KB.','red');input.value='';return}
+  const reader=new FileReader();
+  reader.onload=async function(e){
+    const data=e.target.result;
+    try{
+      await setDoc(doc(db,'design',key), {data, updatedAt:serverTimestamp()});
+      toast('Imagem atualizada no site!','green');
+    }catch(err){
+      console.error('Erro ao salvar imagem de design:', err);
+      toast('Erro ao salvar imagem.','red');
+    }
+  };
+  reader.onerror=function(){
+    toast('Erro ao ler a imagem. Tente novamente.','red');
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function removeDesignImg(key){
+  showConfirm('Remover imagem personalizada?','O site voltará a usar a imagem padrão do repositório.', async ()=>{
+    try{
+      await deleteDoc(doc(db,'design',key));
+      toast('Imagem removida — voltou ao padrão.','green');
+    }catch(err){
+      console.error('Erro ao remover imagem de design:', err);
+      toast('Erro ao remover imagem.','red');
+    }
+  });
 }
 
 function removeImg(){
@@ -1343,6 +1532,7 @@ Object.assign(window, {
   clearOrders, setOrderStatus,
   exportOrders, exportEstoque, exportEsgotados,
   removeImg, handleImgUpload,
+  handleDesignUpload, removeDesignImg,
   closeConfirm
 });
 
