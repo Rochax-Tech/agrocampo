@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vet Clinic Saúde – Clínica Veterinária</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --gold:#b8893f;
+  --gold-light:#d4af6a;
+  --gold-dark:#8a6428;
+  --gold-pale:#faf3e6;
+  --navy:#1a2340;
+  --navy-light:#2a3a63;
+  --white:#ffffff;
+  --off:#faf9f6;
+  --gray:#ece7dd;
+  --gray-mid:#d8cfbe;
+  --gray-dark:#7a7264;
+  --black:#1c1a17;
+  --radius:10px;--radius-sm:7px;--radius-lg:20px;
+  --shadow:0 4px 20px rgba(184,137,63,.12);
+  --shadow-md:0 10px 36px rgba(184,137,63,.18);
+  --tr:.25s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;color:var(--black);background:var(--white);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:'Nunito',sans-serif}
+h1,h2,h3{font-family:'Playfair Display',serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--off)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+
+/* ===== HEADER ===== */
+#header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--gray)}
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 32px;height:78px;max-width:1320px;margin:0 auto}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-mark{width:46px;height:46px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem;box-shadow:0 4px 14px rgba(184,137,63,.35)}
+.logo-text{line-height:1.15}
+.logo-name{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;color:var(--navy)}
+.logo-sub{font-size:.68rem;color:var(--gold-dark);letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-links a{font-size:.85rem;font-weight:700;color:var(--navy);padding:10px 16px;border-radius:50px;transition:var(--tr)}
+.nav-links a:hover{background:var(--gold-pale);color:var(--gold-dark)}
+.h-actions{display:flex;align-items:center;gap:10px}
+.btn-back{display:flex;align-items:center;gap:7px;background:transparent;border:1.5px solid var(--gray-mid);color:var(--gray-dark);border-radius:50px;padding:9px 16px;font-size:.8rem;font-weight:700;transition:var(--tr)}
+.btn-back:hover{border-color:var(--navy);color:var(--navy)}
+.btn-wpp-header{display:flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;border-radius:50px;padding:10px 18px;font-size:.85rem;font-weight:800;transition:var(--tr)}
+.btn-wpp-header:hover{background:#1dba58}
+.mob-toggle{display:none;background:none;border:none;font-size:1.3rem;color:var(--navy)}
+
+/* ===== HERO ===== */
+.hero{margin-top:78px;background:linear-gradient(135deg,var(--navy) 0%,#233158 55%,var(--navy-light) 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(circle at 15% 20%, rgba(212,175,106,.12) 0%, transparent 40%),
+  radial-gradient(circle at 85% 80%, rgba(212,175,106,.1) 0%, transparent 45%);}
+.hero-inner{max-width:1320px;margin:0 auto;padding:80px 32px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:50px;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(212,175,106,.15);border:1px solid rgba(212,175,106,.4);border-radius:50px;padding:7px 16px;font-size:.75rem;font-weight:800;color:var(--gold-light);letter-spacing:.06em;text-transform:uppercase;margin-bottom:22px}
+.hero h1{font-size:clamp(2.1rem,4vw,3.4rem);font-weight:800;line-height:1.15;color:white;margin-bottom:18px}
+.hero h1 em{color:var(--gold-light);font-style:normal}
+.hero p{font-size:1.05rem;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:32px;max-width:480px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn-gold{display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--navy);border:none;border-radius:50px;padding:15px 30px;font-size:.95rem;font-weight:800;transition:var(--tr);box-shadow:0 8px 24px rgba(212,175,106,.35)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(212,175,106,.45)}
+.btn-ghost{display:flex;align-items:center;gap:9px;background:transparent;color:white;border:1.5px solid rgba(255,255,255,.35);border-radius:50px;padding:14px 26px;font-size:.95rem;font-weight:700;transition:var(--tr)}
+.btn-ghost:hover{border-color:white;background:rgba(255,255,255,.08)}
+.hero-img-wrap{position:relative}
+.hero-img-frame{border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.4);border:3px solid rgba(212,175,106,.3)}
+.hero-img-frame img{width:100%;aspect-ratio:4/3.3;object-fit:cover}
+.hero-stat-card{position:absolute;bottom:-20px;left:-20px;background:white;border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:12px}
+.hero-stat-icon{width:44px;height:44px;background:var(--gold-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--gold-dark);font-size:1.2rem;flex-shrink:0}
+.hero-stat-card strong{display:block;font-size:1.1rem;font-weight:900;color:var(--navy)}
+.hero-stat-card span{font-size:.72rem;color:var(--gray-dark);font-weight:700}
+
+/* ===== STRIP ===== */
+.strip{background:var(--gold-pale);border-bottom:1px solid var(--gray);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap}
+.strip-i{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--navy)}
+.strip-i i{color:var(--gold-dark)}
+
+/* ===== SECTIONS ===== */
+.sec{padding:70px 32px;max-width:1320px;margin:0 auto}
+.sec-hd{text-align:center;margin-bottom:48px}
+.sec-label{display:inline-block;background:var(--gold-pale);color:var(--gold-dark);font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:50px;margin-bottom:14px}
+.sec-hd h2{font-size:clamp(1.6rem,3vw,2.3rem);font-weight:800;color:var(--navy);margin-bottom:10px}
+.sec-hd p{font-size:.95rem;color:var(--gray-dark);max-width:480px;margin:0 auto}
+
+/* ===== SERVICES ===== */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.svc-card{background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);padding:32px 28px;transition:var(--tr);position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-light),var(--gold-dark));transform:scaleX(0);transform-origin:left;transition:var(--tr)}
+.svc-card:hover::before{transform:scaleX(1)}
+.svc-card:hover{border-color:var(--gold-light);box-shadow:var(--shadow-md);transform:translateY(-4px)}
+.svc-icon{width:60px;height:60px;background:var(--gold-pale);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--gold-dark);margin-bottom:20px}
+.svc-card h3{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin-bottom:10px}
+.svc-card p{font-size:.86rem;color:var(--gray-dark);line-height:1.65;margin-bottom:18px}
+.svc-price{font-size:1rem;font-weight:900;color:var(--gold-dark);display:block;margin-bottom:16px}
+.btn-svc-wpp{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;border-radius:50px;padding:11px 20px;font-size:.82rem;font-weight:800;transition:var(--tr)}
+.btn-svc-wpp:hover{background:#1dba58}
+
+/* ===== VACINAS (produtos p/ compra) ===== */
+.vac-section{background:var(--off)}
+.vac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.vac-card{background:white;border:1.5px solid var(--gray);border-radius:var(--radius-lg);overflow:hidden;transition:var(--tr)}
+.vac-card:hover{border-color:var(--gold-light);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.vac-thumb{height:130px;background:var(--gold-pale);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+.vac-badge{position:absolute;top:10px;left:10px;background:var(--navy);color:white;font-size:.62rem;font-weight:900;padding:3px 9px;border-radius:50px;text-transform:uppercase;letter-spacing:.04em}
+.vac-body{padding:16px}
+.vac-name{font-size:.86rem;font-weight:800;color:var(--navy);margin-bottom:6px;line-height:1.35}
+.vac-desc{font-size:.75rem;color:var(--gray-dark);margin-bottom:12px;line-height:1.5}
+.vac-price{font-size:1.05rem;font-weight:900;color:var(--gold-dark);margin-bottom:12px;display:block}
+.btn-vac{width:100%;background:var(--navy);color:white;border:none;border-radius:50px;padding:10px;font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--tr)}
+.btn-vac:hover{background:var(--navy-light)}
+
+/* ===== ABOUT / WHY ===== */
+.about-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+.about-img{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md)}
+.about-img img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.about-list{list-style:none;margin-top:26px}
+.about-list li{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.about-list-icon{width:34px;height:34px;background:var(--gold-pale);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--gold-dark);font-size:.9rem;flex-shrink:0}
+.about-list strong{display:block;font-size:.92rem;color:var(--navy);margin-bottom:2px}
+.about-list span{font-size:.82rem;color:var(--gray-dark)}
+
+/* ===== TEAM ===== */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.team-card{text-align:center}
+.team-photo{width:100%;aspect-ratio:1/1;border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.team-photo img{width:100%;height:100%;object-fit:cover}
+.team-card h4{font-size:1rem;font-weight:800;color:var(--navy)}
+.team-card span{font-size:.78rem;color:var(--gold-dark);font-weight:700}
+
+/* ===== CTA ===== */
+.cta-section{background:linear-gradient(135deg,var(--navy),var(--navy-light));text-align:center;padding:70px 32px}
+.cta-section h2{font-size:clamp(1.6rem,3vw,2.2rem);color:white;font-weight:800;margin-bottom:14px}
+.cta-section p{color:rgba(255,255,255,.7);font-size:1rem;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* ===== FOOTER ===== */
+footer{background:var(--black);color:white;padding:56px 32px 22px}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr;gap:44px;max-width:1320px;margin:0 auto 40px}
+.ft-logo-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:800;color:white}
+.footer-inner p{color:rgba(255,255,255,.45);font-size:.85rem;line-height:1.7;margin:14px 0 20px}
+.ft-socials{display:flex;gap:9px}
+.ft-s{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);transition:var(--tr)}
+.ft-s:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.ft-col h5{font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;margin-bottom:18px;color:white}
+.ft-col ul{list-style:none}
+.ft-col ul li{margin-bottom:11px}
+.ft-col ul li a{color:rgba(255,255,255,.45);font-size:.83rem;transition:var(--tr)}
+.ft-col ul li a:hover{color:var(--gold-light)}
+.ft-contact p{display:flex;align-items:flex-start;gap:9px;font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:11px;line-height:1.5}
+.ft-contact i{color:var(--gold-light);flex-shrink:0;margin-top:2px}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;text-align:center;max-width:1320px;margin:0 auto;font-size:.78rem;color:rgba(255,255,255,.3)}
+.footer-bottom span{color:var(--gold-light)}
+
+/* ===== FLOAT WPP ===== */
+.float-wpp{position:fixed;bottom:24px;right:24px;z-index:900;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;border:none;box-shadow:0 6px 24px rgba(37,211,102,.5);transition:var(--tr)}
+.float-wpp:hover{transform:scale(1.08)}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:96px;right:24px;z-index:5000;background:var(--navy);color:white;padding:12px 20px;border-radius:50px;font-size:.82rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:8px;transform:translateY(16px);opacity:0;pointer-events:none;transition:var(--tr)}
+.toast.show{transform:translateY(0);opacity:1}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:960px){
+  .nav-links{display:none}
+  .mob-toggle{display:block}
+  .hero-inner{grid-template-columns:1fr;text-align:center}
+  .hero p{margin-left:auto;margin-right:auto}
+  .hero-btns{justify-content:center}
+  .hero-stat-card{position:static;margin-top:20px;display:inline-flex}
+  .about-wrap{grid-template-columns:1fr}
+  .svc-grid{grid-template-columns:1fr}
+  .vac-grid{grid-template-columns:repeat(2,1fr)}
+  .team-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .header-top{padding:0 16px;height:66px}
+  .logo-sub{display:none}
+  .logo-name{font-size:1.1rem}
+  .logo-mark{width:38px;height:38px}
+  .btn-back span{display:none}
+  .sec{padding:48px 16px}
+  .vac-grid{grid-template-columns:1fr}
+  .strip{gap:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-top">
+    <div class="logo-wrap">
+      <div class="logo-mark"><i class="fas fa-shield-heart"></i></div>
+      <div class="logo-text">
+        <div class="logo-name">Vet Clinic Saúde</div>
+        <div class="logo-sub">Clínica Veterinária</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#servicos">Serviços</a>
+      <a href="#vacinas">Vacinas</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#equipe">Equipe</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <div class="h-actions">
+      <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> <span>Voltar à Loja</span></a>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma consulta na Vet Clinic Saúde." target="_blank" class="btn-wpp-header">
+        <i class="fab fa-whatsapp"></i> Agendar
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge"><i class="fas fa-star"></i> Cuidado veterinário de excelência</div>
+      <h1>A saúde do seu pet, <em>tratada com carinho</em> e responsabilidade.</h1>
+      <p>Consultas, vacinas, exames e procedimentos preventivos realizados por uma equipe apaixonada por animais. Sua clínica de confiança, agora mais perto de você.</p>
+      <div class="hero-btns">
+        <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma consulta." target="_blank" class="btn-gold">
+          <i class="fas fa-calendar-check"></i> Agendar Consulta
+        </a>
+        <a href="#servicos" class="btn-ghost">
+          <i class="fas fa-stethoscope"></i> Ver Serviços
+        </a>
+      </div>
+    </div>
+    <div class="hero-img-wrap">
+      <div class="hero-img-frame">
+        <img src="images/especie-cachorro.jpg" alt="Pet saudável"/>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hero-stat-icon"><i class="fas fa-heart-circle-check"></i></div>
+        <div><strong>+10 anos</strong><span>Cuidando de pets</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip">
+  <div class="strip-i"><i class="fas fa-user-md"></i> Equipe especializada</div>
+  <div class="strip-i"><i class="fas fa-clock"></i> Atendimento ágil</div>
+  <div class="strip-i"><i class="fas fa-shield-heart"></i> Procedimentos seguros</div>
+  <div class="strip-i"><i class="fas fa-map-marker-alt"></i> Perto de você em Vila Velha</div>
+</div>
+
+<!-- SERVIÇOS -->
+<section id="servicos" class="sec">
+  <div class="sec-hd rv">
+    <span class="sec-label">Nossos Serviços</span>
+    <h2>Cuidado completo para o seu pet</h2>
+    <p>Da consulta de rotina aos procedimentos preventivos, cuidamos da saúde do seu animal em cada etapa.</p>
+  </div>
+  <div class="svc-grid">
+    <div class="svc-card rv">
+      <div class="svc-icon"><i class="fas fa-stethoscope"></i></div>
+      <h3>Consulta Veterinária</h3>
+      <p>Avaliação clínica completa, diagnóstico e orientação personalizada para o seu pet.</p>
+      <span class="svc-price">A partir de R$ 80,00</span>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma consulta veterinária." target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+    </div>
+    <div class="svc-card rv">
+      <div class="svc-icon"><i class="fas fa-syringe"></i></div>
+      <h3>Vacinação</h3>
+      <p>Calendário vacinal completo e atualizado, com acompanhamento profissional.</p>
+      <span class="svc-price">A partir de R$ 65,00</span>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar vacinação para meu pet." target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+    </div>
+    <div class="svc-card rv">
+      <div class="svc-icon"><i class="fas fa-microscope"></i></div>
+      <h3>Exames Laboratoriais</h3>
+      <p>Exames de sangue, urina e outros diagnósticos com resultado rápido e preciso.</p>
+      <span class="svc-price">A partir de R$ 95,00</span>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar exames laboratoriais." target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+    </div>
+    <div class="svc-card rv">
+      <div class="svc-icon"><i class="fas fa-tooth"></i></div>
+      <h3>Odontologia Pet</h3>
+      <p>Limpeza e avaliação da saúde bucal, prevenindo doenças periodontais.</p>
+      <span class="svc-price">A partir de R$ 120,00</span>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar odontologia para meu pet." target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+    </div>
+    <div class="svc-card rv">
+      <div class="svc-icon"><i class="fas fa-shield-virus"></i></div>
+      <h3>Controle de Parasitas</h3>
+      <p>Prevenção e tratamento contra pulgas, carrapatos e vermes.</p>
+      <span class="svc-price">A partir de R$ 55,00</span>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar controle de parasitas." target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+    </div>
+    <div class="svc-card rv">
+      <div class="svc-icon"><i class="fas fa-kit-medical"></i></div>
+      <h3>Check-up Preventivo</h3>
+      <p>Avaliação geral de saúde para identificar problemas antes que se agravem.</p>
+      <span class="svc-price">A partir de R$ 110,00</span>
+      <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar um check-up preventivo." target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+    </div>
+  </div>
+</section>
+
+<!-- VACINAS -->
+<section id="vacinas" class="vac-section">
+  <div class="sec">
+    <div class="sec-hd rv">
+      <span class="sec-label">Farmácia da Clínica</span>
+      <h2>Vacinas e Preventivos</h2>
+      <p>Proteja seu pet com as principais vacinas disponíveis, aplicadas por profissionais.</p>
+    </div>
+    <div class="vac-grid">
+      <div class="vac-card rv">
+        <div class="vac-thumb"><span class="vac-badge">Essencial</span>💉</div>
+        <div class="vac-body">
+          <div class="vac-name">Vacina V10 (Cães)</div>
+          <div class="vac-desc">Proteção contra as principais doenças caninas.</div>
+          <span class="vac-price">R$ 89,90</span>
+          <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar a vacina V10 para meu cão." target="_blank" class="btn-vac"><i class="fab fa-whatsapp"></i> Agendar</a>
+        </div>
+      </div>
+      <div class="vac-card rv">
+        <div class="vac-thumb">💉</div>
+        <div class="vac-body">
+          <div class="vac-name">Vacina Antirrábica</div>
+          <div class="vac-desc">Obrigatória, protege contra a raiva animal.</div>
+          <span class="vac-price">R$ 49,90</span>
+          <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar a vacina antirrábica." target="_blank" class="btn-vac"><i class="fab fa-whatsapp"></i> Agendar</a>
+        </div>
+      </div>
+      <div class="vac-card rv">
+        <div class="vac-thumb"><span class="vac-badge">Felina</span>💉</div>
+        <div class="vac-body">
+          <div class="vac-name">Vacina V4 (Gatos)</div>
+          <div class="vac-desc">Proteção contra as principais doenças felinas.</div>
+          <span class="vac-price">R$ 79,90</span>
+          <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar a vacina V4 para meu gato." target="_blank" class="btn-vac"><i class="fab fa-whatsapp"></i> Agendar</a>
+        </div>
+      </div>
+      <div class="vac-card rv">
+        <div class="vac-thumb">💉</div>
+        <div class="vac-body">
+          <div class="vac-name">Vacina Giárdia</div>
+          <div class="vac-desc">Prevenção contra giardíase em cães e gatos.</div>
+          <span class="vac-price">R$ 69,90</span>
+          <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar a vacina contra Giárdia." target="_blank" class="btn-vac"><i class="fab fa-whatsapp"></i> Agendar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre" class="sec">
+  <div class="about-wrap">
+    <div class="about-img rv">
+      <img src="images/especie-gato.jpg" alt="Sobre a Vet Clinic Saúde"/>
+    </div>
+    <div class="rv">
+      <span class="sec-label">Sobre Nós</span>
+      <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;color:var(--navy);margin-bottom:16px">Compromisso com a vida e o bem-estar animal</h2>
+      <p style="font-size:.95rem;color:var(--gray-dark);line-height:1.75">A Vet Clinic Saúde nasceu do propósito de oferecer atendimento veterinário próximo, humano e de qualidade. Trabalhamos ao lado da Agrocampo Pet Shop para garantir que seu pet tenha tudo o que precisa — do alimento ao cuidado médico — em um só lugar.</p>
+      <ul class="about-list">
+        <li>
+          <div class="about-list-icon"><i class="fas fa-check"></i></div>
+          <div><strong>Equipe qualificada</strong><span>Profissionais experientes e atualizados</span></div>
+        </li>
+        <li>
+          <div class="about-list-icon"><i class="fas fa-check"></i></div>
+          <div><strong>Ambiente acolhedor</strong><span>Espaço pensado para o conforto do seu pet</span></div>
+        </li>
+        <li>
+          <div class="about-list-icon"><i class="fas fa-check"></i></div>
+          <div><strong>Atendimento próximo</strong><span>Comunicação clara em cada etapa do tratamento</span></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPE -->
+<section id="equipe" class="sec" style="background:var(--off)">
+  <div class="sec-hd rv">
+    <span class="sec-label">Nossa Equipe</span>
+    <h2>Profissionais dedicados ao seu pet</h2>
+  </div>
+  <div class="team-grid">
+    <div class="team-card rv">
+      <div class="team-photo"><img src="images/especie-cachorro.jpg" alt="Veterinário"/></div>
+      <h4>Dr. Ricardo Alves</h4>
+      <span>Médico Veterinário — Clínica Geral</span>
+    </div>
+    <div class="team-card rv">
+      <div class="team-photo"><img src="images/especie-gato.jpg" alt="Veterinária"/></div>
+      <h4>Dra. Camila Souza</h4>
+      <span>Médica Veterinária — Felinos</span>
+    </div>
+    <div class="team-card rv">
+      <div class="team-photo"><img src="images/especie-peixe.jpg" alt="Auxiliar Veterinária"/></div>
+      <h4>Ana Paula Lima</h4>
+      <span>Auxiliar Veterinária</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="rv">Agende agora a consulta do seu pet</h2>
+  <p class="rv">Atendimento rápido pelo WhatsApp, sem burocracia.</p>
+  <a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma consulta na Vet Clinic Saúde." target="_blank" class="btn-gold rv" style="display:inline-flex">
+    <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer id="contato">
+  <div class="footer-inner">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="logo-mark"><i class="fas fa-shield-heart"></i></div>
+        <span class="ft-logo-name">Vet Clinic Saúde</span>
+      </div>
+      <p>Clínica veterinária parceira da Agrocampo Pet Shop, em Vila Velha – ES. Cuidando da saúde do seu pet com dedicação.</p>
+      <div class="ft-socials">
+        <a href="https://www.instagram.com" target="_blank" class="ft-s"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/5527988840319" target="_blank" class="ft-s"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.facebook.com" target="_blank" class="ft-s"><i class="fab fa-facebook-f"></i></a>
+      </div>
+    </div>
+    <div class="ft-col">
+      <h5>Navegação</h5>
+      <ul>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#vacinas">Vacinas</a></li>
+        <li><a href="#sobre">Sobre Nós</a></li>
+        <li><a href="#equipe">Equipe</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h5>Loja Parceira</h5>
+      <ul>
+        <li><a href="index.html">Agrocampo Pet Shop</a></li>
+        <li><a href="index.html#servicos">Banho e Tosa</a></li>
+        <li><a href="index.html#produtos">Produtos Pet</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h5>Contato</h5>
+      <div class="ft-contact">
+        <p><i class="fas fa-map-marker-alt"></i> Av. Jerônimo Monteiro, 34 – Vila Batista, Vila Velha – ES</p>
+        <p><i class="fas fa-phone"></i> (27) 3226-1943</p>
+        <p><i class="fab fa-whatsapp"></i> (27) 98884-0319</p>
+        <p><i class="fas fa-clock"></i> Seg–Sex: 08h–18h · Sáb: 08h–13h</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2025 Vet Clinic Saúde — Parceira <span>Agrocampo Pet Shop</span>. Todos os direitos reservados.
+  </div>
+</footer>
+
+<a href="https://wa.me/5527988840319" target="_blank" class="float-wpp"><i class="fab fa-whatsapp"></i></a>
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt"></span></div>
+
+<script>
+function initRv(){
+  const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.1});
+  document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+}
+document.addEventListener('DOMContentLoaded',initRv);
+</script>
+</body>
+</html>
