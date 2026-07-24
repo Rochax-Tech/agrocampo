@@ -425,6 +425,15 @@ tr:hover td{background:#fafbfd}
       <!-- ===== PRODUTOS (CRUD) ===== -->
       <div class="page" id="page-produtos">
 
+        <!-- IMPORTAR PRODUTOS DE DEMONSTRAÇÃO -->
+        <div class="export-box" style="margin-bottom:20px">
+          <div class="export-box-info">
+            <div class="export-icon" style="background:var(--blue-pale)">📦</div>
+            <div><h4>Produtos de Demonstração</h4><p>Importe os 26 produtos de exemplo para o Firebase — depois disso ficam totalmente editáveis e excluíveis, prontos para você limpar antes de entregar ao cliente final.</p></div>
+          </div>
+          <button class="btn-export" id="btnImportDemo" onclick="importDemoProducts()"><i class="fas fa-cloud-upload-alt"></i> Importar Produtos de Demonstração</button>
+        </div>
+
         <!-- FORM CADASTRO/EDIÇÃO -->
         <div class="prod-form-wrap" id="prodForm">
           <h3 id="formTitle"><i class="fas fa-plus-circle" style="color:var(--blue)"></i> Cadastrar Novo Produto</h3>
@@ -1002,7 +1011,34 @@ let designCache = {};      // { logo: base64, banner-boas-vindas: base64, ... }
 function isOk(id){ return stockCache[id] !== true; }
 function fmt(v){return'R$ '+(+v).toFixed(2).replace('.',',')}
 function today(){const d=new Date();return`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`}
-function getAllProds(){return[...BASE_PRODS,...customCache]}
+// getAllProds() agora retorna SOMENTE produtos do Firestore (customCache).
+// BASE_PRODS continua existindo apenas como fonte para o botão "Importar Produtos de Demonstração" —
+// depois de importado, cada produto vira um documento real, editável e excluível como qualquer outro.
+function getAllProds(){return[...customCache]}
+
+async function importDemoProducts(){
+  showConfirm(
+    'Importar produtos de demonstração?',
+    `Isso vai criar ${BASE_PRODS.length} produtos no Firebase (editáveis e excluíveis). Use uma vez só — clicar de novo duplica os produtos.`,
+    async ()=>{
+      const btn=document.getElementById('btnImportDemo');
+      if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Importando...'}
+      try{
+        for(const p of BASE_PRODS){
+          await addDoc(collection(db,'produtos_customizados'), {
+            name:p.name, brand:p.brand, price:p.price, old:p.old||null, tag:p.tag||null,
+            cat:p.cat, species:p.species, e:p.e, imgUrl:null, createdAt:serverTimestamp()
+          });
+        }
+        toast(`${BASE_PRODS.length} produtos importados com sucesso!`,'green');
+      }catch(err){
+        console.error('Erro ao importar produtos:', err);
+        toast('Erro ao importar produtos. Tente novamente.','red');
+      }
+      if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-cloud-upload-alt"></i> Importar Produtos de Demonstração'}
+    }
+  );
+}
 
 const CAT_LABEL={racao:'Ração',petisco:'Petisco',sache:'Sachê',brinquedo:'Brinquedo',higiene:'Higiene',medicamento:'Farmácia',aquario:'Aquário',coleira:'Coleira',cama:'Cama',alimentacao:'Comedouro',transporte:'Transporte',roupa:'Roupa',areia:'Areia',jardinagem:'Jardinagem'};
 let customCatsCache = {}; // { slug: 'Nome digitado' }
@@ -2025,7 +2061,7 @@ Object.assign(window, {
   togglePassVis, doLogin, doLogout,
   openSidebar, closeSidebar,
   showPage, setEstoqueCat, handleCatSelectChange,
-  saveProduct, cancelEdit, editProduct, deleteProduct, toggleStock,
+  saveProduct, cancelEdit, editProduct, deleteProduct, toggleStock, importDemoProducts,
   setStatus, setAllAvailable,
   renderProdList, renderEstoque,
   clearOrders, setOrderStatus,
