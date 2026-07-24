@@ -332,7 +332,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   </div>
   <div class="header-top">
     <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-      <img src="images/logo-agrocampo.jpeg" alt="Agrocampo" class="logo-img"/>
+      <img src="images/logo-agrocampo.jpeg" alt="Agrocampo" class="logo-img" id="siteLogo"/>
     </div>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Buscar produtos, rações, acessórios…" oninput="doSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
@@ -375,16 +375,16 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 <section class="carousel" id="heroCarousel">
   <div class="carousel-track" id="carouselTrack">
     <div class="carousel-slide" onclick="carouselClick('boas-vindas')">
-      <img src="images/banner-boas-vindas.jpeg" alt="Bem-vindo à Agrocampo" loading="eager"/>
+      <img src="images/banner-boas-vindas.jpeg" alt="Bem-vindo à Agrocampo" loading="eager" id="banner-boas-vindas"/>
     </div>
     <div class="carousel-slide" onclick="carouselClick('clinica')">
-      <img src="images/banner-clinica.jpeg" alt="Vet Clinic Saúde" loading="lazy"/>
+      <img src="images/banner-clinica.jpeg" alt="Vet Clinic Saúde" loading="lazy" id="banner-clinica"/>
     </div>
     <div class="carousel-slide" onclick="carouselClick('ofertas')">
-      <img src="images/banner-ofertas.jpeg" alt="Ofertas e Promoções" loading="lazy"/>
+      <img src="images/banner-ofertas.jpeg" alt="Ofertas e Promoções" loading="lazy" id="banner-ofertas"/>
     </div>
     <div class="carousel-slide" onclick="carouselClick('jardinagem')">
-      <img src="images/banner-jardinagem.jpeg" alt="Tudo para seu Jardim" loading="lazy"/>
+      <img src="images/banner-jardinagem.jpeg" alt="Tudo para seu Jardim" loading="lazy" id="banner-jardinagem"/>
     </div>
   </div>
   <button class="carousel-arrow carousel-prev" onclick="carouselMove(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -410,15 +410,15 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
     <div class="sec-hd rv"><div class="sec-row"><div><h2>Compre por Espécie</h2><p>Encontre tudo para o seu companheiro</p></div></div></div>
     <div class="species-grid">
       <div class="sp-card rv" onclick="filterBySpecies(null,'cachorro')">
-        <img src="images/especie-cachorro.jpg" alt="Cachorro"/>
+        <img src="images/especie-cachorro.jpg" alt="Cachorro" id="especie-cachorro"/>
         <div class="sp-card-overlay"><span class="sp-card-name">Cachorro</span><span class="sp-card-count">Ver produtos</span></div>
       </div>
       <div class="sp-card rv" onclick="filterBySpecies(null,'gato')">
-        <img src="images/especie-gato.jpg" alt="Gato"/>
+        <img src="images/especie-gato.jpg" alt="Gato" id="especie-gato"/>
         <div class="sp-card-overlay"><span class="sp-card-name">Gato</span><span class="sp-card-count">Ver produtos</span></div>
       </div>
       <div class="sp-card rv" onclick="filterBySpecies(null,'peixe')">
-        <img src="images/especie-peixe.jpg" alt="Peixe"/>
+        <img src="images/especie-peixe.jpg" alt="Peixe" id="especie-peixe"/>
         <div class="sp-card-overlay"><span class="sp-card-name">Peixes</span><span class="sp-card-count">Ver produtos</span></div>
       </div>
     </div>
@@ -505,7 +505,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 <footer id="footer">
   <div class="footer-inner">
     <div class="ft-logo">
-      <div style="display:flex;align-items:center;gap:10px"><img src="images/logo-agrocampo.jpeg" alt="Agrocampo" style="height:38px;width:auto;background:white;padding:4px 8px;border-radius:8px"/></div>
+      <div style="display:flex;align-items:center;gap:10px"><img src="images/logo-agrocampo.jpeg" alt="Agrocampo" style="height:38px;width:auto;background:white;padding:4px 8px;border-radius:8px" id="siteLogoFooter"/></div>
       <p>Sua pet shop de confiança em Vila Velha – ES. Cuidando do seu pet com amor e qualidade há mais de 10 anos.</p>
       <div class="ft-socials">
         <a href="https://www.instagram.com" target="_blank" class="ft-s"><i class="fab fa-instagram"></i></a>
@@ -613,6 +613,21 @@ onSnapshot(query(collection(db,'produtos_customizados'), orderBy('createdAt','as
   customProdsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderProds(filtered());
 }, err => console.error('Erro ao ouvir produtos:', err));
+
+// Ouve as imagens de design do site (logo, banners, fotos de espécie) — sobrescreve o padrão do repositório quando o admin cadastra algo
+onSnapshot(collection(db,'design'), snap => {
+  snap.forEach(d => {
+    const data = d.data().data;
+    if(!data) return;
+    if(d.id==='logo'){
+      const el1=document.getElementById('siteLogo'); if(el1) el1.src=data;
+      const el2=document.getElementById('siteLogoFooter'); if(el2) el2.src=data;
+    } else {
+      const el=document.getElementById(d.id);
+      if(el) el.src=data;
+    }
+  });
+}, err => console.error('Erro ao ouvir imagens de design:', err));
 
 // ===== RENDER PRODUTOS =====
 let cart=[], af={cat:'todos',sp:'todos',tag:''};
