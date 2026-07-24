@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --blue:#2f5fd8;--blue-light:#5b8af0;--blue-pale:#eef3ff;--blue-dark:#1c3e9e;
@@ -438,13 +439,13 @@ tr:hover td{background:#fafbfd}
         <div class="export-box" style="margin-bottom:20px;flex-wrap:wrap">
           <div class="export-box-info">
             <div class="export-icon" style="background:#e8f5e9">📋</div>
-            <div><h4>Importar Produtos via Planilha</h4><p>Baixe o modelo, preencha offline com vários produtos e importe tudo de uma vez.</p></div>
+            <div><h4>Importar Produtos via Planilha</h4><p>Baixe o modelo .xlsx, preencha offline e importe vários produtos de uma vez — igual ao padrão do ESD Gestão.</p></div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-export" onclick="downloadTemplateCSV()"><i class="fas fa-file-arrow-down"></i> Baixar Modelo</button>
+            <button class="btn-export" onclick="downloadTemplateXLSX()"><i class="fas fa-file-arrow-down"></i> Baixar Modelo</button>
             <label class="btn-export" style="cursor:pointer;background:var(--blue)">
               <i class="fas fa-file-arrow-up"></i> Importar Planilha
-              <input type="file" accept=".csv" style="display:none" onchange="handleImportFile(this)"/>
+              <input type="file" accept=".xlsx,.xls" style="display:none" onchange="handleImportFile(this)"/>
             </label>
           </div>
         </div>
@@ -456,7 +457,7 @@ tr:hover td{background:#fafbfd}
             <span class="table-count" id="importPreviewSummary"></span>
           </div>
           <div class="tbl-wrap"><table>
-            <thead><tr><th>Nome</th><th>Marca</th><th>Preço</th><th>Categoria</th><th>Espécie</th><th>Estoque</th><th>Status</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Marca</th><th>Preço</th><th>Categoria</th><th>Tag</th><th>Estoque</th><th>Status</th></tr></thead>
             <tbody id="importPreviewBody"></tbody>
           </table></div>
           <div style="padding:16px 20px;display:flex;gap:10px;border-top:1px solid var(--gray)">
@@ -1094,37 +1095,38 @@ const SP_LABEL={cachorro:'🐶 Cachorro',gato:'🐱 Gato',peixe:'🐠 Peixe',pas
 // ============================================================
 // IMPORTAR PRODUTOS VIA PLANILHA (CSV — abre direto no Excel)
 // ============================================================
-function downloadTemplateCSV(){
-  const catList = Object.entries(CAT_LABEL).map(([k])=>k).join(' | ');
-  const rows = [
-    ['Nome','Marca','Preço','Preço Antigo','Tag','Categoria','Espécie','Estoque'],
-    ['Ração Golden Adulto 15kg','Golden','129.90','159.90','OFERTA','racao','cachorro','Disponível'],
-    ['Brinquedo Mordedor Natural','PetFun','24.90','','','brinquedo','cachorro','Disponível'],
-    [`# Categorias válidas: ${catList}`,'','','','','','',''],
-    ['# Espécies válidas: cachorro | gato | peixe | passaro | roedor | reptil | todos','','','','','','',''],
-    ['# Tag (opcional): OFERTA | PROMO | NOVO — deixe em branco se não tiver','','','','','','',''],
-    ['# Estoque: Disponível ou Esgotado','','','','','','',''],
-  ];
-  downloadCSV(rows, 'modelo_produtos_agrocampo.csv');
-  toast('Modelo baixado! Preencha e depois use "Importar Planilha".','green');
-}
+// IMPORTAR PRODUTOS VIA PLANILHA (.xlsx real — igual ao padrão ESD Gestão)
+// ============================================================
+function downloadTemplateXLSX(){
+  const wb = XLSX.utils.book_new();
 
-function parseCSVText(text){
-  const lines = text.split(/\r?\n/).filter(l=>l.trim().length);
-  return lines.map(line=>{
-    const result=[]; let cur=''; let inQuotes=false;
-    for(let i=0;i<line.length;i++){
-      const c=line[i];
-      if(c==='"'){
-        if(inQuotes && line[i+1]==='"'){cur+='"';i++;}
-        else inQuotes=!inQuotes;
-      } else if((c===';'||c===',') && !inQuotes){
-        result.push(cur); cur='';
-      } else { cur+=c; }
-    }
-    result.push(cur);
-    return result.map(v=>v.trim());
-  });
+  // Aba principal — limpa, só com o que precisa preencher
+  const mainData = [
+    ['Nome','Marca','Categoria','Preço','Tag','Estoque'],
+    ['Ração Golden Adulto 15kg','Golden','Ração',129.90,'OFERTA','Disponível'],
+    ['Brinquedo Mordedor Natural','PetFun','Brinquedo',24.90,'','Disponível'],
+  ];
+  const wsMain = XLSX.utils.aoa_to_sheet(mainData);
+  wsMain['!cols'] = [{wch:28},{wch:16},{wch:18},{wch:12},{wch:12},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsMain, 'Modelo');
+
+  // Aba de referência — opções válidas, separada para não poluir a principal
+  const catRows = [['Categorias Válidas']];
+  Object.values(CAT_LABEL).forEach(v=>catRows.push([v]));
+  Object.values(customCatsCache).forEach(v=>catRows.push([v]));
+  catRows.push(['']);
+  catRows.push(['Tags Válidas (opcional)']);
+  ['OFERTA','PROMO','NOVO'].forEach(v=>catRows.push([v]));
+  catRows.push(['']);
+  catRows.push(['Estoque']);
+  catRows.push(['Disponível']);
+  catRows.push(['Esgotado']);
+  const wsRef = XLSX.utils.aoa_to_sheet(catRows);
+  wsRef['!cols'] = [{wch:26}];
+  XLSX.utils.book_append_sheet(wb, wsRef, 'Opções Válidas');
+
+  XLSX.writeFile(wb, 'modelo_produtos_agrocampo.xlsx');
+  toast('Modelo baixado! Preencha e depois use "Importar Planilha".','green');
 }
 
 let pendingImportRows = [];
@@ -1135,19 +1137,22 @@ function handleImportFile(input){
   const reader=new FileReader();
   reader.onload=e=>{
     try{
-      const text=e.target.result.replace(/^\uFEFF/,'');
-      const rows=parseCSVText(text).filter(r=>!(r[0]||'').trim().startsWith('#'));
+      const data=new Uint8Array(e.target.result);
+      const wb=XLSX.read(data, {type:'array'});
+      const wsName=wb.SheetNames.find(n=>n.toLowerCase()==='modelo') || wb.SheetNames[0];
+      const ws=wb.Sheets[wsName];
+      const rows=XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
       if(rows.length<2){toast('Planilha vazia ou sem produtos.','red');return}
-      const header=rows[0].map(h=>h.toLowerCase());
-      const dataRows=rows.slice(1);
+
+      const header=rows[0].map(h=>String(h).toLowerCase().trim());
+      const dataRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()!==''));
 
       pendingImportRows = dataRows.map(cols=>{
-        const get=(name)=>{ const idx=header.indexOf(name); return idx>-1?(cols[idx]||'').trim():''; };
+        const get=(name)=>{ const idx=header.indexOf(name); return idx>-1?String(cols[idx]??'').trim():''; };
         const name=get('nome');
         const brand=get('marca');
-        const price=parseFloat(get('preço').replace(',','.'));
-        const oldRaw=get('preço antigo').replace(',','.');
-        const old=oldRaw?parseFloat(oldRaw):null;
+        const priceRaw=String(get('preço')).replace(',','.');
+        const price=parseFloat(priceRaw);
         const tag=get('tag').toUpperCase()||null;
         const catRaw=get('categoria').toLowerCase();
         let cat=catRaw;
@@ -1155,12 +1160,6 @@ function handleImportFile(input){
           const foundSlug=Object.keys(CAT_LABEL).find(k=>CAT_LABEL[k].toLowerCase()===catRaw)
             || Object.keys(customCatsCache).find(k=>customCatsCache[k].toLowerCase()===catRaw);
           if(foundSlug) cat=foundSlug;
-        }
-        const spRaw=get('espécie').toLowerCase();
-        let species=spRaw;
-        if(!SP_LABEL[species]){
-          const foundSp=Object.keys(SP_LABEL).find(k=>SP_LABEL[k].toLowerCase().includes(spRaw));
-          if(foundSp) species=foundSp;
         }
         const estoqueRaw=get('estoque').toLowerCase();
         const esgotado=estoqueRaw.includes('esgot');
@@ -1170,17 +1169,16 @@ function handleImportFile(input){
         if(!brand) errors.push('Marca vazia');
         if(!price || isNaN(price)) errors.push('Preço inválido');
         if(!CAT_LABEL[cat] && !customCatsCache[cat]) errors.push('Categoria não reconhecida');
-        if(!SP_LABEL[species]) errors.push('Espécie não reconhecida');
 
-        return {name,brand,price,old,tag,cat,species,esgotado,errors,valid:errors.length===0};
+        return {name,brand,price,tag,cat,species:'todos',esgotado,errors,valid:errors.length===0};
       });
       renderImportPreview();
     }catch(err){
       console.error('Erro ao ler planilha:', err);
-      toast('Erro ao ler a planilha. Verifique o formato.','red');
+      toast('Erro ao ler a planilha. Verifique se é um arquivo .xlsx válido.','red');
     }
   };
-  reader.readAsText(file, 'UTF-8');
+  reader.readAsArrayBuffer(file);
   input.value='';
 }
 
@@ -1197,7 +1195,7 @@ function renderImportPreview(){
       <td>${r.brand||'—'}</td>
       <td>${r.price&&!isNaN(r.price)?fmt(r.price):'—'}</td>
       <td>${catLabel(r.cat)}</td>
-      <td>${SP_LABEL[r.species]||r.species||'—'}</td>
+      <td>${r.tag||'—'}</td>
       <td>${r.esgotado?'Esgotado':'Disponível'}</td>
       <td>${r.valid?'<span style="color:var(--green);font-weight:800">✓ OK</span>':`<span style="color:var(--red);font-weight:800">✕ ${r.errors[0]}</span>`}</td>
     </tr>`).join('');
@@ -1212,7 +1210,7 @@ async function confirmImport(){
   for(const r of valid){
     try{
       const ref=await addDoc(collection(db,'produtos_customizados'), {
-        name:r.name, brand:r.brand, price:r.price, old:r.old, tag:r.tag,
+        name:r.name, brand:r.brand, price:r.price, old:null, tag:r.tag,
         cat:r.cat, species:r.species, e:'📦', imgUrl:null, createdAt:serverTimestamp()
       });
       if(r.esgotado) await setDoc(doc(db,'estoque',ref.id), {esgotado:true});
@@ -2232,7 +2230,7 @@ Object.assign(window, {
   openSidebar, closeSidebar,
   showPage, setEstoqueCat, handleCatSelectChange,
   saveProduct, cancelEdit, editProduct, deleteProduct, toggleStock, importDemoProducts,
-  downloadTemplateCSV, handleImportFile, confirmImport, cancelImportPreview,
+  downloadTemplateXLSX, handleImportFile, confirmImport, cancelImportPreview,
   setStatus, setAllAvailable,
   renderProdList, renderEstoque,
   clearOrders, setOrderStatus,
