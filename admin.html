@@ -10,13 +10,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
 :root{
-  --blue:#3a7bd5;--blue-light:#5b9ae8;--blue-pale:#eaf2ff;--blue-dark:#2260b5;
-  --red:#e5373a;--red-pale:#ffeaea;--green:#16a34a;--green-pale:#dcfce7;
-  --yellow:#f59e0b;--yellow-pale:#fffbe6;
-  --white:#fff;--off:#f7f9fc;--gray:#e8ecf1;--gray-mid:#d0d8e4;--gray-dark:#6b7a90;
-  --black:#1a1f2e;--sidebar:248px;
+  --blue:#2f5fd8;--blue-light:#5b8af0;--blue-pale:#eef3ff;--blue-dark:#1c3e9e;
+  --navy:#0e1b3d;
+  --red:#e5373a;--red-pale:#ffeced;--green:#16a34a;--green-pale:#dcfce7;
+  --yellow:#ffc632;--yellow-dark:#e0a300;--yellow-pale:#fff8e6;
+  --white:#fff;--off:#f6f7fb;--gray:#e9ebf3;--gray-mid:#d2d6e6;--gray-dark:#6b7191;
+  --black:#0e1b3d;--sidebar:248px;
   --radius:10px;--radius-sm:7px;--radius-lg:16px;
-  --shadow:0 2px 12px rgba(58,123,213,.10);--shadow-md:0 6px 28px rgba(58,123,213,.14);
+  --shadow:0 2px 12px rgba(14,27,61,.10);--shadow-md:0 6px 28px rgba(14,27,61,.14);
   --tr:.2s cubic-bezier(.4,0,.2,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -310,7 +311,7 @@ tr:hover td{background:#fafbfd}
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sb-logo">
-      <div class="sb-logo-mark"><i class="fas fa-paw"></i></div>
+      <img src="images/logo-agrocampo.jpeg" alt="Agrocampo" style="height:34px;width:auto;background:white;border-radius:6px;padding:3px 6px"/>
       <div><div class="sb-logo-name">Agrocampo</div><div class="sb-logo-sub">Painel Admin</div></div>
     </div>
 
@@ -642,18 +643,60 @@ tr:hover td{background:#fafbfd}
           <div class="sec-header-text"><h2>Design do Site</h2><p>Troque a logo, os banners do carrossel e as fotos de espécie exibidas no site</p></div>
         </div>
 
-        <!-- LOGO -->
+        <!-- LOGOS -->
         <div class="prod-form-wrap">
-          <h3><i class="fas fa-image" style="color:var(--blue)"></i> Logo da Loja</h3>
+          <h3><i class="fas fa-image" style="color:var(--blue)"></i> Logos das Lojas</h3>
+
           <div class="design-slot">
             <div class="design-preview" id="dp-logo"><span>Sem imagem<br/>personalizada</span></div>
             <div class="design-slot-actions">
-              <p class="design-slot-label">Aparece no cabeçalho e rodapé do site</p>
+              <p class="design-slot-label">Logo Agrocampo — cabeçalho e rodapé do site principal</p>
               <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
                 <i class="fas fa-upload"></i> Selecionar Logo
                 <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'logo')"/>
               </label>
               <button class="btn-form-cancel" onclick="removeDesignImg('logo')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-logo-vetclinic"><span>Sem imagem<br/>personalizada</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Logo Vet Clinic — cabeçalho e rodapé do site da clínica</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Logo
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'logo-vetclinic')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('logo-vetclinic')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VET CLINIC — IMAGENS -->
+        <div class="prod-form-wrap">
+          <h3><i class="fas fa-stethoscope" style="color:var(--blue)"></i> Vet Clinic — Imagens do Site</h3>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-vetclinic-10anos"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Foto do Hero — "+10 anos cuidando de pets"</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'vetclinic-10anos')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('vetclinic-10anos')"><i class="fas fa-trash"></i> Remover</button>
+            </div>
+          </div>
+
+          <div class="design-slot">
+            <div class="design-preview" id="dp-vetclinic-sobre"><span>Padrão do<br/>repositório</span></div>
+            <div class="design-slot-actions">
+              <p class="design-slot-label">Foto da seção "Sobre Nós"</p>
+              <label class="btn-form-save" style="cursor:pointer;display:inline-flex">
+                <i class="fas fa-upload"></i> Selecionar Imagem
+                <input type="file" accept="image/*" style="display:none" onchange="handleDesignUpload(this,'vetclinic-sobre')"/>
+              </label>
+              <button class="btn-form-cancel" onclick="removeDesignImg('vetclinic-sobre')"><i class="fas fa-trash"></i> Remover</button>
             </div>
           </div>
         </div>
@@ -1048,33 +1091,63 @@ function renderDashboard(){
 }
 
 // ============================================================
-// IMAGE UPLOAD (Base64 direto no Firestore — Storage exige plano Blaze)
+// COMPRESSÃO AUTOMÁTICA DE IMAGEM (evita rejeitar fotos grandes)
 // ============================================================
-function handleImgUpload(input){
+function compressImage(file, maxWidth, quality){
+  return new Promise((resolve, reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width, h=img.height;
+        if(w>maxWidth){ h=Math.round(h*maxWidth/w); w=maxWidth; }
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        // Tenta qualidade decrescente até ficar num tamanho seguro para o Firestore (~900KB)
+        let q=quality;
+        let dataUrl=canvas.toDataURL('image/jpeg', q);
+        while(dataUrl.length>900*1024 && q>0.35){
+          q-=0.1;
+          dataUrl=canvas.toDataURL('image/jpeg', q);
+        }
+        resolve(dataUrl);
+      };
+      img.onerror=()=>reject(new Error('Não foi possível processar a imagem.'));
+      img.src=e.target.result;
+    };
+    reader.onerror=()=>reject(new Error('Não foi possível ler o arquivo.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ============================================================
+// IMAGE UPLOAD — foto de produto (Base64 comprimido, direto no Firestore)
+// ============================================================
+async function handleImgUpload(input){
   const file=input.files[0];
   if(!file)return;
-  if(file.size>500*1024){toast('Imagem muito grande! Use imagens menores que 500KB.','red');input.value='';return}
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const data=e.target.result;
+  toast('Processando imagem...','');
+  try{
+    const data=await compressImage(file, 700, 0.75);
     document.getElementById('f-pimgdata').value=data;
     document.getElementById('imgPreviewEmoji').style.display='none';
     const img=document.getElementById('imgPreviewImg');
     img.src=data;img.style.display='block';
     document.getElementById('btnRemoveImg').style.display='inline-flex';
     toast('Imagem carregada com sucesso!','green');
-  };
-  reader.onerror=function(){
-    toast('Erro ao ler a imagem. Tente novamente.','red');
+  }catch(err){
+    console.error('Erro ao processar imagem:', err);
+    toast('Erro ao processar imagem. Tente outra foto.','red');
     input.value='';
-  };
-  reader.readAsDataURL(file);
+  }
 }
 
 // ============================================================
 // DESIGN DO SITE (logo, banners, fotos de espécie)
 // ============================================================
-const DESIGN_KEYS=['logo','banner-boas-vindas','banner-clinica','banner-ofertas','banner-jardinagem','especie-cachorro','especie-gato','especie-peixe'];
+const DESIGN_KEYS=['logo','logo-vetclinic','banner-boas-vindas','banner-clinica','banner-ofertas','banner-jardinagem','especie-cachorro','especie-gato','especie-peixe','vetclinic-10anos','vetclinic-sobre'];
 
 function renderDesignPage(){
   DESIGN_KEYS.forEach(key=>{
@@ -1090,22 +1163,15 @@ function renderDesignPage(){
 async function handleDesignUpload(input,key){
   const file=input.files[0];
   if(!file)return;
-  if(file.size>500*1024){toast('Imagem muito grande! Use imagens menores que 500KB.','red');input.value='';return}
-  const reader=new FileReader();
-  reader.onload=async function(e){
-    const data=e.target.result;
-    try{
-      await setDoc(doc(db,'design',key), {data, updatedAt:serverTimestamp()});
-      toast('Imagem atualizada no site!','green');
-    }catch(err){
-      console.error('Erro ao salvar imagem de design:', err);
-      toast('Erro ao salvar imagem.','red');
-    }
-  };
-  reader.onerror=function(){
-    toast('Erro ao ler a imagem. Tente novamente.','red');
-  };
-  reader.readAsDataURL(file);
+  toast('Processando imagem...','');
+  try{
+    const data=await compressImage(file, 1600, 0.78);
+    await setDoc(doc(db,'design',key), {data, updatedAt:serverTimestamp()});
+    toast('Imagem atualizada no site!','green');
+  }catch(err){
+    console.error('Erro ao salvar imagem de design:', err);
+    toast('Erro ao processar ou salvar a imagem. Tente novamente.','red');
+  }
   input.value='';
 }
 
