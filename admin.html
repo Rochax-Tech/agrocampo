@@ -326,6 +326,7 @@ tr:hover td{background:#fafbfd}
 
     <div class="sb-section">Aparência</div>
     <div class="sb-item" onclick="showPage('design',this)"><i class="fas fa-image"></i> Design do Site</div>
+    <div class="sb-item" onclick="showPage('vetclinic',this)"><i class="fas fa-stethoscope"></i> Gestão Vet Clinic</div>
 
     <div class="sb-section">Sistema</div>
     <div class="sb-item" onclick="window.open('index.html','_blank')"><i class="fas fa-external-link-alt"></i> Ver Site</div>
@@ -365,7 +366,7 @@ tr:hover td{background:#fafbfd}
       <div class="page active" id="page-dashboard">
 
         <!-- Welcome banner -->
-        <div style="background:linear-gradient(120deg,#1a4fa0,#3a7bd5);border-radius:var(--radius-lg);padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div style="background:linear-gradient(120deg,var(--navy),var(--blue));border-radius:var(--radius-lg);padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
           <div style="color:white">
             <div style="font-size:.75rem;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Bem-vindo de volta 👋</div>
             <div style="font-size:1.2rem;font-weight:900">Painel Agrocampo Pet Shop</div>
@@ -377,6 +378,22 @@ tr:hover td{background:#fafbfd}
         </div>
 
         <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- ALERTA DE REPOSIÇÃO — separado, visualmente destacado -->
+        <div id="restockAlert" style="background:var(--red-pale);border:1.5px solid #f5b5b5;border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:20px;display:none">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:2px">
+            <div style="width:40px;height:40px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;flex-shrink:0">
+              <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <div>
+              <div style="font-size:.92rem;font-weight:900;color:#7a1f1f">Atenção: produtos precisam de reposição!</div>
+              <div style="font-size:.78rem;color:#a33">
+                <span id="restockCount">0</span> produto(s) esgotado(s) — providencie a compra para não perder vendas.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="dash-grid">
           <div class="dash-card">
             <div class="dash-card-hd">
@@ -386,6 +403,16 @@ tr:hover td{background:#fafbfd}
             <div id="dashEsgotados"></div>
           </div>
           <div class="dash-card">
+            <div class="dash-card-hd">
+              <h4>📈 Pedidos — Últimos 7 Dias</h4>
+              <span style="font-size:.7rem;color:var(--gray-dark)" id="dashChartQtd"></span>
+            </div>
+            <div id="dashWeekChart" style="padding:18px 20px"></div>
+          </div>
+        </div>
+
+        <div class="dash-grid" style="margin-top:16px">
+          <div class="dash-card" style="grid-column:1/-1">
             <div class="dash-card-hd">
               <h4>🛍️ Últimos Pedidos</h4>
               <span style="font-size:.7rem;color:var(--gray-dark)" id="dashPedQtd"></span>
@@ -438,7 +465,7 @@ tr:hover td{background:#fafbfd}
           <div class="form-grid" style="margin-bottom:14px">
             <div class="fg">
               <label>Categoria *</label>
-              <select id="f-pcat">
+              <select id="f-pcat" onchange="handleCatSelectChange(this)">
                 <option value="">Selecione...</option>
                 <option value="racao">🥩 Ração</option>
                 <option value="petisco">🦴 Petiscos e Ossos</option>
@@ -454,7 +481,10 @@ tr:hover td{background:#fafbfd}
                 <option value="roupa">👕 Roupas</option>
                 <option value="areia">🏖️ Areias e Banheiros</option>
                 <option value="jardinagem">🌱 Jardinagem e Cultivo</option>
+                <optgroup label="Categorias personalizadas" id="customCatGroup"></optgroup>
+                <option value="__nova__">➕ Criar nova categoria...</option>
               </select>
+              <input type="text" id="f-pcat-new" placeholder="Digite o nome da nova categoria" style="display:none;margin-top:8px;width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:10px 12px;font-size:.85rem"/>
             </div>
             <div class="fg">
               <label>Espécie *</label>
@@ -626,15 +656,6 @@ tr:hover td{background:#fafbfd}
           <div class="export-box-info"><div class="export-icon" style="background:#fce4ec">📦</div><div><h4>Produtos Esgotados</h4><p>Lista de produtos marcados como indisponíveis</p></div></div>
           <button class="btn-export" onclick="exportEsgotados()"><i class="fas fa-download"></i> Exportar Excel</button>
         </div>
-        <div class="table-wrap" style="margin-top:8px">
-          <div class="table-head"><h3>Prévia — Todos os Produtos</h3><span class="table-count" id="relCount"></span></div>
-          <div class="tbl-wrap">
-            <table>
-              <thead><tr><th>#</th><th>Produto</th><th>Marca</th><th>Categoria</th><th>Preço</th><th>Origem</th><th>Status</th></tr></thead>
-              <tbody id="relBody"></tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
       <!-- ===== DESIGN DO SITE ===== -->
@@ -797,6 +818,100 @@ tr:hover td{background:#fafbfd}
         </div>
       </div>
 
+      <!-- ===== GESTÃO VET CLINIC ===== -->
+      <div class="page" id="page-vetclinic">
+        <div class="sec-header">
+          <div class="sec-header-text"><h2>Gestão Vet Clinic</h2><p>Controle os serviços, a farmácia e a equipe exibidos no site da clínica</p></div>
+        </div>
+
+        <!-- SERVIÇOS -->
+        <div class="prod-form-wrap">
+          <h3 id="vetSvcFormTitle"><i class="fas fa-stethoscope" style="color:var(--blue)"></i> Cadastrar Serviço</h3>
+          <input type="hidden" id="vetSvc-editing"/>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="fg"><label>Nome do Serviço *</label><input type="text" id="vetSvc-name" placeholder="Ex: Consulta Veterinária"/></div>
+            <div class="fg"><label>Emoji / Ícone *</label><input type="text" id="vetSvc-emoji" placeholder="Ex: 🩺"/></div>
+          </div>
+          <div class="fg" style="margin-bottom:14px"><label>Descrição</label><textarea id="vetSvc-desc" rows="2" style="width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:10px 12px;font-size:.85rem;font-family:'Nunito',sans-serif" placeholder="Ex: Avaliação clínica completa e orientação personalizada"></textarea></div>
+          <div class="fg" style="margin-bottom:14px"><label>Preço exibido <small style="font-weight:400;color:var(--gray-dark)">(texto livre — pode deixar em branco)</small></label><input type="text" id="vetSvc-price" placeholder="Ex: A partir de R$ 80,00"/></div>
+          <div class="form-actions">
+            <button class="btn-form-save" onclick="saveVetSvc()"><i class="fas fa-save"></i> <span id="vetSvcSaveText">Salvar Serviço</span></button>
+            <button class="btn-form-cancel" onclick="cancelVetSvcEdit()" id="vetSvcCancelBtn" style="display:none"><i class="fas fa-times"></i> Cancelar edição</button>
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-bottom:24px">
+          <div class="table-head"><h3>Serviços Cadastrados</h3><span class="table-count" id="vetSvcCount"></span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Serviço</th><th>Descrição</th><th>Preço</th><th>Ações</th></tr></thead>
+            <tbody id="vetSvcBody"></tbody>
+          </table></div>
+          <div id="vetSvcEmpty" class="empty-state" style="display:none"><i class="fas fa-stethoscope"></i><h4>Nenhum serviço cadastrado</h4></div>
+        </div>
+
+        <!-- FARMÁCIA -->
+        <div class="prod-form-wrap">
+          <h3 id="vetPharmFormTitle"><i class="fas fa-pills" style="color:var(--blue)"></i> Cadastrar Item da Farmácia</h3>
+          <input type="hidden" id="vetPharm-editing"/>
+          <div class="form-grid three" style="margin-bottom:14px">
+            <div class="fg"><label>Nome *</label><input type="text" id="vetPharm-name" placeholder="Ex: Vacina V10 (Cães)"/></div>
+            <div class="fg"><label>Emoji / Ícone *</label><input type="text" id="vetPharm-emoji" placeholder="Ex: 💉"/></div>
+            <div class="fg"><label>Tag <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input type="text" id="vetPharm-tag" placeholder="Ex: Essencial"/></div>
+          </div>
+          <div class="fg" style="margin-bottom:14px"><label>Descrição</label><input type="text" id="vetPharm-desc" placeholder="Ex: Proteção contra as principais doenças caninas"/></div>
+          <div class="fg" style="margin-bottom:14px"><label>Preço exibido <small style="font-weight:400;color:var(--gray-dark)">(texto livre — pode deixar em branco)</small></label><input type="text" id="vetPharm-price" placeholder="Ex: R$ 89,90"/></div>
+          <div class="form-actions">
+            <button class="btn-form-save" onclick="saveVetPharm()"><i class="fas fa-save"></i> <span id="vetPharmSaveText">Salvar Item</span></button>
+            <button class="btn-form-cancel" onclick="cancelVetPharmEdit()" id="vetPharmCancelBtn" style="display:none"><i class="fas fa-times"></i> Cancelar edição</button>
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-bottom:24px">
+          <div class="table-head"><h3>Itens da Farmácia</h3><span class="table-count" id="vetPharmCount"></span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Item</th><th>Descrição</th><th>Preço</th><th>Tag</th><th>Ações</th></tr></thead>
+            <tbody id="vetPharmBody"></tbody>
+          </table></div>
+          <div id="vetPharmEmpty" class="empty-state" style="display:none"><i class="fas fa-pills"></i><h4>Nenhum item cadastrado</h4></div>
+        </div>
+
+        <!-- EQUIPE -->
+        <div class="prod-form-wrap">
+          <h3 id="vetTeamFormTitle"><i class="fas fa-user-doctor" style="color:var(--blue)"></i> Cadastrar Membro da Equipe</h3>
+          <input type="hidden" id="vetTeam-editing"/>
+          <div class="fg" style="margin-bottom:14px">
+            <label>Foto do Perfil <span style="font-weight:400;color:var(--gray-dark)">(opcional)</span></label>
+            <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              <div id="vetTeamImgPreviewWrap" style="width:80px;height:80px;background:var(--off);border:1.5px dashed var(--gray-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative">
+                <i class="fas fa-user" id="vetTeamImgEmoji" style="font-size:1.8rem;color:var(--gray-mid)"></i>
+                <img id="vetTeamImgImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+              </div>
+              <div>
+                <label for="vetTeam-img" style="display:inline-flex;align-items:center;gap:7px;background:var(--blue-pale);color:var(--blue);border:1.5px solid var(--blue-light);border-radius:50px;padding:9px 18px;font-size:.8rem;font-weight:800;cursor:pointer">
+                  <i class="fas fa-upload"></i> Selecionar Foto
+                </label>
+                <input type="file" id="vetTeam-img" accept="image/*" style="display:none" onchange="handleVetTeamImgUpload(this)"/>
+                <input type="hidden" id="vetTeam-imgdata"/>
+              </div>
+            </div>
+          </div>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="fg"><label>Nome *</label><input type="text" id="vetTeam-name" placeholder="Ex: Dr. Ricardo Alves"/></div>
+            <div class="fg"><label>Função <small style="font-weight:400;color:var(--gray-dark)">(texto livre)</small></label><input type="text" id="vetTeam-role" placeholder="Ex: Médico Veterinário — Clínico Geral"/></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-form-save" onclick="saveVetTeam()"><i class="fas fa-save"></i> <span id="vetTeamSaveText">Salvar Membro</span></button>
+            <button class="btn-form-cancel" onclick="cancelVetTeamEdit()" id="vetTeamCancelBtn" style="display:none"><i class="fas fa-times"></i> Cancelar edição</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head"><h3>Equipe Cadastrada</h3><span class="table-count" id="vetTeamCount"></span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Função</th><th>Ações</th></tr></thead>
+            <tbody id="vetTeamBody"></tbody>
+          </table></div>
+          <div id="vetTeamEmpty" class="empty-state" style="display:none"><i class="fas fa-user-doctor"></i><h4>Nenhum membro cadastrado</h4></div>
+        </div>
+      </div>
+
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /layout -->
@@ -890,6 +1005,23 @@ function today(){const d=new Date();return`${d.getFullYear()}${String(d.getMonth
 function getAllProds(){return[...BASE_PRODS,...customCache]}
 
 const CAT_LABEL={racao:'Ração',petisco:'Petisco',sache:'Sachê',brinquedo:'Brinquedo',higiene:'Higiene',medicamento:'Farmácia',aquario:'Aquário',coleira:'Coleira',cama:'Cama',alimentacao:'Comedouro',transporte:'Transporte',roupa:'Roupa',areia:'Areia',jardinagem:'Jardinagem'};
+let customCatsCache = {}; // { slug: 'Nome digitado' }
+function catLabel(cat){ return CAT_LABEL[cat] || customCatsCache[cat] || cat; }
+
+onSnapshot(collection(db,'categorias_customizadas'), snap => {
+  const c = {};
+  snap.forEach(d => { c[d.id] = d.data().label; });
+  customCatsCache = c;
+  const group=document.getElementById('customCatGroup');
+  if(group){
+    group.innerHTML = Object.entries(c).map(([slug,label])=>`<option value="${slug}">${label}</option>`).join('');
+  }
+  if(isLoggedIn){ if(currentPage==='produtos')renderProdList(); if(currentPage==='estoque')renderEstoque(); }
+}, err => console.error('Erro ao ouvir categorias personalizadas:', err));
+
+function handleCatSelectChange(select){
+  document.getElementById('f-pcat-new').style.display = select.value==='__nova__' ? 'block' : 'none';
+}
 const SP_LABEL={cachorro:'🐶 Cachorro',gato:'🐱 Gato',peixe:'🐠 Peixe',passaro:'🦜 Pássaro',roedor:'🐹 Roedor',reptil:'🐢 Réptil',todos:'🐾 Todos'};
 
 // ===== LISTENERS EM TEMPO REAL =====
@@ -897,12 +1029,12 @@ onSnapshot(collection(db,'estoque'), snap => {
   const s = {};
   snap.forEach(d => { s[d.id] = true; });
   stockCache = s;
-  if(isLoggedIn){ renderDashboard(); if(currentPage==='estoque')renderEstoque(); if(currentPage==='produtos')renderProdList(); if(currentPage==='relatorio')renderRelatorio(); }
+  if(isLoggedIn){ renderDashboard(); if(currentPage==='estoque')renderEstoque(); if(currentPage==='produtos')renderProdList(); }
 }, err => console.error('Erro ao ouvir estoque:', err));
 
 onSnapshot(query(collection(db,'produtos_customizados'), orderBy('createdAt','asc')), snap => {
   customCache = snap.docs.map(d => ({ id:d.id, ...d.data(), custom:true }));
-  if(isLoggedIn){ renderDashboard(); if(currentPage==='produtos')renderProdList(); if(currentPage==='estoque')renderEstoque(); if(currentPage==='relatorio')renderRelatorio(); }
+  if(isLoggedIn){ renderDashboard(); if(currentPage==='produtos')renderProdList(); if(currentPage==='estoque')renderEstoque(); }
 }, err => console.error('Erro ao ouvir produtos:', err));
 
 onSnapshot(query(collection(db,'pedidos'), orderBy('createdAt','desc')), snap => {
@@ -916,6 +1048,268 @@ onSnapshot(collection(db,'design'), snap => {
   designCache = dc;
   if(isLoggedIn && currentPage==='design') renderDesignPage();
 }, err => console.error('Erro ao ouvir design:', err));
+
+// ============================================================
+// GESTÃO VET CLINIC (Serviços, Farmácia, Equipe)
+// ============================================================
+let vetSvcCache=[], vetPharmCache=[], vetTeamCache=[];
+let editingVetSvcId=null, editingVetPharmId=null, editingVetTeamId=null;
+
+onSnapshot(query(collection(db,'vetclinic_servicos'), orderBy('createdAt','asc')), snap => {
+  vetSvcCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  if(isLoggedIn && currentPage==='vetclinic') renderVetSvc();
+}, err => console.error('Erro ao ouvir serviços vetclinic:', err));
+
+onSnapshot(query(collection(db,'vetclinic_farmacia'), orderBy('createdAt','asc')), snap => {
+  vetPharmCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  if(isLoggedIn && currentPage==='vetclinic') renderVetPharm();
+}, err => console.error('Erro ao ouvir farmácia vetclinic:', err));
+
+onSnapshot(query(collection(db,'vetclinic_equipe'), orderBy('createdAt','asc')), snap => {
+  vetTeamCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  if(isLoggedIn && currentPage==='vetclinic') renderVetTeam();
+}, err => console.error('Erro ao ouvir equipe vetclinic:', err));
+
+// ---------- SERVIÇOS ----------
+function renderVetSvc(){
+  document.getElementById('vetSvcCount').textContent=`${vetSvcCache.length} serviço(s)`;
+  const tb=document.getElementById('vetSvcBody');
+  const empty=document.getElementById('vetSvcEmpty');
+  if(!vetSvcCache.length){tb.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  tb.innerHTML=vetSvcCache.map(s=>`
+    <tr>
+      <td><div class="prod-cell"><div class="prod-thumb-sm">${s.emoji||'🩺'}</div><div class="pn">${s.name}</div></div></td>
+      <td style="font-size:.78rem;max-width:260px">${s.desc||'—'}</td>
+      <td style="font-weight:800;color:var(--blue)">${s.price||'—'}</td>
+      <td><div class="act-btns">
+        <button class="act-btn edit" title="Editar" onclick="editVetSvc('${s.id}')"><i class="fas fa-edit"></i></button>
+        <button class="act-btn danger" title="Excluir" onclick="deleteVetSvc('${s.id}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+async function saveVetSvc(){
+  const name=document.getElementById('vetSvc-name').value.trim();
+  const emoji=document.getElementById('vetSvc-emoji').value.trim()||'🩺';
+  const desc=document.getElementById('vetSvc-desc').value.trim();
+  const price=document.getElementById('vetSvc-price').value.trim();
+  if(!name){toast('Digite o nome do serviço!','red');return}
+  try{
+    if(editingVetSvcId){
+      await updateDoc(doc(db,'vetclinic_servicos',editingVetSvcId), {name,emoji,desc,price});
+      toast('Serviço atualizado!','green');
+      cancelVetSvcEdit();
+    }else{
+      await addDoc(collection(db,'vetclinic_servicos'), {name,emoji,desc,price,createdAt:serverTimestamp()});
+      toast('Serviço cadastrado!','green');
+      clearVetSvcForm();
+    }
+  }catch(err){console.error(err);toast('Erro ao salvar serviço.','red')}
+}
+
+function editVetSvc(id){
+  const s=vetSvcCache.find(x=>x.id===id); if(!s)return;
+  editingVetSvcId=id;
+  document.getElementById('vetSvc-name').value=s.name;
+  document.getElementById('vetSvc-emoji').value=s.emoji||'';
+  document.getElementById('vetSvc-desc').value=s.desc||'';
+  document.getElementById('vetSvc-price').value=s.price||'';
+  document.getElementById('vetSvcFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Serviço';
+  document.getElementById('vetSvcSaveText').textContent='Salvar Alterações';
+  document.getElementById('vetSvcCancelBtn').style.display='flex';
+}
+
+function cancelVetSvcEdit(){
+  editingVetSvcId=null;
+  clearVetSvcForm();
+  document.getElementById('vetSvcFormTitle').innerHTML='<i class="fas fa-stethoscope" style="color:var(--blue)"></i> Cadastrar Serviço';
+  document.getElementById('vetSvcSaveText').textContent='Salvar Serviço';
+  document.getElementById('vetSvcCancelBtn').style.display='none';
+}
+
+function clearVetSvcForm(){
+  ['vetSvc-name','vetSvc-emoji','vetSvc-desc','vetSvc-price'].forEach(id=>document.getElementById(id).value='');
+}
+
+function deleteVetSvc(id){
+  const s=vetSvcCache.find(x=>x.id===id); if(!s)return;
+  showConfirm('Excluir serviço?',`Deseja excluir "${s.name}"?`, async ()=>{
+    try{ await deleteDoc(doc(db,'vetclinic_servicos',id)); toast('Serviço excluído!','red'); }
+    catch(err){console.error(err);toast('Erro ao excluir.','red')}
+  });
+}
+
+// ---------- FARMÁCIA ----------
+function renderVetPharm(){
+  document.getElementById('vetPharmCount').textContent=`${vetPharmCache.length} item(ns)`;
+  const tb=document.getElementById('vetPharmBody');
+  const empty=document.getElementById('vetPharmEmpty');
+  if(!vetPharmCache.length){tb.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  tb.innerHTML=vetPharmCache.map(s=>`
+    <tr>
+      <td><div class="prod-cell"><div class="prod-thumb-sm">${s.emoji||'💉'}</div><div class="pn">${s.name}</div></div></td>
+      <td style="font-size:.78rem;max-width:220px">${s.desc||'—'}</td>
+      <td style="font-weight:800;color:var(--blue)">${s.price||'—'}</td>
+      <td>${s.tag?`<span class="tag-pill" style="background:var(--blue-pale);color:var(--blue-dark)">${s.tag}</span>`:'—'}</td>
+      <td><div class="act-btns">
+        <button class="act-btn edit" title="Editar" onclick="editVetPharm('${s.id}')"><i class="fas fa-edit"></i></button>
+        <button class="act-btn danger" title="Excluir" onclick="deleteVetPharm('${s.id}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+async function saveVetPharm(){
+  const name=document.getElementById('vetPharm-name').value.trim();
+  const emoji=document.getElementById('vetPharm-emoji').value.trim()||'💉';
+  const tag=document.getElementById('vetPharm-tag').value.trim();
+  const desc=document.getElementById('vetPharm-desc').value.trim();
+  const price=document.getElementById('vetPharm-price').value.trim();
+  if(!name){toast('Digite o nome do item!','red');return}
+  try{
+    if(editingVetPharmId){
+      await updateDoc(doc(db,'vetclinic_farmacia',editingVetPharmId), {name,emoji,tag,desc,price});
+      toast('Item atualizado!','green');
+      cancelVetPharmEdit();
+    }else{
+      await addDoc(collection(db,'vetclinic_farmacia'), {name,emoji,tag,desc,price,createdAt:serverTimestamp()});
+      toast('Item cadastrado!','green');
+      clearVetPharmForm();
+    }
+  }catch(err){console.error(err);toast('Erro ao salvar item.','red')}
+}
+
+function editVetPharm(id){
+  const s=vetPharmCache.find(x=>x.id===id); if(!s)return;
+  editingVetPharmId=id;
+  document.getElementById('vetPharm-name').value=s.name;
+  document.getElementById('vetPharm-emoji').value=s.emoji||'';
+  document.getElementById('vetPharm-tag').value=s.tag||'';
+  document.getElementById('vetPharm-desc').value=s.desc||'';
+  document.getElementById('vetPharm-price').value=s.price||'';
+  document.getElementById('vetPharmFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Item';
+  document.getElementById('vetPharmSaveText').textContent='Salvar Alterações';
+  document.getElementById('vetPharmCancelBtn').style.display='flex';
+}
+
+function cancelVetPharmEdit(){
+  editingVetPharmId=null;
+  clearVetPharmForm();
+  document.getElementById('vetPharmFormTitle').innerHTML='<i class="fas fa-pills" style="color:var(--blue)"></i> Cadastrar Item da Farmácia';
+  document.getElementById('vetPharmSaveText').textContent='Salvar Item';
+  document.getElementById('vetPharmCancelBtn').style.display='none';
+}
+
+function clearVetPharmForm(){
+  ['vetPharm-name','vetPharm-emoji','vetPharm-tag','vetPharm-desc','vetPharm-price'].forEach(id=>document.getElementById(id).value='');
+}
+
+function deleteVetPharm(id){
+  const s=vetPharmCache.find(x=>x.id===id); if(!s)return;
+  showConfirm('Excluir item?',`Deseja excluir "${s.name}"?`, async ()=>{
+    try{ await deleteDoc(doc(db,'vetclinic_farmacia',id)); toast('Item excluído!','red'); }
+    catch(err){console.error(err);toast('Erro ao excluir.','red')}
+  });
+}
+
+// ---------- EQUIPE ----------
+function renderVetTeam(){
+  document.getElementById('vetTeamCount').textContent=`${vetTeamCache.length} membro(s)`;
+  const tb=document.getElementById('vetTeamBody');
+  const empty=document.getElementById('vetTeamEmpty');
+  if(!vetTeamCache.length){tb.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  tb.innerHTML=vetTeamCache.map(s=>{
+    const thumb=s.photo?`<img src="${s.photo}" style="width:42px;height:42px;object-fit:cover;border-radius:50%;border:1px solid var(--gray)"/>`:`<div class="prod-thumb-sm" style="border-radius:50%"><i class="fas fa-user"></i></div>`;
+    return`<tr>
+      <td>${thumb}</td>
+      <td class="pn">${s.name}</td>
+      <td style="font-size:.8rem">${s.role||'—'}</td>
+      <td><div class="act-btns">
+        <button class="act-btn edit" title="Editar" onclick="editVetTeam('${s.id}')"><i class="fas fa-edit"></i></button>
+        <button class="act-btn danger" title="Excluir" onclick="deleteVetTeam('${s.id}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+async function handleVetTeamImgUpload(input){
+  const file=input.files[0];
+  if(!file)return;
+  toast('Processando imagem...','');
+  try{
+    const data=await compressImage(file, 400, 0.75);
+    document.getElementById('vetTeam-imgdata').value=data;
+    document.getElementById('vetTeamImgEmoji').style.display='none';
+    const img=document.getElementById('vetTeamImgImg');
+    img.src=data; img.style.display='block';
+    toast('Foto carregada!','green');
+  }catch(err){
+    console.error(err);
+    toast('Erro ao processar imagem.','red');
+  }
+}
+
+async function saveVetTeam(){
+  const name=document.getElementById('vetTeam-name').value.trim();
+  const role=document.getElementById('vetTeam-role').value.trim();
+  const photo=document.getElementById('vetTeam-imgdata').value||null;
+  if(!name){toast('Digite o nome do membro!','red');return}
+  try{
+    if(editingVetTeamId){
+      await updateDoc(doc(db,'vetclinic_equipe',editingVetTeamId), {name,role,photo});
+      toast('Membro atualizado!','green');
+      cancelVetTeamEdit();
+    }else{
+      await addDoc(collection(db,'vetclinic_equipe'), {name,role,photo,createdAt:serverTimestamp()});
+      toast('Membro cadastrado!','green');
+      clearVetTeamForm();
+    }
+  }catch(err){console.error(err);toast('Erro ao salvar membro.','red')}
+}
+
+function editVetTeam(id){
+  const s=vetTeamCache.find(x=>x.id===id); if(!s)return;
+  editingVetTeamId=id;
+  document.getElementById('vetTeam-name').value=s.name;
+  document.getElementById('vetTeam-role').value=s.role||'';
+  document.getElementById('vetTeam-imgdata').value=s.photo||'';
+  if(s.photo){
+    document.getElementById('vetTeamImgEmoji').style.display='none';
+    const img=document.getElementById('vetTeamImgImg');
+    img.src=s.photo; img.style.display='block';
+  }
+  document.getElementById('vetTeamFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Membro';
+  document.getElementById('vetTeamSaveText').textContent='Salvar Alterações';
+  document.getElementById('vetTeamCancelBtn').style.display='flex';
+}
+
+function cancelVetTeamEdit(){
+  editingVetTeamId=null;
+  clearVetTeamForm();
+  document.getElementById('vetTeamFormTitle').innerHTML='<i class="fas fa-user-doctor" style="color:var(--blue)"></i> Cadastrar Membro da Equipe';
+  document.getElementById('vetTeamSaveText').textContent='Salvar Membro';
+  document.getElementById('vetTeamCancelBtn').style.display='none';
+}
+
+function clearVetTeamForm(){
+  document.getElementById('vetTeam-name').value='';
+  document.getElementById('vetTeam-role').value='';
+  document.getElementById('vetTeam-imgdata').value='';
+  document.getElementById('vetTeam-img').value='';
+  document.getElementById('vetTeamImgEmoji').style.display='block';
+  const img=document.getElementById('vetTeamImgImg');
+  img.style.display='none'; img.src='';
+}
+
+function deleteVetTeam(id){
+  const s=vetTeamCache.find(x=>x.id===id); if(!s)return;
+  showConfirm('Excluir membro?',`Deseja excluir "${s.name}" da equipe?`, async ()=>{
+    try{ await deleteDoc(doc(db,'vetclinic_equipe',id)); toast('Membro excluído!','red'); }
+    catch(err){console.error(err);toast('Erro ao excluir.','red')}
+  });
+}
 
 // ============================================================
 // RELÓGIO EM TEMPO REAL
@@ -1012,8 +1406,8 @@ function showPage(page,el){
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
   if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios',design:'Design do Site'};
-  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados em planilha',design:'Troque logo, banners e fotos de espécie'};
+  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios',design:'Design do Site',vetclinic:'Gestão Vet Clinic'};
+  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados em planilha',design:'Troque logo, banners e fotos de espécie',vetclinic:'Serviços, farmácia e equipe da clínica'};
   document.getElementById('pageTitle').textContent=titles[page]||page;
   document.getElementById('pageSubtitle').textContent=subs[page]||'';
   closeSidebar();
@@ -1021,13 +1415,40 @@ function showPage(page,el){
   if(page==='produtos')renderProdList();
   if(page==='estoque')renderEstoque();
   if(page==='pedidos')renderPedidos();
-  if(page==='relatorio')renderRelatorio();
   if(page==='design')renderDesignPage();
+  if(page==='vetclinic'){renderVetSvc();renderVetPharm();renderVetTeam();}
 }
 
 // ============================================================
 // DASHBOARD
 // ============================================================
+function renderWeekChart(){
+  const el=document.getElementById('dashWeekChart');
+  if(!el)return;
+  // Monta os últimos 7 dias (mais antigo -> mais recente)
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    days.push({date:d, label:d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.',''), key:d.toLocaleDateString('pt-BR')});
+  }
+  const counts=days.map(d=>ordersCache.filter(o=>o.date===d.key).length);
+  const max=Math.max(...counts,1);
+  document.getElementById('dashChartQtd').textContent=counts.reduce((a,b)=>a+b,0)+' pedido(s) na semana';
+
+  el.innerHTML=`
+    <div style="display:flex;align-items:flex-end;gap:8px;height:120px">
+      ${days.map((d,i)=>{
+        const h=Math.max(6, Math.round((counts[i]/max)*100));
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">
+          <span style="font-size:.68rem;font-weight:800;color:var(--navy)">${counts[i]||''}</span>
+          <div style="width:100%;max-width:28px;height:${h}%;background:${counts[i]>0?'var(--blue)':'var(--gray)'};border-radius:6px 6px 2px 2px;transition:height .4s ease"></div>
+          <span style="font-size:.65rem;color:var(--gray-dark);font-weight:700;text-transform:capitalize">${d.label}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
 function renderDashboard(){
   const all=getAllProds();
   const esgotados=all.filter(p=>stockCache[p.id]===true);
@@ -1063,10 +1484,22 @@ function renderDashboard(){
     de.innerHTML=esgotados.slice(0,6).map(p=>`
       <div class="dash-item">
         <div class="dash-item-e">${p.e}</div>
-        <div class="dash-item-info"><div class="di-name">${p.name}</div><div class="di-sub">${CAT_LABEL[p.cat]||p.cat}</div></div>
+        <div class="dash-item-info"><div class="di-name">${p.name}</div><div class="di-sub">${catLabel(p.cat)}</div></div>
         <span style="font-size:.65rem;font-weight:800;color:var(--red);background:var(--red-pale);padding:3px 8px;border-radius:50px;flex-shrink:0">ESGOTADO</span>
       </div>`).join('');
   }
+
+  // Alerta de reposição (separado, visualmente destacado)
+  const alertBox=document.getElementById('restockAlert');
+  if(esgotados.length>0){
+    alertBox.style.display='block';
+    document.getElementById('restockCount').textContent=esgotados.length;
+  }else{
+    alertBox.style.display='none';
+  }
+
+  // Gráfico — pedidos nos últimos 7 dias
+  renderWeekChart();
 
   // Pedidos
   const dp=document.getElementById('dashPedidos');
@@ -1218,10 +1651,25 @@ async function saveProduct(){
   const price=parseFloat(document.getElementById('f-pprice').value);
   const old=parseFloat(document.getElementById('f-pold').value)||null;
   const tag=document.getElementById('f-ptag').value||null;
-  const cat=document.getElementById('f-pcat').value;
+  let cat=document.getElementById('f-pcat').value;
   const species=document.getElementById('f-pspecies').value;
   const e=document.getElementById('f-pemoji').value.trim()||'📦';
   const imgUrl=document.getElementById('f-pimgdata').value||null;
+
+  // Se escolheu criar uma categoria nova, gera o slug e salva antes de continuar
+  if(cat==='__nova__'){
+    const newCatName=document.getElementById('f-pcat-new').value.trim();
+    if(!newCatName){toast('Digite o nome da nova categoria!','red');return}
+    const slug='custom_'+newCatName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    try{
+      await setDoc(doc(db,'categorias_customizadas',slug), {label:newCatName});
+    }catch(err){
+      console.error('Erro ao criar categoria:', err);
+      toast('Erro ao criar categoria nova.','red');
+      return;
+    }
+    cat=slug;
+  }
 
   if(!name||!brand||!price||!cat||!species){toast('Preencha todos os campos obrigatórios!','red');return}
 
@@ -1297,6 +1745,8 @@ function clearForm(){
   ['f-pname','f-pbrand','f-pprice','f-pold','f-pemoji'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-ptag').value='';
   document.getElementById('f-pcat').value='';
+  document.getElementById('f-pcat-new').value='';
+  document.getElementById('f-pcat-new').style.display='none';
   document.getElementById('f-pspecies').value='';
   document.getElementById('emojiPreview').textContent='📦';
   document.getElementById('f-pimgdata').value='';
@@ -1326,7 +1776,7 @@ function renderProdList(){
         ${thumbHtml}
         <div><div class="pn">${p.name}</div><div class="pb">${p.brand} ${p.custom?'<span style="color:var(--blue);font-size:.62rem;font-weight:800">● PERSONALIZADO</span>':''}</div></div>
       </div></td>
-      <td><span class="cat-pill ${p.custom?'custom':''}">${CAT_LABEL[p.cat]||p.cat}</span></td>
+      <td><span class="cat-pill ${p.custom?'custom':''}">${catLabel(p.cat)}</span></td>
       <td style="font-weight:900;color:var(--blue);white-space:nowrap">
         ${p.old?`<span style="font-size:.7rem;color:var(--gray-dark);text-decoration:line-through;display:block">${fmt(p.old)}</span>`:''}
         ${fmt(p.price)}
@@ -1391,7 +1841,7 @@ function renderEstoque(){
         <div class="prod-thumb-sm">${p.e}</div>
         <div class="prod-cell-info"><div class="pn">${p.name}</div><div class="pb">${p.brand}</div></div>
       </div></td>
-      <td><span class="cat-pill">${CAT_LABEL[p.cat]||p.cat}</span></td>
+      <td><span class="cat-pill">${catLabel(p.cat)}</span></td>
       <td style="font-size:.78rem">${SP_LABEL[p.species]||p.species}</td>
       <td style="font-weight:900;color:var(--blue)">${fmt(p.price)}</td>
       <td>
@@ -1401,9 +1851,12 @@ function renderEstoque(){
         </div>
       </td>
       <td>
-        <div class="stock-toggle">
-          <button class="stg-btn ${ok?'active-ok':''}" onclick="setStatus('${p.id}','disponivel')">✓ Disponível</button>
-          <button class="stg-btn ${!ok?'active-no':''}" onclick="setStatus('${p.id}','esgotado')">✕ Esgotado</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="stock-toggle">
+            <button class="stg-btn ${ok?'active-ok':''}" onclick="setStatus('${p.id}','disponivel')">✓ Disponível</button>
+            <button class="stg-btn ${!ok?'active-no':''}" onclick="setStatus('${p.id}','esgotado')">✕ Esgotado</button>
+          </div>
+          ${p.custom?`<button class="act-btn danger" title="Excluir produto" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
         </div>
       </td>
     </tr>`;
@@ -1491,31 +1944,11 @@ function clearOrders(){
 }
 
 // ============================================================
-// RELATÓRIO
-// ============================================================
-function renderRelatorio(){
-  const all=getAllProds();
-  document.getElementById('relCount').textContent=`${all.length} produtos`;
-  document.getElementById('relBody').innerHTML=all.map((p,i)=>{
-    const ok=isOk(p.id);
-    return`<tr>
-      <td style="font-size:.72rem;color:var(--gray-dark)">${i+1}</td>
-      <td><div style="display:flex;align-items:center;gap:7px"><span style="font-size:1.15rem">${p.e}</span><span style="font-size:.78rem;font-weight:700">${p.name}</span></div></td>
-      <td style="font-size:.75rem">${p.brand}</td>
-      <td><span class="cat-pill">${CAT_LABEL[p.cat]||p.cat}</span></td>
-      <td style="font-weight:900;color:var(--blue)">${fmt(p.price)}</td>
-      <td style="font-size:.7rem"><span style="padding:2px 8px;border-radius:50px;font-weight:800;background:${p.custom?'#f3e8ff':'var(--off)'};color:${p.custom?'#7c3aed':'var(--gray-dark)'}">${p.custom?'Personalizado':'Padrão'}</span></td>
-      <td><span style="font-size:.7rem;font-weight:800;color:${ok?'var(--green)':'var(--red)'};background:${ok?'var(--green-pale)':'var(--red-pale)'};padding:3px 9px;border-radius:50px">${ok?'Disponível':'Esgotado'}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-// ============================================================
 // EXPORTS
 // ============================================================
 function exportEstoque(){
   const rows=[['#','Produto','Marca','Categoria','Espécie','Preço (R$)','Origem','Status']];
-  getAllProds().forEach((p,i)=>rows.push([i+1,p.name,p.brand,CAT_LABEL[p.cat]||p.cat,SP_LABEL[p.species]||p.species,p.price.toFixed(2),p.custom?'Personalizado':'Padrão',isOk(p.id)?'Disponível':'Esgotado']));
+  getAllProds().forEach((p,i)=>rows.push([i+1,p.name,p.brand,catLabel(p.cat),SP_LABEL[p.species]||p.species,p.price.toFixed(2),p.custom?'Personalizado':'Padrão',isOk(p.id)?'Disponível':'Esgotado']));
   downloadCSV(rows,'agrocampo_estoque_'+today()+'.csv');
   toast('Planilha de estoque exportada!','green');
 }
@@ -1535,7 +1968,7 @@ function exportEsgotados(){
   const esg=getAllProds().filter(p=>stockCache[p.id]===true);
   if(!esg.length){toast('Nenhum produto esgotado!','red');return}
   const rows=[['#','Produto','Marca','Categoria','Preço (R$)']];
-  esg.forEach((p,i)=>rows.push([i+1,p.name,p.brand,CAT_LABEL[p.cat]||p.cat,p.price.toFixed(2)]));
+  esg.forEach((p,i)=>rows.push([i+1,p.name,p.brand,catLabel(p.cat),p.price.toFixed(2)]));
   downloadCSV(rows,'agrocampo_esgotados_'+today()+'.csv');
   toast('Lista de esgotados exportada!','green');
 }
@@ -1591,7 +2024,7 @@ document.addEventListener('keydown',e=>{
 Object.assign(window, {
   togglePassVis, doLogin, doLogout,
   openSidebar, closeSidebar,
-  showPage, setEstoqueCat,
+  showPage, setEstoqueCat, handleCatSelectChange,
   saveProduct, cancelEdit, editProduct, deleteProduct, toggleStock,
   setStatus, setAllAvailable,
   renderProdList, renderEstoque,
@@ -1599,6 +2032,9 @@ Object.assign(window, {
   exportOrders, exportEstoque, exportEsgotados,
   removeImg, handleImgUpload,
   handleDesignUpload, removeDesignImg,
+  saveVetSvc, editVetSvc, cancelVetSvcEdit, deleteVetSvc,
+  saveVetPharm, editVetPharm, cancelVetPharmEdit, deleteVetPharm,
+  saveVetTeam, editVetTeam, cancelVetTeamEdit, deleteVetTeam, handleVetTeamImgUpload,
   closeConfirm
 });
 
