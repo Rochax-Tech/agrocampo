@@ -261,7 +261,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
     <h2>Cuidado completo para o seu pet</h2>
     <p>Da consulta de rotina aos procedimentos preventivos, cuidamos da saúde do seu animal em cada etapa.</p>
   </div>
-  <div class="svc-grid">
+  <div class="svc-grid" id="svcGrid">
     <div class="svc-card rv">
       <div class="svc-icon"><i class="fas fa-stethoscope"></i></div>
       <h3>Consulta Veterinária</h3>
@@ -315,7 +315,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
       <h2>Vacinas e Preventivos</h2>
       <p>Proteja seu pet com as principais vacinas disponíveis, aplicadas por profissionais.</p>
     </div>
-    <div class="vac-grid">
+    <div class="vac-grid" id="pharmGrid">
       <div class="vac-card rv">
         <div class="vac-thumb"><span class="vac-badge">Essencial</span>💉</div>
         <div class="vac-body">
@@ -390,7 +390,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
     <span class="sec-label">Nossa Equipe</span>
     <h2>Profissionais dedicados ao seu pet</h2>
   </div>
-  <div class="team-grid">
+  <div class="team-grid" id="teamGrid">
     <div class="team-card rv">
       <div class="team-photo"><img src="images/especie-cachorro.jpg" alt="Veterinário"/></div>
       <h4>Dr. Ricardo Alves</h4>
@@ -470,7 +470,7 @@ footer{background:var(--black);color:white;padding:56px 32px 22px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDjBc97cakzwBP1gGMJ2OXlLo0g5ovw_8U",
@@ -496,6 +496,66 @@ onSnapshot(collection(db,'design'), snap => {
     }
   });
 }, err => console.error('Erro ao ouvir imagens de design:', err));
+
+// ============================================================
+// SERVIÇOS, FARMÁCIA E EQUIPE — dinâmico via painel admin
+// (guarda o conteúdo estático atual como padrão, caso nada seja cadastrado ainda)
+// ============================================================
+const WPP = '5527988840319';
+const svcGridEl = document.getElementById('svcGrid');
+const pharmGridEl = document.getElementById('pharmGrid');
+const teamGridEl = document.getElementById('teamGrid');
+const svcFallback = svcGridEl ? svcGridEl.innerHTML : '';
+const pharmFallback = pharmGridEl ? pharmGridEl.innerHTML : '';
+const teamFallback = teamGridEl ? teamGridEl.innerHTML : '';
+
+onSnapshot(query(collection(db,'vetclinic_servicos'), orderBy('createdAt','asc')), snap => {
+  if(!svcGridEl) return;
+  if(snap.empty){ svcGridEl.innerHTML = svcFallback; return; }
+  svcGridEl.innerHTML = snap.docs.map(d=>{
+    const s=d.data();
+    const msg=encodeURIComponent(`Olá! Gostaria de agendar: ${s.name}.`);
+    return`<div class="svc-card rv in">
+      <div class="svc-top"><div class="svc-emoji">${s.emoji||'🩺'}</div><div><h3>${s.name}</h3><p>${s.desc||''}</p></div></div>
+      <div class="svc-body">
+        ${s.price?`<span class="svc-price">${s.price}</span>`:''}
+        <a href="https://wa.me/${WPP}?text=${msg}" target="_blank" class="btn-svc-wpp"><i class="fab fa-whatsapp"></i> Agendar</a>
+      </div>
+    </div>`;
+  }).join('');
+}, err => console.error('Erro ao ouvir serviços:', err));
+
+onSnapshot(query(collection(db,'vetclinic_farmacia'), orderBy('createdAt','asc')), snap => {
+  if(!pharmGridEl) return;
+  if(snap.empty){ pharmGridEl.innerHTML = pharmFallback; return; }
+  pharmGridEl.innerHTML = snap.docs.map(d=>{
+    const s=d.data();
+    const msg=encodeURIComponent(`Olá! Gostaria de agendar: ${s.name}.`);
+    return`<div class="vac-card rv in">
+      <div class="vac-thumb">${s.tag?`<span class="vac-badge">${s.tag}</span>`:''}${s.emoji||'💉'}</div>
+      <div class="vac-body">
+        <div class="vac-name">${s.name}</div>
+        <div class="vac-desc">${s.desc||''}</div>
+        ${s.price?`<span class="vac-price">${s.price}</span>`:''}
+        <a href="https://wa.me/${WPP}?text=${msg}" target="_blank" class="btn-vac"><i class="fab fa-whatsapp"></i> Agendar</a>
+      </div>
+    </div>`;
+  }).join('');
+}, err => console.error('Erro ao ouvir farmácia:', err));
+
+onSnapshot(query(collection(db,'vetclinic_equipe'), orderBy('createdAt','asc')), snap => {
+  if(!teamGridEl) return;
+  if(snap.empty){ teamGridEl.innerHTML = teamFallback; return; }
+  teamGridEl.innerHTML = snap.docs.map(d=>{
+    const s=d.data();
+    const photo=s.photo?`<img src="${s.photo}" alt="${s.name}"/>`:`<div style="width:100%;height:100%;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--gray-mid)"><i class="fas fa-user"></i></div>`;
+    return`<div class="team-card rv in">
+      <div class="team-photo">${photo}</div>
+      <h4>${s.name}</h4>
+      <span>${s.role||''}</span>
+    </div>`;
+  }).join('');
+}, err => console.error('Erro ao ouvir equipe:', err));
 
 function initRv(){
   const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.1});
