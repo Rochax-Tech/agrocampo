@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Agrocampo – Painel Administrativo</title>
+<link rel="icon" type="image/jpeg" href="images/logo-agrocampo.jpeg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -312,7 +313,7 @@ tr:hover td{background:#fafbfd}
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sb-logo">
-      <img src="images/logo-agrocampo.jpeg" alt="Agrocampo" style="height:34px;width:auto;background:white;border-radius:6px;padding:3px 6px"/>
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" alt="Agrocampo" id="sidebarLogo" style="height:34px;width:auto;background:white;border-radius:6px;padding:3px 6px"/>
       <div><div class="sb-logo-name">Agrocampo</div><div class="sb-logo-sub">Painel Admin</div></div>
     </div>
 
@@ -1250,6 +1251,10 @@ onSnapshot(collection(db,'design'), snap => {
   const dc = {};
   snap.forEach(d => { dc[d.id] = d.data().data; });
   designCache = dc;
+  if(dc.logo){
+    const sb=document.getElementById('sidebarLogo');
+    if(sb) sb.src=dc.logo;
+  }
   if(isLoggedIn && currentPage==='design') renderDesignPage();
 }, err => console.error('Erro ao ouvir design:', err));
 
