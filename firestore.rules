@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Só existe cadastro de usuário pelo Firebase Console (não há tela de
+    // signup no admin.html), então "autenticado" já equivale a "administrador"
+    // hoje. Se no futuro outras contas forem criadas para outros fins, trocar
+    // por uma checagem de custom claim (ex.: request.auth.token.admin == true).
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Catálogo e conteúdo dos sites: leitura pública, escrita só do admin.
+    match /produtos_customizados/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /categorias_customizadas/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /estoque/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /design/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /vetclinic_servicos/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /vetclinic_farmacia/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /vetclinic_equipe/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Pedidos: qualquer cliente pode criar o próprio pedido no checkout,
+    // mas só o admin pode listar, atualizar status ou excluir.
+    match /pedidos/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Qualquer outra coleção fica bloqueada por padrão.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
