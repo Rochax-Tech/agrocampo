@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Agrocampo – Painel Administrativo</title>
-<link rel="icon" type="image/jpeg" href="images/logo-agrocampo.jpeg"/>
+<link rel="icon" type="image/jpeg" href="/images/logo-agrocampo.jpeg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -266,6 +266,8 @@ tr:hover td{background:#fafbfd}
   .topbar-right .tb-btn span{display:none}
 }
 </style>
+  <script type="module" crossorigin src="/assets/admin-n2CLtkuq.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/firebase-BvAgtE82.js">
 </head>
 <body>
 
@@ -320,6 +322,7 @@ tr:hover td{background:#fafbfd}
     <div class="sb-section">Principal</div>
     <div class="sb-item active" onclick="showPage('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
     <div class="sb-item" onclick="showPage('produtos',this)"><i class="fas fa-box-open"></i> Produtos <span class="sb-badge green" id="badgeProds">0</span></div>
+    <div class="sb-item" onclick="showPage('categorias',this)"><i class="fas fa-tags"></i> Categorias</div>
     <div class="sb-item" onclick="showPage('estoque',this)"><i class="fas fa-warehouse"></i> Estoque</div>
     <div class="sb-item" onclick="showPage('pedidos',this)"><i class="fas fa-shopping-bag"></i> Pedidos <span class="sb-badge" id="badgeOrders">0</span></div>
 
@@ -507,7 +510,7 @@ tr:hover td{background:#fafbfd}
           <div class="form-grid" style="margin-bottom:14px">
             <div class="fg">
               <label>Categoria *</label>
-              <select id="f-pcat" onchange="handleCatSelectChange(this)">
+              <select id="f-pcat">
                 <option value="">Selecione...</option>
                 <option value="racao">🥩 Ração</option>
                 <option value="petisco">🦴 Petiscos e Ossos</option>
@@ -524,9 +527,8 @@ tr:hover td{background:#fafbfd}
                 <option value="areia">🏖️ Areias e Banheiros</option>
                 <option value="jardinagem">🌱 Jardinagem e Cultivo</option>
                 <optgroup label="Categorias personalizadas" id="customCatGroup"></optgroup>
-                <option value="__nova__">➕ Criar nova categoria...</option>
               </select>
-              <input type="text" id="f-pcat-new" placeholder="Digite o nome da nova categoria" style="display:none;margin-top:8px;width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:10px 12px;font-size:.85rem"/>
+              <span class="hint">Não achou a categoria? <a href="#" onclick="showPage('categorias');return false">Crie uma nova aqui</a>.</span>
             </div>
             <div class="fg">
               <label>Espécie *</label>
@@ -563,6 +565,19 @@ tr:hover td{background:#fafbfd}
               </div>
             </div>
             <input type="hidden" id="f-pimgdata"/>
+          </div>
+
+          <div class="fg" style="margin-bottom:14px">
+            <label>Validade do Produto</label>
+            <div style="display:flex;align-items:center;gap:18px;margin:4px 0 8px">
+              <label style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:.85rem;cursor:pointer;color:var(--black)">
+                <input type="radio" name="f-pval-mode" id="f-pval-none" value="none" checked onchange="toggleValidadeField()" style="width:auto;padding:0;border:none;background:none;accent-color:var(--blue)"/> Sem validade
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:.85rem;cursor:pointer;color:var(--black)">
+                <input type="radio" name="f-pval-mode" id="f-pval-has" value="has" onchange="toggleValidadeField()" style="width:auto;padding:0;border:none;background:none;accent-color:var(--blue)"/> Adicionar validade
+              </label>
+            </div>
+            <input type="date" id="f-pvalidade" style="display:none;max-width:220px"/>
           </div>
 
           <div class="fg" style="margin-bottom:14px">
@@ -620,6 +635,50 @@ tr:hover td{background:#fafbfd}
         </div>
       </div>
 
+      <!-- ===== CATEGORIAS ===== -->
+      <div class="page" id="page-categorias">
+        <div class="prod-form-wrap" style="margin-bottom:20px">
+          <h3 id="catFormTitle"><i class="fas fa-plus-circle" style="color:var(--blue)"></i> Nova Categoria</h3>
+          <input type="hidden" id="cat-editing-slug"/>
+          <div class="form-grid three" style="margin-bottom:14px;align-items:end">
+            <div class="fg">
+              <label>Nome da Categoria *</label>
+              <input type="text" id="cat-label" placeholder="Ex: Roupas para Cachorro"/>
+            </div>
+            <div class="fg">
+              <label>Ícone / Emoji</label>
+              <input type="text" id="cat-emoji" placeholder="📦" maxlength="4"/>
+            </div>
+            <div class="fg" style="display:flex;gap:8px">
+              <button class="btn-form-save" onclick="saveCategoria()"><i class="fas fa-check"></i> <span id="catSaveText">Salvar Categoria</span></button>
+              <button class="btn-form-cancel" id="catCancelBtn" style="display:none" onclick="cancelCategoriaEdit()"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <p class="hint">Categorias personalizadas ficam disponíveis no formulário de produto e aparecem no site.</p>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-head"><h3>Categorias do Sistema</h3><span class="table-count">Fixas — não podem ser editadas ou excluídas</span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Ícone</th><th>Nome</th><th>Produtos</th></tr></thead>
+            <tbody id="catBuiltinBody"></tbody>
+          </table></div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:20px">
+          <div class="table-head"><h3>Categorias Personalizadas</h3><span class="table-count" id="catCustomCount"></span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Ícone</th><th>Nome</th><th>Produtos</th><th>Ações</th></tr></thead>
+            <tbody id="catCustomBody"></tbody>
+          </table></div>
+          <div id="catCustomEmpty" class="empty-state" style="display:none">
+            <i class="fas fa-tags"></i>
+            <h4>Nenhuma categoria personalizada</h4>
+            <p>Crie categorias adicionais usando o formulário acima.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- ===== ESTOQUE ===== -->
       <div class="page" id="page-estoque">
         <div class="toolbar">
@@ -651,7 +710,7 @@ tr:hover td{background:#fafbfd}
           <div class="tbl-wrap">
             <table>
               <thead><tr>
-                <th>Produto</th><th>Categoria</th><th>Espécie</th><th>Preço</th><th>Status no Site</th><th>Ação</th>
+                <th>Produto</th><th>Categoria</th><th>Espécie</th><th>Preço</th><th>Qtd. / Mín.</th><th>Status no Site</th><th>Ação</th>
               </tr></thead>
               <tbody id="estoqueBody"></tbody>
             </table>
@@ -671,7 +730,7 @@ tr:hover td{background:#fafbfd}
         <div class="table-wrap">
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Pedido</th><th>Data</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Entrega</th><th>Status</th><th>Ações</th></tr></thead>
+              <thead><tr><th>Pedido</th><th>Data</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Entrega</th><th>Status</th><th>Ações</th></tr></thead>
               <tbody id="pedidosBody"></tbody>
             </table>
           </div>
@@ -972,1282 +1031,16 @@ tr:hover td{background:#fafbfd}
   </div>
 </div>
 
+<!-- DETALHE DO PEDIDO -->
+<div class="modal-mask" id="orderDetailMask">
+  <div class="modal-box" style="max-width:640px">
+    <div class="modal-hd"><h3 id="odTitle">Pedido</h3><button class="modal-close" onclick="closeOrderDetail()">✕</button></div>
+    <div class="modal-bd" id="odBody" style="max-height:70vh;overflow-y:auto"></div>
+    <div class="modal-ft" id="odActions" style="padding:0 20px 18px"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastTxt"></span></div>
 
-<script type="module">
-// ============================================================
-// FIREBASE
-// ============================================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import {
-  getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, addDoc, updateDoc,
-  serverTimestamp, query, orderBy, getDocs, writeBatch
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-import {
-  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDRAP8rrxqkb1NbrASpD0xZU788MLnk5NE",
-  authDomain: "agro-campo-4420f.firebaseapp.com",
-  projectId: "agro-campo-4420f",
-  storageBucket: "agro-campo-4420f.firebasestorage.app",
-  messagingSenderId: "828728775395",
-  appId: "1:828728775395:web:50d75a53cfcfa13c4febd6"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-let isLoggedIn = false;
-
-// ============================================================
-// PRODUTOS BASE (fixos, do site original)
-// ============================================================
-const BASE_PRODS = [
-  {id:'1',name:'Ração Golden Special Adulto 15kg',brand:'Golden',cat:'racao',species:'cachorro',e:'🥩',price:129.90,old:159.90,tag:'OFERTA',custom:false},
-  {id:'2',name:'Ração Royal Canin Gato Adulto 4kg',brand:'Royal Canin',cat:'racao',species:'gato',e:'😺',price:89.90,old:null,tag:null,custom:false},
-  {id:'3',name:'Sachê Pedigree Carne e Frango 100g',brand:'Pedigree',cat:'sache',species:'cachorro',e:'🥫',price:4.90,old:6.50,tag:'PROMO',custom:false},
-  {id:'4',name:'Sachê Whiskas Atum para Gatos 85g',brand:'Whiskas',cat:'sache',species:'gato',e:'🐟',price:3.90,old:null,tag:null,custom:false},
-  {id:'5',name:'Brinquedo Mordedor Natural Pet 30cm',brand:'PetFun',cat:'brinquedo',species:'cachorro',e:'🦷',price:24.90,old:null,tag:null,custom:false},
-  {id:'6',name:'Brinquedo Kong Classic Médio',brand:'Kong',cat:'brinquedo',species:'cachorro',e:'🎾',price:49.90,old:69.90,tag:'OFERTA',custom:false},
-  {id:'7',name:'Shampoo Pet Society Neutro 500ml',brand:'Pet Society',cat:'higiene',species:'cachorro',e:'🛁',price:22.90,old:null,tag:null,custom:false},
-  {id:'8',name:'Antipulgas Frontline Plus Cão Até 10kg',brand:'Frontline',cat:'medicamento',species:'cachorro',e:'💊',price:79.90,old:null,tag:null,custom:false},
-  {id:'9',name:'Ração para Peixes Tropical Colour 40g',brand:'Tropical',cat:'racao',species:'peixe',e:'🐠',price:12.90,old:null,tag:null,custom:false},
-  {id:'10',name:'Aquário Kit Completo 20 Litros',brand:'Aquatek',cat:'aquario',species:'peixe',e:'🐟',price:189.00,old:220.00,tag:'NOVO',custom:false},
-  {id:'11',name:'Coleira Nylon Ajustável Colorida M',brand:'PetStyle',cat:'coleira',species:'cachorro',e:'🦮',price:18.90,old:null,tag:null,custom:false},
-  {id:'12',name:'Ração Golden Gatos Castrados 3kg',brand:'Golden',cat:'racao',species:'gato',e:'🐱',price:59.90,old:74.90,tag:'PROMO',custom:false},
-  {id:'13',name:'Petisco Ossinho Bifinho Carne 500g',brand:'PetBiscoito',cat:'petisco',species:'cachorro',e:'🦴',price:14.90,old:null,tag:null,custom:false},
-  {id:'14',name:"Ração Hill's Aves Domésticas 1kg",brand:"Hill's",cat:'racao',species:'passaro',e:'🦜',price:39.90,old:null,tag:null,custom:false},
-  {id:'15',name:'Areia Sanitária para Gatos 4kg',brand:'PetFresh',cat:'areia',species:'gato',e:'🏖️',price:29.90,old:34.90,tag:'PROMO',custom:false},
-  {id:'16',name:'Caminha Pelúcia Redonda P',brand:'Confort Pet',cat:'cama',species:'cachorro',e:'🛏️',price:59.90,old:null,tag:'NOVO',custom:false},
-  {id:'17',name:'Comedouro Inox Antiderrapante M',brand:'PetWare',cat:'alimentacao',species:'cachorro',e:'🥣',price:32.90,old:null,tag:null,custom:false},
-  {id:'18',name:'Bolsa de Transporte Soft Pet M',brand:'CarryPet',cat:'transporte',species:'cachorro',e:'🧳',price:129.00,old:160.00,tag:'OFERTA',custom:false},
-  {id:'19',name:'Ração Hamster Roedor Gourmet 500g',brand:'RoeGold',cat:'racao',species:'roedor',e:'🐹',price:19.90,old:null,tag:null,custom:false},
-  {id:'20',name:'Repelente Spray Antipulgas 200ml',brand:'BioVet',cat:'medicamento',species:'cachorro',e:'🪲',price:34.90,old:null,tag:null,custom:false},
-  {id:'21',name:'Pá de Jardinagem Cabo Madeira',brand:'AgroFerra',cat:'jardinagem',species:'todos',e:'🛠️',price:39.90,old:null,tag:null,custom:false},
-  {id:'22',name:'Regador Galvanizado 5 Litros',brand:'AgroFerra',cat:'jardinagem',species:'todos',e:'🪣',price:54.90,old:69.90,tag:'OFERTA',custom:false},
-  {id:'23',name:'Luva de Jardinagem Reforçada',brand:'GreenHand',cat:'jardinagem',species:'todos',e:'🧤',price:22.90,old:null,tag:null,custom:false},
-  {id:'24',name:'Tesoura de Poda Profissional',brand:'GreenHand',cat:'jardinagem',species:'todos',e:'✂️',price:44.90,old:null,tag:'NOVO',custom:false},
-  {id:'25',name:'Vaso de Cerâmica para Mudas',brand:'Terra Viva',cat:'jardinagem',species:'todos',e:'🪴',price:29.90,old:34.90,tag:'PROMO',custom:false},
-  {id:'26',name:'Adubo Orgânico para Plantas 1kg',brand:'Terra Viva',cat:'jardinagem',species:'todos',e:'🌱',price:18.90,old:null,tag:null,custom:false},
-];
-
-// ============================================================
-// CACHES REATIVOS (populados via Firestore em tempo real)
-// ============================================================
-let stockCache = {};       // { id: true } => esgotado
-let customCache = [];      // produtos cadastrados no painel
-let ordersCache = [];      // pedidos recebidos do site
-let designCache = {};      // { logo: base64, banner-boas-vindas: base64, ... }
-
-function isOk(id){ return stockCache[id] !== true; }
-function fmt(v){return'R$ '+(+v).toFixed(2).replace('.',',')}
-function today(){const d=new Date();return`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`}
-// getAllProds() agora retorna SOMENTE produtos do Firestore (customCache).
-// BASE_PRODS continua existindo apenas como fonte para o botão "Importar Produtos de Demonstração" —
-// depois de importado, cada produto vira um documento real, editável e excluível como qualquer outro.
-function getAllProds(){return[...customCache]}
-
-async function importDemoProducts(){
-  showConfirm(
-    'Importar produtos de demonstração?',
-    `Isso vai criar ${BASE_PRODS.length} produtos no Firebase (editáveis e excluíveis). Use uma vez só — clicar de novo duplica os produtos.`,
-    async ()=>{
-      const btn=document.getElementById('btnImportDemo');
-      if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Importando...'}
-      try{
-        for(const p of BASE_PRODS){
-          await addDoc(collection(db,'produtos_customizados'), {
-            name:p.name, brand:p.brand, price:p.price, old:p.old||null, tag:p.tag||null,
-            cat:p.cat, species:p.species, e:p.e, imgUrl:null, createdAt:serverTimestamp()
-          });
-        }
-        toast(`${BASE_PRODS.length} produtos importados com sucesso!`,'green');
-      }catch(err){
-        console.error('Erro ao importar produtos:', err);
-        toast('Erro ao importar produtos. Tente novamente.','red');
-      }
-      if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-cloud-upload-alt"></i> Importar Produtos de Demonstração'}
-    }
-  );
-}
-
-const CAT_LABEL={racao:'Ração',petisco:'Petisco',sache:'Sachê',brinquedo:'Brinquedo',higiene:'Higiene',medicamento:'Farmácia',aquario:'Aquário',coleira:'Coleira',cama:'Cama',alimentacao:'Comedouro',transporte:'Transporte',roupa:'Roupa',areia:'Areia',jardinagem:'Jardinagem'};
-let customCatsCache = {}; // { slug: 'Nome digitado' }
-function catLabel(cat){ return CAT_LABEL[cat] || customCatsCache[cat] || cat; }
-
-onSnapshot(collection(db,'categorias_customizadas'), snap => {
-  const c = {};
-  snap.forEach(d => { c[d.id] = d.data().label; });
-  customCatsCache = c;
-  const group=document.getElementById('customCatGroup');
-  if(group){
-    group.innerHTML = Object.entries(c).map(([slug,label])=>`<option value="${slug}">${label}</option>`).join('');
-  }
-  if(isLoggedIn){ if(currentPage==='produtos')renderProdList(); if(currentPage==='estoque')renderEstoque(); }
-}, err => console.error('Erro ao ouvir categorias personalizadas:', err));
-
-function handleCatSelectChange(select){
-  document.getElementById('f-pcat-new').style.display = select.value==='__nova__' ? 'block' : 'none';
-}
-const SP_LABEL={cachorro:'🐶 Cachorro',gato:'🐱 Gato',peixe:'🐠 Peixe',passaro:'🦜 Pássaro',roedor:'🐹 Roedor',reptil:'🐢 Réptil',todos:'🐾 Todos'};
-
-// ============================================================
-// IMPORTAR PRODUTOS VIA PLANILHA (CSV — abre direto no Excel)
-// ============================================================
-// IMPORTAR PRODUTOS VIA PLANILHA (.xlsx real — igual ao padrão ESD Gestão)
-// ============================================================
-function downloadTemplateXLSX(){
-  const wb = XLSX.utils.book_new();
-
-  // Aba principal — limpa, só com o que precisa preencher
-  const mainData = [
-    ['Nome','Marca','Categoria','Preço','Tag','Estoque'],
-    ['Ração Golden Adulto 15kg','Golden','Ração',129.90,'OFERTA','Disponível'],
-    ['Brinquedo Mordedor Natural','PetFun','Brinquedo',24.90,'','Disponível'],
-  ];
-  const wsMain = XLSX.utils.aoa_to_sheet(mainData);
-  wsMain['!cols'] = [{wch:28},{wch:16},{wch:18},{wch:12},{wch:12},{wch:14}];
-  XLSX.utils.book_append_sheet(wb, wsMain, 'Modelo');
-
-  // Aba de referência — opções válidas, separada para não poluir a principal
-  const catRows = [['Categorias Válidas']];
-  Object.values(CAT_LABEL).forEach(v=>catRows.push([v]));
-  Object.values(customCatsCache).forEach(v=>catRows.push([v]));
-  catRows.push(['']);
-  catRows.push(['Tags Válidas (opcional)']);
-  ['OFERTA','PROMO','NOVO'].forEach(v=>catRows.push([v]));
-  catRows.push(['']);
-  catRows.push(['Estoque']);
-  catRows.push(['Disponível']);
-  catRows.push(['Esgotado']);
-  const wsRef = XLSX.utils.aoa_to_sheet(catRows);
-  wsRef['!cols'] = [{wch:26}];
-  XLSX.utils.book_append_sheet(wb, wsRef, 'Opções Válidas');
-
-  XLSX.writeFile(wb, 'modelo_produtos_agrocampo.xlsx');
-  toast('Modelo baixado! Preencha e depois use "Importar Planilha".','green');
-}
-
-let pendingImportRows = [];
-
-function handleImportFile(input){
-  const file=input.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const data=new Uint8Array(e.target.result);
-      const wb=XLSX.read(data, {type:'array'});
-      const wsName=wb.SheetNames.find(n=>n.toLowerCase()==='modelo') || wb.SheetNames[0];
-      const ws=wb.Sheets[wsName];
-      const rows=XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-      if(rows.length<2){toast('Planilha vazia ou sem produtos.','red');return}
-
-      const header=rows[0].map(h=>String(h).toLowerCase().trim());
-      const dataRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()!==''));
-
-      pendingImportRows = dataRows.map(cols=>{
-        const get=(name)=>{ const idx=header.indexOf(name); return idx>-1?String(cols[idx]??'').trim():''; };
-        const name=get('nome');
-        const brand=get('marca');
-        const priceRaw=String(get('preço')).replace(',','.');
-        const price=parseFloat(priceRaw);
-        const tag=get('tag').toUpperCase()||null;
-        const catRaw=get('categoria').toLowerCase();
-        let cat=catRaw;
-        if(!CAT_LABEL[cat] && !customCatsCache[cat]){
-          const foundSlug=Object.keys(CAT_LABEL).find(k=>CAT_LABEL[k].toLowerCase()===catRaw)
-            || Object.keys(customCatsCache).find(k=>customCatsCache[k].toLowerCase()===catRaw);
-          if(foundSlug) cat=foundSlug;
-        }
-        const estoqueRaw=get('estoque').toLowerCase();
-        const esgotado=estoqueRaw.includes('esgot');
-
-        const errors=[];
-        if(!name) errors.push('Nome vazio');
-        if(!brand) errors.push('Marca vazia');
-        if(!price || isNaN(price)) errors.push('Preço inválido');
-        if(!CAT_LABEL[cat] && !customCatsCache[cat]) errors.push('Categoria não reconhecida');
-
-        return {name,brand,price,tag,cat,species:'todos',esgotado,errors,valid:errors.length===0};
-      });
-      renderImportPreview();
-    }catch(err){
-      console.error('Erro ao ler planilha:', err);
-      toast('Erro ao ler a planilha. Verifique se é um arquivo .xlsx válido.','red');
-    }
-  };
-  reader.readAsArrayBuffer(file);
-  input.value='';
-}
-
-function renderImportPreview(){
-  const wrap=document.getElementById('importPreviewWrap');
-  const tb=document.getElementById('importPreviewBody');
-  if(!pendingImportRows.length){wrap.style.display='none';return}
-  wrap.style.display='block';
-  const validCount=pendingImportRows.filter(r=>r.valid).length;
-  document.getElementById('importPreviewSummary').textContent=`${validCount} de ${pendingImportRows.length} linha(s) válida(s)`;
-  tb.innerHTML=pendingImportRows.map(r=>`
-    <tr style="${r.valid?'':'background:var(--red-pale)'}">
-      <td>${r.name||'—'}</td>
-      <td>${r.brand||'—'}</td>
-      <td>${r.price&&!isNaN(r.price)?fmt(r.price):'—'}</td>
-      <td>${catLabel(r.cat)}</td>
-      <td>${r.tag||'—'}</td>
-      <td>${r.esgotado?'Esgotado':'Disponível'}</td>
-      <td>${r.valid?'<span style="color:var(--green);font-weight:800">✓ OK</span>':`<span style="color:var(--red);font-weight:800">✕ ${r.errors[0]}</span>`}</td>
-    </tr>`).join('');
-}
-
-async function confirmImport(){
-  const valid=pendingImportRows.filter(r=>r.valid);
-  if(!valid.length){toast('Nenhuma linha válida para importar.','red');return}
-  const btn=document.getElementById('btnConfirmImport');
-  if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Importando...'}
-  let ok=0;
-  for(const r of valid){
-    try{
-      const ref=await addDoc(collection(db,'produtos_customizados'), {
-        name:r.name, brand:r.brand, price:r.price, old:null, tag:r.tag,
-        cat:r.cat, species:r.species, e:'📦', imgUrl:null, createdAt:serverTimestamp()
-      });
-      if(r.esgotado) await setDoc(doc(db,'estoque',ref.id), {esgotado:true});
-      ok++;
-    }catch(err){ console.error('Erro ao importar linha:', err); }
-  }
-  toast(`${ok} produto(s) importado(s) com sucesso!`,'green');
-  pendingImportRows=[];
-  renderImportPreview();
-  if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-check"></i> Confirmar Importação'}
-}
-
-function cancelImportPreview(){
-  pendingImportRows=[];
-  renderImportPreview();
-}
-
-// ===== LISTENERS EM TEMPO REAL =====
-onSnapshot(collection(db,'estoque'), snap => {
-  const s = {};
-  snap.forEach(d => { s[d.id] = true; });
-  stockCache = s;
-  if(isLoggedIn){ renderDashboard(); if(currentPage==='estoque')renderEstoque(); if(currentPage==='produtos')renderProdList(); }
-}, err => console.error('Erro ao ouvir estoque:', err));
-
-onSnapshot(query(collection(db,'produtos_customizados'), orderBy('createdAt','asc')), snap => {
-  customCache = snap.docs.map(d => ({ id:d.id, ...d.data(), custom:true }));
-  if(isLoggedIn){ renderDashboard(); if(currentPage==='produtos')renderProdList(); if(currentPage==='estoque')renderEstoque(); }
-}, err => console.error('Erro ao ouvir produtos:', err));
-
-onSnapshot(query(collection(db,'pedidos'), orderBy('createdAt','desc')), snap => {
-  ordersCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-  if(isLoggedIn){ renderDashboard(); if(currentPage==='pedidos')renderPedidos(); }
-}, err => console.error('Erro ao ouvir pedidos:', err));
-
-onSnapshot(collection(db,'design'), snap => {
-  const dc = {};
-  snap.forEach(d => { dc[d.id] = d.data().data; });
-  designCache = dc;
-  if(dc.logo){
-    const sb=document.getElementById('sidebarLogo');
-    if(sb) sb.src=dc.logo;
-  }
-  if(isLoggedIn && currentPage==='design') renderDesignPage();
-}, err => console.error('Erro ao ouvir design:', err));
-
-// ============================================================
-// GESTÃO VET CLINIC (Serviços, Farmácia, Equipe)
-// ============================================================
-let vetSvcCache=[], vetPharmCache=[], vetTeamCache=[];
-let editingVetSvcId=null, editingVetPharmId=null, editingVetTeamId=null;
-
-onSnapshot(query(collection(db,'vetclinic_servicos'), orderBy('createdAt','asc')), snap => {
-  vetSvcCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  if(isLoggedIn && currentPage==='vetclinic') renderVetSvc();
-}, err => console.error('Erro ao ouvir serviços vetclinic:', err));
-
-onSnapshot(query(collection(db,'vetclinic_farmacia'), orderBy('createdAt','asc')), snap => {
-  vetPharmCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  if(isLoggedIn && currentPage==='vetclinic') renderVetPharm();
-}, err => console.error('Erro ao ouvir farmácia vetclinic:', err));
-
-onSnapshot(query(collection(db,'vetclinic_equipe'), orderBy('createdAt','asc')), snap => {
-  vetTeamCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  if(isLoggedIn && currentPage==='vetclinic') renderVetTeam();
-}, err => console.error('Erro ao ouvir equipe vetclinic:', err));
-
-// ---------- SERVIÇOS ----------
-function renderVetSvc(){
-  document.getElementById('vetSvcCount').textContent=`${vetSvcCache.length} serviço(s)`;
-  const tb=document.getElementById('vetSvcBody');
-  const empty=document.getElementById('vetSvcEmpty');
-  if(!vetSvcCache.length){tb.innerHTML='';empty.style.display='block';return}
-  empty.style.display='none';
-  tb.innerHTML=vetSvcCache.map(s=>`
-    <tr>
-      <td><div class="prod-cell"><div class="prod-thumb-sm">${s.emoji||'🩺'}</div><div class="pn">${s.name}</div></div></td>
-      <td style="font-size:.78rem;max-width:260px">${s.desc||'—'}</td>
-      <td style="font-weight:800;color:var(--blue)">${s.price||'—'}</td>
-      <td><div class="act-btns">
-        <button class="act-btn edit" title="Editar" onclick="editVetSvc('${s.id}')"><i class="fas fa-edit"></i></button>
-        <button class="act-btn danger" title="Excluir" onclick="deleteVetSvc('${s.id}')"><i class="fas fa-trash"></i></button>
-      </div></td>
-    </tr>`).join('');
-}
-
-async function saveVetSvc(){
-  const name=document.getElementById('vetSvc-name').value.trim();
-  const emoji=document.getElementById('vetSvc-emoji').value.trim()||'🩺';
-  const desc=document.getElementById('vetSvc-desc').value.trim();
-  const price=document.getElementById('vetSvc-price').value.trim();
-  if(!name){toast('Digite o nome do serviço!','red');return}
-  try{
-    if(editingVetSvcId){
-      await updateDoc(doc(db,'vetclinic_servicos',editingVetSvcId), {name,emoji,desc,price});
-      toast('Serviço atualizado!','green');
-      cancelVetSvcEdit();
-    }else{
-      await addDoc(collection(db,'vetclinic_servicos'), {name,emoji,desc,price,createdAt:serverTimestamp()});
-      toast('Serviço cadastrado!','green');
-      clearVetSvcForm();
-    }
-  }catch(err){console.error(err);toast('Erro ao salvar serviço.','red')}
-}
-
-function editVetSvc(id){
-  const s=vetSvcCache.find(x=>x.id===id); if(!s)return;
-  editingVetSvcId=id;
-  document.getElementById('vetSvc-name').value=s.name;
-  document.getElementById('vetSvc-emoji').value=s.emoji||'';
-  document.getElementById('vetSvc-desc').value=s.desc||'';
-  document.getElementById('vetSvc-price').value=s.price||'';
-  document.getElementById('vetSvcFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Serviço';
-  document.getElementById('vetSvcSaveText').textContent='Salvar Alterações';
-  document.getElementById('vetSvcCancelBtn').style.display='flex';
-}
-
-function cancelVetSvcEdit(){
-  editingVetSvcId=null;
-  clearVetSvcForm();
-  document.getElementById('vetSvcFormTitle').innerHTML='<i class="fas fa-stethoscope" style="color:var(--blue)"></i> Cadastrar Serviço';
-  document.getElementById('vetSvcSaveText').textContent='Salvar Serviço';
-  document.getElementById('vetSvcCancelBtn').style.display='none';
-}
-
-function clearVetSvcForm(){
-  ['vetSvc-name','vetSvc-emoji','vetSvc-desc','vetSvc-price'].forEach(id=>document.getElementById(id).value='');
-}
-
-function deleteVetSvc(id){
-  const s=vetSvcCache.find(x=>x.id===id); if(!s)return;
-  showConfirm('Excluir serviço?',`Deseja excluir "${s.name}"?`, async ()=>{
-    try{ await deleteDoc(doc(db,'vetclinic_servicos',id)); toast('Serviço excluído!','red'); }
-    catch(err){console.error(err);toast('Erro ao excluir.','red')}
-  });
-}
-
-// ---------- FARMÁCIA ----------
-function renderVetPharm(){
-  document.getElementById('vetPharmCount').textContent=`${vetPharmCache.length} item(ns)`;
-  const tb=document.getElementById('vetPharmBody');
-  const empty=document.getElementById('vetPharmEmpty');
-  if(!vetPharmCache.length){tb.innerHTML='';empty.style.display='block';return}
-  empty.style.display='none';
-  tb.innerHTML=vetPharmCache.map(s=>`
-    <tr>
-      <td><div class="prod-cell"><div class="prod-thumb-sm">${s.emoji||'💉'}</div><div class="pn">${s.name}</div></div></td>
-      <td style="font-size:.78rem;max-width:220px">${s.desc||'—'}</td>
-      <td style="font-weight:800;color:var(--blue)">${s.price||'—'}</td>
-      <td>${s.tag?`<span class="tag-pill" style="background:var(--blue-pale);color:var(--blue-dark)">${s.tag}</span>`:'—'}</td>
-      <td><div class="act-btns">
-        <button class="act-btn edit" title="Editar" onclick="editVetPharm('${s.id}')"><i class="fas fa-edit"></i></button>
-        <button class="act-btn danger" title="Excluir" onclick="deleteVetPharm('${s.id}')"><i class="fas fa-trash"></i></button>
-      </div></td>
-    </tr>`).join('');
-}
-
-async function saveVetPharm(){
-  const name=document.getElementById('vetPharm-name').value.trim();
-  const emoji=document.getElementById('vetPharm-emoji').value.trim()||'💉';
-  const tag=document.getElementById('vetPharm-tag').value.trim();
-  const desc=document.getElementById('vetPharm-desc').value.trim();
-  const price=document.getElementById('vetPharm-price').value.trim();
-  if(!name){toast('Digite o nome do item!','red');return}
-  try{
-    if(editingVetPharmId){
-      await updateDoc(doc(db,'vetclinic_farmacia',editingVetPharmId), {name,emoji,tag,desc,price});
-      toast('Item atualizado!','green');
-      cancelVetPharmEdit();
-    }else{
-      await addDoc(collection(db,'vetclinic_farmacia'), {name,emoji,tag,desc,price,createdAt:serverTimestamp()});
-      toast('Item cadastrado!','green');
-      clearVetPharmForm();
-    }
-  }catch(err){console.error(err);toast('Erro ao salvar item.','red')}
-}
-
-function editVetPharm(id){
-  const s=vetPharmCache.find(x=>x.id===id); if(!s)return;
-  editingVetPharmId=id;
-  document.getElementById('vetPharm-name').value=s.name;
-  document.getElementById('vetPharm-emoji').value=s.emoji||'';
-  document.getElementById('vetPharm-tag').value=s.tag||'';
-  document.getElementById('vetPharm-desc').value=s.desc||'';
-  document.getElementById('vetPharm-price').value=s.price||'';
-  document.getElementById('vetPharmFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Item';
-  document.getElementById('vetPharmSaveText').textContent='Salvar Alterações';
-  document.getElementById('vetPharmCancelBtn').style.display='flex';
-}
-
-function cancelVetPharmEdit(){
-  editingVetPharmId=null;
-  clearVetPharmForm();
-  document.getElementById('vetPharmFormTitle').innerHTML='<i class="fas fa-pills" style="color:var(--blue)"></i> Cadastrar Item da Farmácia';
-  document.getElementById('vetPharmSaveText').textContent='Salvar Item';
-  document.getElementById('vetPharmCancelBtn').style.display='none';
-}
-
-function clearVetPharmForm(){
-  ['vetPharm-name','vetPharm-emoji','vetPharm-tag','vetPharm-desc','vetPharm-price'].forEach(id=>document.getElementById(id).value='');
-}
-
-function deleteVetPharm(id){
-  const s=vetPharmCache.find(x=>x.id===id); if(!s)return;
-  showConfirm('Excluir item?',`Deseja excluir "${s.name}"?`, async ()=>{
-    try{ await deleteDoc(doc(db,'vetclinic_farmacia',id)); toast('Item excluído!','red'); }
-    catch(err){console.error(err);toast('Erro ao excluir.','red')}
-  });
-}
-
-// ---------- EQUIPE ----------
-function renderVetTeam(){
-  document.getElementById('vetTeamCount').textContent=`${vetTeamCache.length} membro(s)`;
-  const tb=document.getElementById('vetTeamBody');
-  const empty=document.getElementById('vetTeamEmpty');
-  if(!vetTeamCache.length){tb.innerHTML='';empty.style.display='block';return}
-  empty.style.display='none';
-  tb.innerHTML=vetTeamCache.map(s=>{
-    const thumb=s.photo?`<img src="${s.photo}" style="width:42px;height:42px;object-fit:cover;border-radius:50%;border:1px solid var(--gray)"/>`:`<div class="prod-thumb-sm" style="border-radius:50%"><i class="fas fa-user"></i></div>`;
-    return`<tr>
-      <td>${thumb}</td>
-      <td class="pn">${s.name}</td>
-      <td style="font-size:.8rem">${s.role||'—'}</td>
-      <td><div class="act-btns">
-        <button class="act-btn edit" title="Editar" onclick="editVetTeam('${s.id}')"><i class="fas fa-edit"></i></button>
-        <button class="act-btn danger" title="Excluir" onclick="deleteVetTeam('${s.id}')"><i class="fas fa-trash"></i></button>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-
-async function handleVetTeamImgUpload(input){
-  const file=input.files[0];
-  if(!file)return;
-  toast('Processando imagem...','');
-  try{
-    const data=await compressImage(file, 400, 0.75);
-    document.getElementById('vetTeam-imgdata').value=data;
-    document.getElementById('vetTeamImgEmoji').style.display='none';
-    const img=document.getElementById('vetTeamImgImg');
-    img.src=data; img.style.display='block';
-    toast('Foto carregada!','green');
-  }catch(err){
-    console.error(err);
-    toast('Erro ao processar imagem.','red');
-  }
-}
-
-async function saveVetTeam(){
-  const name=document.getElementById('vetTeam-name').value.trim();
-  const role=document.getElementById('vetTeam-role').value.trim();
-  const photo=document.getElementById('vetTeam-imgdata').value||null;
-  if(!name){toast('Digite o nome do membro!','red');return}
-  try{
-    if(editingVetTeamId){
-      await updateDoc(doc(db,'vetclinic_equipe',editingVetTeamId), {name,role,photo});
-      toast('Membro atualizado!','green');
-      cancelVetTeamEdit();
-    }else{
-      await addDoc(collection(db,'vetclinic_equipe'), {name,role,photo,createdAt:serverTimestamp()});
-      toast('Membro cadastrado!','green');
-      clearVetTeamForm();
-    }
-  }catch(err){console.error(err);toast('Erro ao salvar membro.','red')}
-}
-
-function editVetTeam(id){
-  const s=vetTeamCache.find(x=>x.id===id); if(!s)return;
-  editingVetTeamId=id;
-  document.getElementById('vetTeam-name').value=s.name;
-  document.getElementById('vetTeam-role').value=s.role||'';
-  document.getElementById('vetTeam-imgdata').value=s.photo||'';
-  if(s.photo){
-    document.getElementById('vetTeamImgEmoji').style.display='none';
-    const img=document.getElementById('vetTeamImgImg');
-    img.src=s.photo; img.style.display='block';
-  }
-  document.getElementById('vetTeamFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Membro';
-  document.getElementById('vetTeamSaveText').textContent='Salvar Alterações';
-  document.getElementById('vetTeamCancelBtn').style.display='flex';
-}
-
-function cancelVetTeamEdit(){
-  editingVetTeamId=null;
-  clearVetTeamForm();
-  document.getElementById('vetTeamFormTitle').innerHTML='<i class="fas fa-user-doctor" style="color:var(--blue)"></i> Cadastrar Membro da Equipe';
-  document.getElementById('vetTeamSaveText').textContent='Salvar Membro';
-  document.getElementById('vetTeamCancelBtn').style.display='none';
-}
-
-function clearVetTeamForm(){
-  document.getElementById('vetTeam-name').value='';
-  document.getElementById('vetTeam-role').value='';
-  document.getElementById('vetTeam-imgdata').value='';
-  document.getElementById('vetTeam-img').value='';
-  document.getElementById('vetTeamImgEmoji').style.display='block';
-  const img=document.getElementById('vetTeamImgImg');
-  img.style.display='none'; img.src='';
-}
-
-function deleteVetTeam(id){
-  const s=vetTeamCache.find(x=>x.id===id); if(!s)return;
-  showConfirm('Excluir membro?',`Deseja excluir "${s.name}" da equipe?`, async ()=>{
-    try{ await deleteDoc(doc(db,'vetclinic_equipe',id)); toast('Membro excluído!','red'); }
-    catch(err){console.error(err);toast('Erro ao excluir.','red')}
-  });
-}
-
-// ============================================================
-// RELÓGIO EM TEMPO REAL
-// ============================================================
-function updateClock(){
-  const el=document.getElementById('currentDateTime');
-  if(!el)return;
-  const now=new Date();
-  el.textContent=now.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'})
-    +' · '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-
-// ============================================================
-// AUTH (Firebase Authentication)
-// ============================================================
-function togglePassVis(){
-  const input=document.getElementById('loginPass');
-  const icon=document.getElementById('togglePassIcon');
-  if(input.type==='password'){
-    input.type='text';
-    icon.className='fas fa-eye-slash';
-  }else{
-    input.type='password';
-    icon.className='fas fa-eye';
-  }
-}
-
-async function doLogin(){
-  const email=document.getElementById('loginUser').value.trim();
-  const pass=document.getElementById('loginPass').value.trim();
-  const err=document.getElementById('loginErr');
-  const btn=document.querySelector('.btn-login');
-  if(!email||!pass){
-    err.querySelector('span')?.remove();
-    err.innerHTML='<i class="fas fa-exclamation-circle"></i> Preencha e-mail e senha.';
-    err.classList.add('show');
-    return;
-  }
-  if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Entrando...'}
-  try{
-    await signInWithEmailAndPassword(auth, email, pass);
-    err.classList.remove('show');
-    // onAuthStateChanged cuida do resto (mostrar o painel)
-  }catch(e){
-    err.innerHTML='<i class="fas fa-exclamation-circle"></i> E-mail ou senha incorretos. Tente novamente.';
-    err.classList.add('show');
-    document.getElementById('loginPass').value='';
-    document.getElementById('loginPass').focus();
-  }
-  if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Entrar no Painel'}
-}
-
-function doLogout(){
-  signOut(auth);
-}
-
-onAuthStateChanged(auth, user => {
-  if(user){
-    isLoggedIn=true;
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('appLayout').style.display='flex';
-    init();
-    setTimeout(()=>document.getElementById('loginScreen').style.display='none',400);
-  }else{
-    isLoggedIn=false;
-    document.getElementById('appLayout').style.display='none';
-    document.getElementById('loginScreen').style.display='flex';
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('loginUser').value='';
-    document.getElementById('loginPass').value='';
-  }
-});
-
-// ============================================================
-// SIDEBAR MOBILE
-// ============================================================
-function openSidebar(){
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sbOverlay').style.display='block';
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sbOverlay').style.display='none';
-}
-
-// ============================================================
-// PAGES
-// ============================================================
-let currentPage='dashboard', estoqueCat='todos';
-
-function showPage(page,el){
-  currentPage=page;
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
-  if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios',design:'Design do Site',vetclinic:'Gestão Vet Clinic'};
-  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados em planilha',design:'Troque logo, banners e fotos de espécie',vetclinic:'Serviços, farmácia e equipe da clínica'};
-  document.getElementById('pageTitle').textContent=titles[page]||page;
-  document.getElementById('pageSubtitle').textContent=subs[page]||'';
-  closeSidebar();
-  if(page==='dashboard')renderDashboard();
-  if(page==='produtos')renderProdList();
-  if(page==='estoque')renderEstoque();
-  if(page==='pedidos')renderPedidos();
-  if(page==='design')renderDesignPage();
-  if(page==='vetclinic'){renderVetSvc();renderVetPharm();renderVetTeam();}
-}
-
-// ============================================================
-// DASHBOARD
-// ============================================================
-function renderWeekChart(){
-  const el=document.getElementById('dashWeekChart');
-  if(!el)return;
-  // Monta os últimos 7 dias (mais antigo -> mais recente)
-  const days=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date();
-    d.setDate(d.getDate()-i);
-    days.push({date:d, label:d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.',''), key:d.toLocaleDateString('pt-BR')});
-  }
-  const counts=days.map(d=>ordersCache.filter(o=>o.date===d.key).length);
-  const max=Math.max(...counts,1);
-  document.getElementById('dashChartQtd').textContent=counts.reduce((a,b)=>a+b,0)+' pedido(s) na semana';
-
-  el.innerHTML=`
-    <div style="display:flex;align-items:flex-end;gap:8px;height:120px">
-      ${days.map((d,i)=>{
-        const h=Math.max(6, Math.round((counts[i]/max)*100));
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">
-          <span style="font-size:.68rem;font-weight:800;color:var(--navy)">${counts[i]||''}</span>
-          <div style="width:100%;max-width:28px;height:${h}%;background:${counts[i]>0?'var(--blue)':'var(--gray)'};border-radius:6px 6px 2px 2px;transition:height .4s ease"></div>
-          <span style="font-size:.65rem;color:var(--gray-dark);font-weight:700;text-transform:capitalize">${d.label}</span>
-        </div>`;
-      }).join('')}
-    </div>`;
-}
-
-function renderDashboard(){
-  const all=getAllProds();
-  const esgotados=all.filter(p=>stockCache[p.id]===true);
-
-  document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon" style="background:var(--blue-pale);color:var(--blue)"><i class="fas fa-boxes"></i></div></div>
-      <div class="stat-val">${all.length}</div>
-      <div class="stat-label">Total de Produtos</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon" style="background:var(--green-pale);color:var(--green)"><i class="fas fa-check-circle"></i></div></div>
-      <div class="stat-val" style="color:var(--green)">${all.length-esgotados.length}</div>
-      <div class="stat-label">Disponíveis no Site</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon" style="background:var(--red-pale);color:var(--red)"><i class="fas fa-ban"></i></div></div>
-      <div class="stat-val" style="color:var(--red)">${esgotados.length}</div>
-      <div class="stat-label">Produtos Esgotados</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon" style="background:var(--yellow-pale);color:var(--yellow)"><i class="fas fa-shopping-bag"></i></div></div>
-      <div class="stat-val">${ordersCache.length}</div>
-      <div class="stat-label">Pedidos Recebidos</div>
-    </div>`;
-
-  // Esgotados
-  const de=document.getElementById('dashEsgotados');
-  document.getElementById('dashEsgQtd').textContent=esgotados.length+' produto(s)';
-  if(!esgotados.length){
-    de.innerHTML='<div style="padding:24px;text-align:center;color:var(--gray-dark);font-size:.8rem"><i class="fas fa-check-circle" style="color:var(--green);display:block;font-size:1.6rem;margin-bottom:8px"></i>Nenhum produto esgotado! ✅</div>';
-  }else{
-    de.innerHTML=esgotados.slice(0,6).map(p=>`
-      <div class="dash-item">
-        <div class="dash-item-e">${p.e}</div>
-        <div class="dash-item-info"><div class="di-name">${p.name}</div><div class="di-sub">${catLabel(p.cat)}</div></div>
-        <span style="font-size:.65rem;font-weight:800;color:var(--red);background:var(--red-pale);padding:3px 8px;border-radius:50px;flex-shrink:0">ESGOTADO</span>
-      </div>`).join('');
-  }
-
-  // Alerta de reposição (separado, visualmente destacado)
-  const alertBox=document.getElementById('restockAlert');
-  if(esgotados.length>0){
-    alertBox.style.display='block';
-    document.getElementById('restockCount').textContent=esgotados.length;
-  }else{
-    alertBox.style.display='none';
-  }
-
-  // Gráfico — pedidos nos últimos 7 dias
-  renderWeekChart();
-
-  // Pedidos
-  const dp=document.getElementById('dashPedidos');
-  const last=ordersCache.slice(0,6);
-  document.getElementById('dashPedQtd').textContent=ordersCache.length+' total';
-  if(!last.length){
-    dp.innerHTML='<div style="padding:24px;text-align:center;color:var(--gray-dark);font-size:.8rem"><i class="fas fa-shopping-bag" style="color:var(--gray-mid);display:block;font-size:1.6rem;margin-bottom:8px"></i>Nenhum pedido ainda.</div>';
-  }else{
-    dp.innerHTML=last.map(o=>`
-      <div class="dash-item">
-        <div style="flex:1;min-width:0">
-          <div class="di-name" style="font-family:monospace;font-size:.75rem;color:var(--blue)">PED-${o.id.slice(-6).toUpperCase()}</div>
-          <div class="di-sub">${o.date} ${o.time}</div>
-        </div>
-        <span style="font-size:.82rem;font-weight:900;color:var(--blue);white-space:nowrap">${fmt(o.total||0)}</span>
-      </div>`).join('');
-  }
-
-  // Badges
-  document.getElementById('badgeOrders').textContent=ordersCache.length;
-  document.getElementById('badgeProds').textContent=customCache.length;
-}
-
-// ============================================================
-// COMPRESSÃO AUTOMÁTICA DE IMAGEM (evita rejeitar fotos grandes)
-// ============================================================
-function compressImage(file, maxWidth, quality){
-  return new Promise((resolve, reject)=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const img=new Image();
-      img.onload=()=>{
-        let w=img.width, h=img.height;
-        if(w>maxWidth){ h=Math.round(h*maxWidth/w); w=maxWidth; }
-        const canvas=document.createElement('canvas');
-        canvas.width=w; canvas.height=h;
-        const ctx=canvas.getContext('2d');
-        ctx.drawImage(img,0,0,w,h);
-        // Tenta qualidade decrescente até ficar num tamanho seguro para o Firestore (~900KB)
-        let q=quality;
-        let dataUrl=canvas.toDataURL('image/jpeg', q);
-        while(dataUrl.length>900*1024 && q>0.35){
-          q-=0.1;
-          dataUrl=canvas.toDataURL('image/jpeg', q);
-        }
-        resolve(dataUrl);
-      };
-      img.onerror=()=>reject(new Error('Não foi possível processar a imagem.'));
-      img.src=e.target.result;
-    };
-    reader.onerror=()=>reject(new Error('Não foi possível ler o arquivo.'));
-    reader.readAsDataURL(file);
-  });
-}
-
-// ============================================================
-// IMAGE UPLOAD — foto de produto (Base64 comprimido, direto no Firestore)
-// ============================================================
-async function handleImgUpload(input){
-  const file=input.files[0];
-  if(!file)return;
-  toast('Processando imagem...','');
-  try{
-    const data=await compressImage(file, 700, 0.75);
-    document.getElementById('f-pimgdata').value=data;
-    document.getElementById('imgPreviewEmoji').style.display='none';
-    const img=document.getElementById('imgPreviewImg');
-    img.src=data;img.style.display='block';
-    document.getElementById('btnRemoveImg').style.display='inline-flex';
-    toast('Imagem carregada com sucesso!','green');
-  }catch(err){
-    console.error('Erro ao processar imagem:', err);
-    toast('Erro ao processar imagem. Tente outra foto.','red');
-    input.value='';
-  }
-}
-
-// ============================================================
-// DESIGN DO SITE (logo, banners, fotos de espécie)
-// ============================================================
-const DESIGN_KEYS=['logo','logo-vetclinic','banner-boas-vindas','banner-clinica','banner-ofertas','banner-jardinagem','especie-cachorro','especie-gato','especie-peixe','vetclinic-10anos','vetclinic-sobre'];
-
-function renderDesignPage(){
-  DESIGN_KEYS.forEach(key=>{
-    const el=document.getElementById('dp-'+key);
-    if(!el)return;
-    const data=designCache[key];
-    el.innerHTML = data
-      ? `<img src="${data}" alt="${key}"/>`
-      : `<span>Padrão do<br/>repositório</span>`;
-  });
-}
-
-async function handleDesignUpload(input,key){
-  const file=input.files[0];
-  if(!file)return;
-  toast('Processando imagem...','');
-  try{
-    const data=await compressImage(file, 1600, 0.78);
-    await setDoc(doc(db,'design',key), {data, updatedAt:serverTimestamp()});
-    toast('Imagem atualizada no site!','green');
-  }catch(err){
-    console.error('Erro ao salvar imagem de design:', err);
-    toast('Erro ao processar ou salvar a imagem. Tente novamente.','red');
-  }
-  input.value='';
-}
-
-function removeDesignImg(key){
-  showConfirm('Remover imagem personalizada?','O site voltará a usar a imagem padrão do repositório.', async ()=>{
-    try{
-      await deleteDoc(doc(db,'design',key));
-      toast('Imagem removida — voltou ao padrão.','green');
-    }catch(err){
-      console.error('Erro ao remover imagem de design:', err);
-      toast('Erro ao remover imagem.','red');
-    }
-  });
-}
-
-function removeImg(){
-  document.getElementById('f-pimgdata').value='';
-  document.getElementById('f-pimg').value='';
-  document.getElementById('imgPreviewImg').style.display='none';
-  document.getElementById('imgPreviewImg').src='';
-  document.getElementById('imgPreviewEmoji').style.display='block';
-  document.getElementById('btnRemoveImg').style.display='none';
-}
-
-function setImgPreview(data){
-  if(data){
-    document.getElementById('imgPreviewEmoji').style.display='none';
-    const img=document.getElementById('imgPreviewImg');
-    img.src=data;img.style.display='block';
-    document.getElementById('btnRemoveImg').style.display='inline-flex';
-  }else{
-    removeImg();
-  }
-}
-
-// ============================================================
-// PRODUTOS CRUD (Firestore)
-// ============================================================
-let editingProdId = null;
-
-async function saveProduct(){
-  const name=document.getElementById('f-pname').value.trim();
-  const brand=document.getElementById('f-pbrand').value.trim();
-  const price=parseFloat(document.getElementById('f-pprice').value);
-  const old=parseFloat(document.getElementById('f-pold').value)||null;
-  const tag=document.getElementById('f-ptag').value||null;
-  let cat=document.getElementById('f-pcat').value;
-  const species=document.getElementById('f-pspecies').value;
-  const e=document.getElementById('f-pemoji').value.trim()||'📦';
-  const imgUrl=document.getElementById('f-pimgdata').value||null;
-
-  // Se escolheu criar uma categoria nova, gera o slug e salva antes de continuar
-  if(cat==='__nova__'){
-    const newCatName=document.getElementById('f-pcat-new').value.trim();
-    if(!newCatName){toast('Digite o nome da nova categoria!','red');return}
-    const slug='custom_'+newCatName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-    try{
-      await setDoc(doc(db,'categorias_customizadas',slug), {label:newCatName});
-    }catch(err){
-      console.error('Erro ao criar categoria:', err);
-      toast('Erro ao criar categoria nova.','red');
-      return;
-    }
-    cat=slug;
-  }
-
-  if(!name||!brand||!price||!cat||!species){toast('Preencha todos os campos obrigatórios!','red');return}
-
-  const btn=document.querySelector('.btn-form-save');
-  if(btn){btn.disabled=true}
-
-  try{
-    if(editingProdId!==null){
-      await updateDoc(doc(db,'produtos_customizados',editingProdId), {name,brand,price,old,tag,cat,species,e,imgUrl});
-      toast('Produto atualizado com sucesso!','green');
-      cancelEdit();
-    }else{
-      await addDoc(collection(db,'produtos_customizados'), {name,brand,price,old,tag,cat,species,e,imgUrl,createdAt:serverTimestamp()});
-      toast('Produto cadastrado e já disponível no site!','green');
-      clearForm();
-    }
-  }catch(err){
-    console.error('Erro ao salvar produto:', err);
-    toast('Erro ao salvar produto. Tente novamente.','red');
-  }
-  if(btn){btn.disabled=false}
-}
-
-function editProduct(id){
-  const all=getAllProds();
-  const p=all.find(x=>x.id===id);
-  if(!p||!p.custom){toast('Produtos padrão não podem ser editados.','yellow');return}
-
-  editingProdId=id;
-  document.getElementById('f-pname').value=p.name;
-  document.getElementById('f-pbrand').value=p.brand;
-  document.getElementById('f-pprice').value=p.price;
-  document.getElementById('f-pold').value=p.old||'';
-  document.getElementById('f-ptag').value=p.tag||'';
-  document.getElementById('f-pcat').value=p.cat;
-  document.getElementById('f-pspecies').value=p.species;
-  document.getElementById('f-pemoji').value=p.e;
-  document.getElementById('emojiPreview').textContent=p.e;
-  document.getElementById('f-pimgdata').value=p.imgUrl||'';
-  setImgPreview(p.imgUrl||null);
-  document.getElementById('formTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Produto';
-  document.getElementById('saveBtnText').textContent='Salvar Alterações';
-  document.getElementById('cancelBtn').style.display='flex';
-  document.getElementById('prodForm').scrollIntoView({behavior:'smooth'});
-}
-
-function deleteProduct(id){
-  const all=getAllProds();
-  const p=all.find(x=>x.id===id);
-  if(!p){return}
-  if(!p.custom){toast('Produtos padrão do sistema não podem ser excluídos.','yellow');return}
-  showConfirm('Excluir produto?',`Deseja excluir "${p.name}"? Esta ação não pode ser desfeita.`, async ()=>{
-    try{
-      await deleteDoc(doc(db,'produtos_customizados',id));
-      await deleteDoc(doc(db,'estoque',id)).catch(()=>{});
-      toast('Produto excluído!','red');
-    }catch(err){
-      console.error('Erro ao excluir produto:', err);
-      toast('Erro ao excluir produto.','red');
-    }
-  });
-}
-
-function cancelEdit(){
-  editingProdId=null;
-  clearForm();
-  document.getElementById('formTitle').innerHTML='<i class="fas fa-plus-circle" style="color:var(--blue)"></i> Cadastrar Novo Produto';
-  document.getElementById('saveBtnText').textContent='Salvar Produto';
-  document.getElementById('cancelBtn').style.display='none';
-}
-
-function clearForm(){
-  ['f-pname','f-pbrand','f-pprice','f-pold','f-pemoji'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-ptag').value='';
-  document.getElementById('f-pcat').value='';
-  document.getElementById('f-pcat-new').value='';
-  document.getElementById('f-pcat-new').style.display='none';
-  document.getElementById('f-pspecies').value='';
-  document.getElementById('emojiPreview').textContent='📦';
-  document.getElementById('f-pimgdata').value='';
-  document.getElementById('f-pimg').value='';
-  removeImg();
-}
-
-function renderProdList(){
-  const q=document.getElementById('prodSearch').value.toLowerCase().trim();
-  const all=getAllProds();
-  const list=q?all.filter(p=>p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q)):all;
-
-  document.getElementById('prodCount').textContent=`${list.length} produto(s)`;
-  const empty=document.getElementById('prodListEmpty');
-  const tb=document.getElementById('prodListBody');
-
-  if(!list.length){tb.innerHTML='';empty.style.display='block';return}
-  empty.style.display='none';
-
-  tb.innerHTML=list.map(p=>{
-    const ok=isOk(p.id);
-    const thumbHtml=p.imgUrl
-      ?`<img src="${p.imgUrl}" alt="${p.name}" style="width:42px;height:42px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--gray)"/>`
-      :`<div class="prod-thumb-sm">${p.e}</div>`;
-    return`<tr>
-      <td><div class="prod-cell">
-        ${thumbHtml}
-        <div><div class="pn">${p.name}</div><div class="pb">${p.brand} ${p.custom?'<span style="color:var(--blue);font-size:.62rem;font-weight:800">● PERSONALIZADO</span>':''}</div></div>
-      </div></td>
-      <td><span class="cat-pill ${p.custom?'custom':''}">${catLabel(p.cat)}</span></td>
-      <td style="font-weight:900;color:var(--blue);white-space:nowrap">
-        ${p.old?`<span style="font-size:.7rem;color:var(--gray-dark);text-decoration:line-through;display:block">${fmt(p.old)}</span>`:''}
-        ${fmt(p.price)}
-      </td>
-      <td>${p.tag?`<span class="tag-pill tag-${p.tag}">${p.tag}</span>`:'<span style="color:var(--gray-dark);font-size:.75rem">—</span>'}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:5px">
-          <span class="status-dot ${ok?'ok':'no'}"></span>
-          <span style="font-size:.75rem;font-weight:800;color:${ok?'var(--green)':'var(--red)'}">${ok?'Disponível':'Esgotado'}</span>
-        </div>
-      </td>
-      <td>
-        <div class="act-btns">
-          ${p.custom?`<button class="act-btn edit" title="Editar" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>`:''}
-          <button class="act-btn" title="${ok?'Marcar Esgotado':'Marcar Disponível'}" onclick="toggleStock('${p.id}')" style="${ok?'':'border-color:var(--green);color:var(--green)'}">
-            <i class="fas fa-${ok?'ban':'check'}"></i>
-          </button>
-          ${p.custom?`<button class="act-btn danger" title="Excluir" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function toggleStock(id){
-  const ok=isOk(id);
-  try{
-    if(ok) await setDoc(doc(db,'estoque',id), {esgotado:true});
-    else await deleteDoc(doc(db,'estoque',id));
-    toast(ok?'Produto esgotado no site!':'Produto disponível no site!',ok?'red':'green');
-  }catch(err){
-    console.error('Erro ao alterar estoque:', err);
-    toast('Erro ao alterar estoque.','red');
-  }
-}
-
-// ============================================================
-// ESTOQUE
-// ============================================================
-function setEstoqueCat(el,cat){
-  estoqueCat=cat;
-  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  renderEstoque();
-}
-
-function renderEstoque(){
-  const q=document.getElementById('estoqueSearch').value.toLowerCase().trim();
-  let list=getAllProds();
-  if(estoqueCat!=='todos') list=list.filter(p=>p.cat===estoqueCat);
-  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q));
-
-  document.getElementById('estoqueCount').textContent=`${list.length} produto(s)`;
-  const tb=document.getElementById('estoqueBody');
-
-  if(!list.length){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--gray-dark);font-size:.82rem">Nenhum produto encontrado.</td></tr>`;return}
-
-  tb.innerHTML=list.map(p=>{
-    const ok=isOk(p.id);
-    return`<tr>
-      <td><div class="prod-cell">
-        <div class="prod-thumb-sm">${p.e}</div>
-        <div class="prod-cell-info"><div class="pn">${p.name}</div><div class="pb">${p.brand}</div></div>
-      </div></td>
-      <td><span class="cat-pill">${catLabel(p.cat)}</span></td>
-      <td style="font-size:.78rem">${SP_LABEL[p.species]||p.species}</td>
-      <td style="font-weight:900;color:var(--blue)">${fmt(p.price)}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:5px">
-          <span class="status-dot ${ok?'ok':'no'}"></span>
-          <span style="font-size:.75rem;font-weight:800;color:${ok?'var(--green)':'var(--red)'}">${ok?'Disponível':'Esgotado'}</span>
-        </div>
-      </td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="stock-toggle">
-            <button class="stg-btn ${ok?'active-ok':''}" onclick="setStatus('${p.id}','disponivel')">✓ Disponível</button>
-            <button class="stg-btn ${!ok?'active-no':''}" onclick="setStatus('${p.id}','esgotado')">✕ Esgotado</button>
-          </div>
-          ${p.custom?`<button class="act-btn danger" title="Excluir produto" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function setStatus(id,status){
-  try{
-    if(status==='esgotado') await setDoc(doc(db,'estoque',id), {esgotado:true});
-    else await deleteDoc(doc(db,'estoque',id));
-    toast(status==='esgotado'?'Produto marcado como esgotado!':'Produto disponível no site!',status==='esgotado'?'red':'green');
-  }catch(err){
-    console.error('Erro ao alterar estoque:', err);
-    toast('Erro ao alterar estoque.','red');
-  }
-}
-
-function setAllAvailable(){
-  showConfirm('Marcar todos como disponíveis?','Todos os produtos voltarão a aparecer normalmente no site.', async ()=>{
-    try{
-      const snap=await getDocs(collection(db,'estoque'));
-      const batch=writeBatch(db);
-      snap.forEach(d=>batch.delete(d.ref));
-      await batch.commit();
-      toast('Todos os produtos estão disponíveis!','green');
-    }catch(err){
-      console.error('Erro ao liberar estoque:', err);
-      toast('Erro ao atualizar estoque.','red');
-    }
-  });
-}
-
-// ============================================================
-// PEDIDOS (Firestore)
-// ============================================================
-function renderPedidos(){
-  document.getElementById('badgeOrders').textContent=ordersCache.length;
-  const tb=document.getElementById('pedidosBody');
-  const empty=document.getElementById('pedidosEmpty');
-  if(!ordersCache.length){tb.innerHTML='';empty.style.display='block';return}
-  empty.style.display='none';
-  const pLbl={pix:'PIX',dinheiro:'Dinheiro',cartao:'Cartão'};
-  const dLbl={delivery:'Delivery',retirada:'Retirada'};
-  tb.innerHTML=ordersCache.map(o=>`
-    <tr>
-      <td style="font-family:monospace;font-size:.72rem;font-weight:700;color:var(--blue)">PED-${o.id.slice(-6).toUpperCase()}</td>
-      <td style="font-size:.75rem">${o.date}<br/><span style="color:var(--gray-dark)">${o.time}</span></td>
-      <td style="font-size:.73rem;max-width:160px">${(o.items||[]).map(x=>`${x.name.substring(0,18)}… ×${x.qty}`).join('<br/>')}</td>
-      <td style="font-weight:900;color:var(--blue);white-space:nowrap">${fmt(o.total||0)}</td>
-      <td style="font-size:.75rem;font-weight:700">${pLbl[o.payment]||'—'}</td>
-      <td style="font-size:.75rem;font-weight:700">${dLbl[o.delivery]||'—'}</td>
-      <td><span class="order-status os-${(o.status||'aguardando').toLowerCase()}">${o.status||'Aguardando'}</span></td>
-      <td>
-        <div class="act-btns">
-          <button class="act-btn" title="Confirmar" onclick="setOrderStatus('${o.id}','confirmado')" style="color:var(--green);border-color:var(--green)"><i class="fas fa-check"></i></button>
-          <button class="act-btn danger" title="Cancelar" onclick="setOrderStatus('${o.id}','cancelado')"><i class="fas fa-times"></i></button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
-
-async function setOrderStatus(id,status){
-  try{
-    await updateDoc(doc(db,'pedidos',id), {status});
-    toast(status==='confirmado'?'Pedido confirmado!':'Pedido cancelado.',status==='confirmado'?'green':'red');
-  }catch(err){
-    console.error('Erro ao atualizar pedido:', err);
-    toast('Erro ao atualizar pedido.','red');
-  }
-}
-
-function clearOrders(){
-  showConfirm('Limpar todos os pedidos?','Esta ação removerá todos os pedidos registrados. Não pode ser desfeita.', async ()=>{
-    try{
-      const snap=await getDocs(collection(db,'pedidos'));
-      const batch=writeBatch(db);
-      snap.forEach(d=>batch.delete(d.ref));
-      await batch.commit();
-      toast('Todos os pedidos foram removidos.','red');
-    }catch(err){
-      console.error('Erro ao limpar pedidos:', err);
-      toast('Erro ao limpar pedidos.','red');
-    }
-  });
-}
-
-// ============================================================
-// EXPORTS
-// ============================================================
-function exportEstoque(){
-  const rows=[['#','Produto','Marca','Categoria','Espécie','Preço (R$)','Origem','Status']];
-  getAllProds().forEach((p,i)=>rows.push([i+1,p.name,p.brand,catLabel(p.cat),SP_LABEL[p.species]||p.species,p.price.toFixed(2),p.custom?'Personalizado':'Padrão',isOk(p.id)?'Disponível':'Esgotado']));
-  downloadCSV(rows,'agrocampo_estoque_'+today()+'.csv');
-  toast('Planilha de estoque exportada!','green');
-}
-
-function exportOrders(){
-  if(!ordersCache.length){toast('Nenhum pedido para exportar.','red');return}
-  const rows=[['Pedido','Data','Hora','Itens','Total (R$)','Pagamento','Entrega','Status']];
-  ordersCache.forEach(o=>{
-    const itens=(o.items||[]).map(x=>`${x.name} x${x.qty}`).join(' | ');
-    rows.push(['PED-'+o.id.slice(-6).toUpperCase(),o.date,o.time,itens,(o.total||0).toFixed(2),o.payment||'',o.delivery||'',o.status||'Aguardando']);
-  });
-  downloadCSV(rows,'agrocampo_pedidos_'+today()+'.csv');
-  toast('Planilha de pedidos exportada!','green');
-}
-
-function exportEsgotados(){
-  const esg=getAllProds().filter(p=>stockCache[p.id]===true);
-  if(!esg.length){toast('Nenhum produto esgotado!','red');return}
-  const rows=[['#','Produto','Marca','Categoria','Preço (R$)']];
-  esg.forEach((p,i)=>rows.push([i+1,p.name,p.brand,catLabel(p.cat),p.price.toFixed(2)]));
-  downloadCSV(rows,'agrocampo_esgotados_'+today()+'.csv');
-  toast('Lista de esgotados exportada!','green');
-}
-
-function downloadCSV(rows,filename){
-  const bom='\uFEFF';
-  const csv=bom+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ============================================================
-// CONFIRM MODAL
-// ============================================================
-let _cb=null;
-function showConfirm(title,msg,cb){
-  _cb=cb;
-  document.getElementById('confirmTitle').textContent=title;
-  document.getElementById('confirmMsg').textContent=msg;
-  document.getElementById('confirmMask').classList.add('open');
-  document.getElementById('confirmOkBtn').onclick=()=>{closeConfirm();if(_cb)_cb()};
-}
-function closeConfirm(){document.getElementById('confirmMask').classList.remove('open')}
-
-// ============================================================
-// TOAST
-// ============================================================
-function toast(msg,type=''){
-  const t=document.getElementById('toast');
-  t.className='toast'+(type?' '+type:'');
-  document.getElementById('toastTxt').textContent=msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
-}
-
-// ============================================================
-// INIT
-// ============================================================
-function init(){
-  renderDashboard();
-  updateClock();
-  setInterval(updateClock, 30000);
-}
-
-// Login com Enter
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin()
-});
-
-// ===== EXPORTAR PARA O WINDOW (necessário pois o script agora é um módulo ES6) =====
-Object.assign(window, {
-  togglePassVis, doLogin, doLogout,
-  openSidebar, closeSidebar,
-  showPage, setEstoqueCat, handleCatSelectChange,
-  saveProduct, cancelEdit, editProduct, deleteProduct, toggleStock, importDemoProducts,
-  downloadTemplateXLSX, handleImportFile, confirmImport, cancelImportPreview,
-  setStatus, setAllAvailable,
-  renderProdList, renderEstoque,
-  clearOrders, setOrderStatus,
-  exportOrders, exportEstoque, exportEsgotados,
-  removeImg, handleImgUpload,
-  handleDesignUpload, removeDesignImg,
-  saveVetSvc, editVetSvc, cancelVetSvcEdit, deleteVetSvc,
-  saveVetPharm, editVetPharm, cancelVetPharmEdit, deleteVetPharm,
-  saveVetTeam, editVetTeam, cancelVetTeamEdit, deleteVetTeam, handleVetTeamImgUpload,
-  closeConfirm
-});
-
-</script>
 </body>
 </html>
