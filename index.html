@@ -35,7 +35,7 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .logo-sub{font-size:.63rem;color:var(--gray-dark);display:block;line-height:1;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .search-wrap{flex:1;max-width:460px;margin:0 auto;display:flex;background:var(--off);border:1.5px solid transparent;border-radius:50px;overflow:hidden;transition:var(--tr)}
 .search-wrap:focus-within{border-color:var(--blue);background:white;box-shadow:0 0 0 4px var(--blue-pale)}
-.search-wrap input{flex:1;border:none;background:transparent;padding:0 20px;font-size:.9rem;font-family:'Inter',sans-serif;color:var(--black);outline:none}
+.search-wrap input{flex:1;border:none;background:transparent;padding:0 20px;font-size:16px;font-family:'Inter',sans-serif;color:var(--black);outline:none}
 .search-wrap button{background:var(--navy);border:none;width:44px;height:44px;margin:2px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:.92rem;transition:var(--tr);flex-shrink:0}
 .search-wrap button:hover{background:var(--blue)}
 .h-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
@@ -50,7 +50,7 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .mobile-search{display:none;padding:8px 16px 10px;background:var(--white);border-top:1px solid var(--gray)}
 .mobile-search-inner{display:flex;background:var(--off);border:1.5px solid var(--gray);border-radius:50px;overflow:hidden;transition:var(--tr)}
 .mobile-search-inner:focus-within{border-color:var(--blue)}
-.mobile-search-inner input{flex:1;border:none;background:transparent;padding:10px 16px;font-size:.88rem;font-family:'Inter',sans-serif;color:var(--black);outline:none}
+.mobile-search-inner input{flex:1;border:none;background:transparent;padding:10px 16px;font-size:16px;font-family:'Inter',sans-serif;color:var(--black);outline:none}
 .mobile-search-inner button{background:var(--navy);border:none;width:42px;height:42px;display:flex;align-items:center;justify-content:center;color:white;font-size:.95rem;flex-shrink:0}
 
 .nav-wrap{border-top:1px solid var(--gray);background:var(--off)}
@@ -272,7 +272,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .fg{margin-bottom:14px}
 .fg label{display:block;font-size:.78rem;font-weight:800;color:var(--black);margin-bottom:6px}
-.fg input{width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:11px 14px;font-size:.86rem;font-family:'Inter',sans-serif;color:var(--black);background:white;outline:none;transition:var(--tr)}
+.fg input{width:100%;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:11px 14px;font-size:16px;font-family:'Inter',sans-serif;color:var(--black);background:white;outline:none;transition:var(--tr)}
 .fg input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-pale)}
 .pix-wrap{text-align:center;padding:8px 0}
 .pix-qr{width:145px;height:145px;background:var(--off);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;margin:0 auto 15px;font-size:4.6rem;border:2px dashed var(--gray-mid)}
@@ -348,8 +348,6 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   .cat-label{font-size:.66rem}
 }
 </style>
-  <script type="module" crossorigin src="/assets/main-BOoIB2PJ.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/firebase-BvAgtE82.js">
 </head>
 <body>
 
@@ -584,5 +582,405 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   </div>
 </div>
 
+<script type="module">
+// ===== FIREBASE =====
+import { db } from "/src/firebase.js";
+import {
+  collection, doc, onSnapshot, addDoc,
+  serverTimestamp, query, orderBy
+} from "firebase/firestore";
+
+// ===== PRODUTOS (fonte única de dados) =====
+const PRODS = [
+  {id:1,name:'Ração Golden Special Adulto 15kg',brand:'Golden',cat:'racao',species:'cachorro',e:'🥩',price:129.90,old:159.90,tag:'OFERTA'},
+  {id:2,name:'Ração Royal Canin Gato Adulto 4kg',brand:'Royal Canin',cat:'racao',species:'gato',e:'😺',price:89.90,old:null,tag:null},
+  {id:3,name:'Sachê Pedigree Carne e Frango 100g',brand:'Pedigree',cat:'sache',species:'cachorro',e:'🥫',price:4.90,old:6.50,tag:'PROMO'},
+  {id:4,name:'Sachê Whiskas Atum para Gatos 85g',brand:'Whiskas',cat:'sache',species:'gato',e:'🐟',price:3.90,old:null,tag:null},
+  {id:5,name:'Brinquedo Mordedor Natural Pet 30cm',brand:'PetFun',cat:'brinquedo',species:'cachorro',e:'🦷',price:24.90,old:null,tag:null},
+  {id:6,name:'Brinquedo Kong Classic Médio',brand:'Kong',cat:'brinquedo',species:'cachorro',e:'🎾',price:49.90,old:69.90,tag:'OFERTA'},
+  {id:7,name:'Shampoo Pet Society Neutro 500ml',brand:'Pet Society',cat:'higiene',species:'cachorro',e:'🛁',price:22.90,old:null,tag:null},
+  {id:8,name:'Antipulgas Frontline Plus Cão Até 10kg',brand:'Frontline',cat:'medicamento',species:'cachorro',e:'💊',price:79.90,old:null,tag:null},
+  {id:9,name:'Ração para Peixes Tropical Colour 40g',brand:'Tropical',cat:'racao',species:'peixe',e:'🐠',price:12.90,old:null,tag:null},
+  {id:10,name:'Aquário Kit Completo 20 Litros',brand:'Aquatek',cat:'aquario',species:'peixe',e:'🐟',price:189.00,old:220.00,tag:'NOVO'},
+  {id:11,name:'Coleira Nylon Ajustável Colorida M',brand:'PetStyle',cat:'coleira',species:'cachorro',e:'🦮',price:18.90,old:null,tag:null},
+  {id:12,name:'Ração Golden Gatos Castrados 3kg',brand:'Golden',cat:'racao',species:'gato',e:'🐱',price:59.90,old:74.90,tag:'PROMO'},
+  {id:13,name:'Petisco Ossinho Bifinho Carne 500g',brand:'PetBiscoito',cat:'petisco',species:'cachorro',e:'🦴',price:14.90,old:null,tag:null},
+  {id:14,name:"Ração Hill's Aves Domésticas 1kg",brand:"Hill's",cat:'racao',species:'passaro',e:'🦜',price:39.90,old:null,tag:null},
+  {id:15,name:'Areia Sanitária para Gatos 4kg',brand:'PetFresh',cat:'areia',species:'gato',e:'🏖️',price:29.90,old:34.90,tag:'PROMO'},
+  {id:16,name:'Caminha Pelúcia Redonda P',brand:'Confort Pet',cat:'cama',species:'cachorro',e:'🛏️',price:59.90,old:null,tag:'NOVO'},
+  {id:17,name:'Comedouro Inox Antiderrapante M',brand:'PetWare',cat:'alimentacao',species:'cachorro',e:'🥣',price:32.90,old:null,tag:null},
+  {id:18,name:'Bolsa de Transporte Soft Pet M',brand:'CarryPet',cat:'transporte',species:'cachorro',e:'🧳',price:129.00,old:160.00,tag:'OFERTA'},
+  {id:19,name:'Ração Hamster Roedor Gourmet 500g',brand:'RoeGold',cat:'racao',species:'roedor',e:'🐹',price:19.90,old:null,tag:null},
+  {id:20,name:'Repelente Spray Antipulgas 200ml',brand:'BioVet',cat:'medicamento',species:'cachorro',e:'🪲',price:34.90,old:null,tag:null},
+  {id:21,name:'Pá de Jardinagem Cabo Madeira',brand:'AgroFerra',cat:'jardinagem',species:'todos',e:'🛠️',price:39.90,old:null,tag:null},
+  {id:22,name:'Regador Galvanizado 5 Litros',brand:'AgroFerra',cat:'jardinagem',species:'todos',e:'🪣',price:54.90,old:69.90,tag:'OFERTA'},
+  {id:23,name:'Luva de Jardinagem Reforçada',brand:'GreenHand',cat:'jardinagem',species:'todos',e:'🧤',price:22.90,old:null,tag:null},
+  {id:24,name:'Tesoura de Poda Profissional',brand:'GreenHand',cat:'jardinagem',species:'todos',e:'✂️',price:44.90,old:null,tag:'NOVO'},
+  {id:25,name:'Vaso de Cerâmica para Mudas',brand:'Terra Viva',cat:'jardinagem',species:'todos',e:'🪴',price:29.90,old:34.90,tag:'PROMO'},
+  {id:26,name:'Adubo Orgânico para Plantas 1kg',brand:'Terra Viva',cat:'jardinagem',species:'todos',e:'🌱',price:18.90,old:null,tag:null},
+];
+
+// ===== ESTOQUE E PRODUTOS CUSTOMIZADOS (tempo real via Firestore) =====
+let stockCache = {};        // { productId: true } => esgotado
+let customProdsCache = [];  // produtos cadastrados pelo painel admin
+
+function isAvailable(id){
+  const p=customProdsCache.find(x=>x.id===id);
+  if(p && p.qty!=null) return p.qty>0;
+  return stockCache[id] !== true;
+}
+
+// Mescla produtos base + personalizados cadastrados no admin
+// getAllProds() retorna somente os produtos do Firebase — os 26 produtos de demonstração
+// só aparecem depois que forem importados pelo botão no painel administrativo.
+function getAllProds(){ return [...customProdsCache]; }
+
+// Ouve o estoque em tempo real — qualquer dispositivo que alterar reflete aqui na hora
+onSnapshot(collection(db,'estoque'), snap => {
+  const s = {};
+  snap.forEach(d => { s[d.id] = true; });
+  stockCache = s;
+  renderProds(filtered());
+}, err => console.error('Erro ao ouvir estoque:', err));
+
+// Ouve os produtos personalizados em tempo real
+onSnapshot(query(collection(db,'produtos_customizados'), orderBy('createdAt','asc')), snap => {
+  customProdsCache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderProds(filtered());
+}, err => console.error('Erro ao ouvir produtos:', err));
+
+// Ouve as categorias personalizadas cadastradas no painel e as insere no site
+let customCatsCache = {}; // { slug: {label, emoji} }
+onSnapshot(collection(db,'categorias_customizadas'), snap => {
+  const c = {};
+  snap.forEach(d => { c[d.id] = { label:d.data().label, emoji:d.data().emoji||'📦' }; });
+  customCatsCache = c;
+  const anchor=document.getElementById('catVerTodos');
+  if(anchor){
+    document.querySelectorAll('.cat-item[data-custom]').forEach(el=>el.remove());
+    const html=Object.entries(c).map(([slug,{label,emoji}])=>
+      `<div class="cat-item rv in" data-custom onclick="filterByCat(this,'${slug}')"><div class="cat-e">${emoji}</div><div class="cat-label">${label}</div></div>`
+    ).join('');
+    anchor.insertAdjacentHTML('beforebegin', html);
+  }
+}, err => console.error('Erro ao ouvir categorias personalizadas:', err));
+
+// Ouve as imagens de design do site (logo, banners, fotos de espécie) — sobrescreve o padrão do repositório quando o admin cadastra algo
+// Com retry: se o listener cair (rede/permissão), antes a imagem ficava presa
+// num pixel transparente pra sempre sem nenhum aviso. Agora tenta de novo com backoff.
+let designRetryDelay = 3000;
+function subscribeDesign(){
+  return onSnapshot(collection(db,'design'), snap => {
+    designRetryDelay = 3000;
+    snap.forEach(d => {
+      const data = d.data().data;
+      if(!data) return;
+      if(d.id==='logo'){
+        const el1=document.getElementById('siteLogo'); if(el1) el1.src=data;
+        const el2=document.getElementById('siteLogoFooter'); if(el2) el2.src=data;
+      } else {
+        const el=document.getElementById(d.id);
+        if(el) el.src=data;
+      }
+    });
+  }, err => {
+    console.error('Erro ao ouvir imagens de design:', err);
+    setTimeout(subscribeDesign, designRetryDelay);
+    designRetryDelay = Math.min(designRetryDelay*2, 30000);
+  });
+}
+subscribeDesign();
+
+// ===== RENDER PRODUTOS =====
+// Carrinho persistido em localStorage — sem isso, o Safari no iOS recarrega a
+// aba em segundo plano e o cliente perde os itens sem aviso nenhum.
+// Envolvido em try/catch pois localStorage pode lançar erro em modo privado.
+function loadCart(){
+  try{ return JSON.parse(localStorage.getItem('agrocampo_cart')||'[]'); }
+  catch(e){ return []; }
+}
+function persistCart(){
+  try{ localStorage.setItem('agrocampo_cart', JSON.stringify(cart)); }
+  catch(e){ /* modo privado ou localStorage indisponível — segue sem persistir */ }
+}
+let cart=loadCart(), af={cat:'todos',sp:'todos',tag:''};
+
+// ===== CARROSSEL =====
+let carouselIdx=0;
+const carouselTotal=4;
+function updateCarousel(){
+  document.querySelectorAll('.carousel-slide').forEach((s,i)=>s.classList.toggle('active',i===carouselIdx));
+  document.querySelectorAll('.cdot').forEach((d,i)=>d.classList.toggle('active',i===carouselIdx));
+}
+function carouselMove(dir){
+  carouselIdx=(carouselIdx+dir+carouselTotal)%carouselTotal;
+  updateCarousel();
+  resetCarouselAuto();
+}
+function carouselGo(i){
+  carouselIdx=i;
+  updateCarousel();
+  resetCarouselAuto();
+}
+function carouselClick(type){
+  if(type==='boas-vindas'){ scrollSec('produtos'); }
+  else if(type==='clinica'){ window.open('vetclinic.html','_blank'); }
+  else if(type==='ofertas'){ filterByTag('OFERTA'); }
+  else if(type==='jardinagem'){ filterByCat(null,'jardinagem'); }
+}
+let carouselAutoTimer=null;
+function startCarouselAuto(){
+  carouselAutoTimer=setInterval(()=>{carouselIdx=(carouselIdx+1)%carouselTotal;updateCarousel();},5500);
+}
+function resetCarouselAuto(){
+  clearInterval(carouselAutoTimer);
+  startCarouselAuto();
+}
+startCarouselAuto();
+
+function renderProds(list){
+  const g=document.getElementById('productsGrid');
+  if(!list.length){g.innerHTML='<div class="no-results"><i class="fas fa-search"></i>Nenhum produto encontrado.</div>';return}
+  g.innerHTML=list.map(p=>{
+    const ok=isAvailable(p.id);
+    // Thumb: imagem real se tiver, senão emoji
+    const thumbInner = p.imgUrl
+      ? `<img src="${p.imgUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+      : `<span style="font-size:4rem">${p.e||'📦'}</span>`;
+    return`<div class="prod-card${ok?'':' esgotado'} rv">
+      <div class="prod-thumb" style="${p.imgUrl?'padding:0;overflow:hidden':''}">
+        ${!ok?'<span class="prod-tag esgotado-tag">ESGOTADO</span>':(p.tag?`<span class="prod-tag ${p.tag==='NOVO'?'novo':''}">${p.tag}</span>`:'')}
+        ${thumbInner}
+      </div>
+      ${ok
+        ?`<button class="btn-add-float" onclick="addCart('${p.id}')" title="Adicionar à sacola"><i class="fas fa-plus"></i></button>`
+        :`<button class="btn-add-float" disabled title="Indisponível"><i class="fas fa-ban"></i></button>`
+      }
+      <div class="prod-body">
+        <div class="prod-brand">${p.brand}</div>
+        <div class="prod-name">${p.name}</div>
+        ${p.old?`<div class="prod-old">R$ ${(+p.old).toFixed(2).replace('.',',')}</div>`:''}
+        <div class="prod-price">R$ ${(+p.price).toFixed(2).replace('.',',')}</div>
+        <div class="prod-inst">${ok?'em até 3× sem juros':'<span style="color:var(--red)">Produto esgotado no momento.</span>'}</div>
+      </div>
+    </div>`;
+  }).join('');
+  initRv();
+}
+
+function filtered(){
+  let l=[...getAllProds()];
+  if(af.tag) l=l.filter(p=>p.tag&&p.tag===af.tag);
+  if(af.sp&&af.sp!=='todos') l=l.filter(p=>p.species===af.sp||p.species==='todos');
+  if(af.cat&&af.cat!=='todos') l=l.filter(p=>p.cat===af.cat);
+  return l;
+}
+
+function filterByCat(el,cat){
+  af.cat=cat; af.tag='';
+  document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labels={'racao':'Rações','petisco':'Petiscos e Ossos','sache':'Sachês','brinquedo':'Brinquedos','higiene':'Higiene e Beleza','medicamento':'Farmácia','coleira':'Coleiras e Peitorais','cama':'Camas e Cobertores','alimentacao':'Comedouros','transporte':'Transporte','aquario':'Aquários','roupa':'Roupas','areia':'Areias e Banheiros','jardinagem':'Jardinagem e Cultivo','todos':'Todos os Produtos'};
+  document.getElementById('prodsTitle').textContent=labels[cat]||customCatsCache[cat]?.label||'Produtos';
+  document.getElementById('prodsSub').textContent=cat==='todos'?'Tudo para o seu pet':'Filtrando por categoria';
+  renderProds(filtered()); scrollSec('produtos');
+}
+
+function filterBySpecies(el,sp){
+  af.sp=sp; af.cat='todos'; af.tag='';
+  document.querySelectorAll('.nav-item[data-sp]').forEach(e=>e.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const labels={'todos':'Todos os Produtos','cachorro':'Para Cachorros 🐶','gato':'Para Gatos 🐱','peixe':'Para Peixes 🐠','passaro':'Para Pássaros 🦜','roedor':'Para Roedores 🐹','reptil':'Para Répteis 🐢'};
+  document.getElementById('prodsTitle').textContent=labels[sp]||'Produtos';
+  document.getElementById('prodsSub').textContent='Filtrando por espécie';
+  renderProds(filtered()); scrollSec('produtos');
+}
+
+function filterByTag(tag){
+  af.tag=tag; af.cat='todos'; af.sp='todos';
+  document.getElementById('prodsTitle').textContent='🔥 Promoções';
+  document.getElementById('prodsSub').textContent='Melhores ofertas do momento';
+  renderProds(filtered()); scrollSec('produtos');
+}
+
+function doSearch(q){
+  // Sincroniza os dois campos de busca
+  const desktop=document.getElementById('searchInput');
+  const mobile=document.getElementById('searchInputMobile');
+  if(document.activeElement!==desktop) desktop.value=q;
+  if(document.activeElement!==mobile) mobile.value=q;
+
+  const t=q.trim().toLowerCase();
+  if(!t){renderProds(getAllProds());document.getElementById('prodsTitle').textContent='Produtos em Destaque';document.getElementById('prodsSub').textContent='Qualidade e variedade para seu pet';return}
+  const r=getAllProds().filter(p=>p.name.toLowerCase().includes(t)||p.brand.toLowerCase().includes(t)||p.cat.toLowerCase().includes(t)||(p.species&&p.species.toLowerCase().includes(t)));
+  document.getElementById('prodsTitle').textContent=`Resultados para "${q}"`;
+  document.getElementById('prodsSub').textContent=`${r.length} produto(s) encontrado(s)`;
+  renderProds(r); scrollSec('produtos');
+}
+
+// ===== CART =====
+function addCart(id){
+  if(!isAvailable(id)){toast('Produto esgotado!');return}
+  const p=getAllProds().find(x=>String(x.id)===String(id));
+  if(!p)return;
+  const ex=cart.find(x=>String(x.id)===String(id));
+  if(ex) ex.qty++; else cart.push({...p,qty:1});
+  updCart(); openDrawer(); toast(`${p.name.substring(0,30)}… adicionado!`);
+}
+
+function updCart(){
+  persistCart();
+  const tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('cartCount').textContent=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartTotal').textContent=fmt(tot);
+  const bd=document.getElementById('drawerBody'), ft=document.getElementById('drawerFt');
+  if(!cart.length){bd.innerHTML='<div class="cart-empty-state"><i class="fas fa-shopping-bag"></i><p>Sua sacola está vazia.</p></div>';ft.style.display='none';return}
+  ft.style.display='block';
+  bd.innerHTML=cart.map(c=>{
+    const thumbHtml=c.imgUrl
+      ?`<img src="${c.imgUrl}" alt="${c.name}" style="width:58px;height:58px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0"/>`
+      :`<div class="ci-thumb">${c.e||'📦'}</div>`;
+    return`<div class="ci">
+      ${thumbHtml}
+      <div class="ci-info">
+        <div class="ci-name">${c.name}</div>
+        <div class="ci-price">${fmt(c.price*c.qty)}</div>
+        <div class="ci-qty">
+          <button onclick="chgQty('${c.id}',-1)">−</button>
+          <span>${c.qty}</span>
+          <button onclick="chgQty('${c.id}',1)">+</button>
+        </div>
+      </div>
+      <button class="ci-del" onclick="rmItem('${c.id}')"><i class="fas fa-trash"></i></button>
+    </div>`;
+  }).join('');
+}
+
+function chgQty(id,d){const i=cart.find(c=>String(c.id)===String(id));if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(c=>String(c.id)!==String(id));updCart()}
+function rmItem(id){cart=cart.filter(c=>String(c.id)!==String(id));updCart()}
+function openDrawer(){document.getElementById('drawerMask').classList.add('open')}
+function closeDrawer(){document.getElementById('drawerMask').classList.remove('open')}
+function handleMaskClick(e){if(e.target===e.currentTarget)closeDrawer()}
+
+// ===== SALVAR PEDIDO (Firestore) =====
+async function saveOrder(data){
+  try{
+    await addDoc(collection(db,'pedidos'), {
+      ...data,
+      status:'Aguardando',
+      date:new Date().toLocaleDateString('pt-BR'),
+      time:new Date().toLocaleTimeString('pt-BR'),
+      createdAt:serverTimestamp()
+    });
+    return true;
+  }catch(e){
+    console.error('Erro ao salvar pedido:', e);
+    toast('Erro ao enviar pedido. Verifique sua conexão e tente novamente.');
+    return false;
+  }
+}
+
+// ===== CHECKOUT =====
+let chkStep=1, payM='', delivM='';
+function openCheckout(){closeDrawer();chkStep=1;payM='';delivM='';document.getElementById('modalMask').classList.add('open');renderChk()}
+function closeCheckout(){document.getElementById('modalMask').classList.remove('open')}
+function fmt(v){return'R$ '+v.toFixed(2).replace('.',',')}
+function total(){return cart.reduce((s,c)=>s+c.price*c.qty,0)}
+
+function stpsHtml(a){return`<div class="steps">${['Pagamento','Entrega','Confirmação'].map((l,i)=>{const n=i+1,cls=n<a?'done':n===a?'active':'';return`<div class="stp ${cls}"><div class="stp-dot">${n<a?'✓':n}</div><div class="stp-lbl">${l}</div></div>`;}).join('')}</div>`}
+
+function sumHtml(){return`<div class="order-sum"><h4>Resumo do pedido</h4>${cart.map(c=>`<div class="sum-row"><span>${c.name.substring(0,28)}… ×${c.qty}</span><span>${fmt(c.price*c.qty)}</span></div>`).join('')}<div class="sum-row"><span>Total</span><span class="sum-val-total">${fmt(total())}</span></div></div>`}
+
+function addrForm(){return`<div class="frow"><div class="fg"><label>Nome Completo</label><input id="f-nome" placeholder="Seu nome completo"/></div><div class="fg"><label>Telefone / WhatsApp</label><input id="f-tel" placeholder="(27) 99999-9999"/></div></div><div class="frow"><div class="fg"><label>CEP</label><input id="f-cep" placeholder="00000-000" maxlength="9" oninput="mskCep(this)"/></div><div class="fg"><label>Número</label><input id="f-num" placeholder="Nº da casa"/></div></div><div class="fg"><label>Rua / Avenida</label><input id="f-rua" placeholder="Nome da rua ou avenida"/></div><div class="frow"><div class="fg"><label>Complemento <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-comp" placeholder="Apto, Bloco..."/></div><div class="fg"><label>Bairro</label><input id="f-bairro" placeholder="Seu bairro"/></div></div><div class="frow"><div class="fg"><label>Cidade</label><input id="f-cidade" value="Vila Velha"/></div><div class="fg"><label>Estado</label><input id="f-estado" value="ES" maxlength="2"/></div></div><div class="fg"><label>Referência <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-ref" placeholder="Próximo ao mercado, portão azul..."/></div>`}
+
+function pickupBox(lbl){return`<div class="pickup-box"><div style="font-size:2.8rem;margin-bottom:10px">🏪</div><h4 style="margin-bottom:6px;color:var(--blue-dark)">Retire na loja!</h4><p style="font-size:.82rem;color:var(--gray-dark);line-height:1.55">Av. Jerônimo Monteiro, 34 – Vila Batista, Vila Velha – ES<br/>⏰ Seg–Sex 08h–18h | Sáb 08h–13h</p><p style="margin-top:10px;font-size:.82rem;font-weight:700">Pagamento: <span style="color:var(--blue)">${lbl}</span> — realizado no balcão da loja.</p></div>`}
+
+function renderChk(){
+  const bd=document.getElementById('mBody'),ti=document.getElementById('mTitle');
+  if(chkStep===1){
+    ti.textContent='💳 Forma de Pagamento';
+    bd.innerHTML=`${stpsHtml(1)}${sumHtml()}<p style="font-size:.82rem;font-weight:800;margin-bottom:4px">Selecione o pagamento:</p><div class="pay-opts"><div class="pay-opt" id="op-pix" onclick="selPay('pix')"><i class="fas fa-qrcode"></i><span>PIX</span></div><div class="pay-opt" id="op-dinheiro" onclick="selPay('dinheiro')"><i class="fas fa-money-bill-wave"></i><span>Dinheiro</span></div><div class="pay-opt" id="op-cartao" onclick="selPay('cartao')"><i class="fas fa-credit-card"></i><span>Cartão</span></div></div><button class="btn-next" onclick="goS2()">Continuar →</button>`;
+  } else if(chkStep===2){
+    ti.textContent='📦 Forma de Entrega';
+    bd.innerHTML=`${stpsHtml(2)}${sumHtml()}<p style="font-size:.82rem;font-weight:800;margin-bottom:4px">Como deseja receber?</p><div class="del-opts"><div class="del-opt" id="op-delivery" onclick="selDeliv('delivery')"><i class="fas fa-motorcycle"></i><strong>Delivery</strong><small>Recebo em casa</small></div><div class="del-opt" id="op-retirada" onclick="selDeliv('retirada')"><i class="fas fa-store"></i><strong>Retirada</strong><small>Busco na loja</small></div></div><button class="btn-next" onclick="goS3()">Continuar →</button>`;
+  } else if(chkStep===3 && payM==='pix'){
+    ti.textContent='⚡ Pagamento via PIX';
+    const wt=encodeURIComponent(`Olá! Realizei o pagamento via PIX. Total: ${fmt(total())}`);
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}<div class="pix-wrap"><div class="pix-qr">📱</div><p style="font-size:.8rem;color:var(--gray-dark);margin-bottom:4px">Chave PIX (Telefone):</p><div class="pix-key">(27) 98884-0318</div><button class="btn-copy" onclick="cpPix()"><i class="fas fa-copy"></i> Copiar Chave PIX</button><div class="pix-alert"><strong><i class="fas fa-info-circle"></i> Após o pagamento, envie o comprovante pelo WhatsApp.</strong></div><a href="https://wa.me/5527988840319?text=${wt}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;border-radius:50px;padding:12px 22px;font-weight:800;margin-top:14px;font-size:.85rem"><i class="fab fa-whatsapp"></i> Enviar Comprovante</a></div><div style="margin-top:16px;background:var(--off);border-radius:var(--radius);padding:14px;border:1.5px solid var(--gray)"><p style="font-size:.8rem;font-weight:800;margin-bottom:8px">Forma de retirada do pedido:</p><div class="del-opts"><div class="del-opt" id="op-delivery" onclick="selDeliv('delivery')"><i class="fas fa-motorcycle"></i><strong>Delivery</strong><small>Recebo em casa</small></div><div class="del-opt" id="op-retirada" onclick="selDeliv('retirada')"><i class="fas fa-store"></i><strong>Retirada</strong><small>Busco na loja</small></div></div><button class="btn-next" onclick="goS3pix()">Continuar →</button></div>`;
+  } else if(chkStep===4 && payM==='pix' && delivM==='delivery'){
+    ti.textContent='🏠 Endereço de Entrega';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}<div class="info-box"><i class="fas fa-info-circle"></i> Pagamento: <strong>PIX</strong> — envie o comprovante após pagar.</div>${addrForm()}<button class="btn-next" onclick="confirmOrder()"><i class="fas fa-check"></i> Confirmar Pedido</button>`;
+  } else if(chkStep===4 && payM==='pix' && delivM==='retirada'){
+    ti.textContent='🏪 Retirada na Loja';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}${pickupBox('PIX')}<button class="btn-next" onclick="confirmPickup()"><i class="fas fa-check"></i> Confirmar Retirada</button>`;
+  } else if(chkStep===3 && delivM==='delivery'){
+    const lbl=payM==='dinheiro'?'💵 Dinheiro na entrega':'💳 Cartão na entrega';
+    ti.textContent='🏠 Endereço de Entrega';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}<div class="info-box"><i class="fas fa-info-circle"></i> Pagamento: <strong>${lbl}</strong></div>${addrForm()}<button class="btn-next" onclick="confirmOrder()"><i class="fas fa-check"></i> Confirmar Pedido</button>`;
+  } else if(chkStep===3 && delivM==='retirada'){
+    ti.textContent='🏪 Retirada na Loja';
+    const lbl=payM==='dinheiro'?'💵 Dinheiro':'💳 Cartão';
+    bd.innerHTML=`${stpsHtml(3)}${sumHtml()}${pickupBox(lbl)}<button class="btn-next" onclick="confirmPickup()"><i class="fas fa-check"></i> Confirmar Retirada</button>`;
+  }
+}
+
+function selPay(m){payM=m;document.querySelectorAll('.pay-opt').forEach(e=>e.classList.remove('sel'));document.getElementById('op-'+m)?.classList.add('sel')}
+function selDeliv(m){delivM=m;document.querySelectorAll('.del-opt').forEach(e=>e.classList.remove('sel'));document.getElementById('op-'+m)?.classList.add('sel')}
+function goS2(){if(!payM){toast('Selecione a forma de pagamento!');return}chkStep=2;renderChk()}
+function goS3(){if(!delivM){toast('Selecione a forma de entrega!');return}chkStep=3;renderChk()}
+function goS3pix(){if(!delivM){toast('Selecione como quer receber!');return}chkStep=4;renderChk()}
+function cpPix(){
+  const key='(27) 98884-0318';
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(key).then(()=>toast('Chave PIX copiada!')).catch(()=>toast(`Copie manualmente: ${key}`));
+  }else{
+    toast(`Copie manualmente: ${key}`);
+  }
+}
+
+async function confirmOrder(){
+  const nome=document.getElementById('f-nome')?.value.trim(),tel=document.getElementById('f-tel')?.value.trim(),cep=document.getElementById('f-cep')?.value.trim(),rua=document.getElementById('f-rua')?.value.trim(),num=document.getElementById('f-num')?.value.trim(),bairro=document.getElementById('f-bairro')?.value.trim();
+  if(!nome||!tel||!cep||!rua||!num||!bairro){toast('Preencha todos os campos obrigatórios!');return}
+  const btn=document.querySelector('.btn-next');
+  if(btn){btn.disabled=true;btn.textContent='Enviando...'}
+  const ok=await saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),total:total(),payment:payM,delivery:delivM,address:{nome,tel,cep,rua,num,bairro}});
+  if(!ok){if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-check"></i> Confirmar Pedido'}return}
+  cart=[];updCart();
+  showSuccessUI();
+}
+
+async function confirmPickup(){
+  const btn=document.querySelector('.btn-next');
+  if(btn){btn.disabled=true;btn.textContent='Enviando...'}
+  const ok=await saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),total:total(),payment:payM,delivery:delivM});
+  if(!ok){if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-check"></i> Confirmar Retirada'}return}
+  cart=[];updCart();
+  showSuccessUI();
+}
+
+function showSuccessUI(){
+  document.getElementById('mTitle').textContent='✅ Pedido Confirmado!';
+  document.getElementById('mBody').innerHTML=`<div class="success-wrap"><div class="suc-icon"><i class="fas fa-check"></i></div><h3>Pedido enviado com sucesso!</h3><p>Entraremos em contato em breve para confirmar os detalhes da sua entrega ou retirada.</p><a href="https://wa.me/5527988840319?text=Olá! Acabei de fazer um pedido no site da Agrocampo." target="_blank" class="btn-wpp-suc"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a><br/><br/><button onclick="closeCheckout()" style="background:none;border:1.5px solid var(--gray);border-radius:50px;padding:9px 22px;font-size:.82rem;font-weight:700;cursor:pointer">Fechar</button></div>`;
+}
+
+function mskCep(el){let v=el.value.replace(/\D/g,'');if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5,8);el.value=v}
+function toast(msg){const t=document.getElementById('toast');document.getElementById('toastTxt').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function scrollSec(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
+function initRv(){const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.08});document.querySelectorAll('.rv:not(.in)').forEach(el=>obs.observe(el))}
+document.addEventListener('DOMContentLoaded',()=>{renderProds(getAllProds());updCart();initRv()});
+
+// ===== EXPORTAR PARA O WINDOW (necessário pois o script agora é um módulo ES6) =====
+Object.assign(window, {
+  carouselMove, carouselGo, carouselClick,
+  filterByCat, filterBySpecies, filterByTag, doSearch,
+  openDrawer, closeDrawer, handleMaskClick,
+  addCart, chgQty, rmItem,
+  openCheckout, closeCheckout,
+  selPay, selDeliv, goS2, goS3, goS3pix, cpPix,
+  confirmOrder, confirmPickup, mskCep,
+  scrollSec
+});
+
+</script>
 </body>
 </html>
