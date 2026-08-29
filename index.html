@@ -106,19 +106,13 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif}
 .sp-card-count::after{content:'→';font-size:.95rem;transition:var(--tr)}
 .sp-card:hover .sp-card-count::after{transform:translateX(4px)}
 
-/* ===== CATEGORIAS (pílulas com ícone circular) ===== */
-.cats-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
-.cats-strip::-webkit-scrollbar{height:5px}
-.cat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:var(--tr);flex-shrink:0;width:118px;height:118px;border-radius:var(--radius-lg);position:relative;overflow:hidden}
-.cat-item:nth-child(4n+1){background:linear-gradient(150deg,var(--navy),#1c3568)}
-.cat-item:nth-child(4n+2){background:linear-gradient(150deg,var(--blue),var(--blue-dark))}
-.cat-item:nth-child(4n+3){background:linear-gradient(150deg,#3a4a7a,var(--navy))}
-.cat-item:nth-child(4n+4){background:linear-gradient(150deg,var(--blue-light),var(--blue))}
-.cat-item::after{content:'';position:absolute;top:-20px;right:-20px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.08)}
-.cat-item:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
-.cat-item.active{outline:3px solid var(--yellow);outline-offset:2px}
-.cat-e{font-size:2rem;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}
-.cat-label{font-size:.72rem;font-weight:800;color:white;text-align:center;line-height:1.2;position:relative;z-index:1;padding:0 8px}
+/* ===== CATEGORIAS (grid de cards claros, tudo visível de uma vez) ===== */
+.cats-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:14px}
+.cat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:var(--tr);padding:20px 8px;border-radius:var(--radius-lg);background:var(--off);border:1.5px solid var(--gray);position:relative}
+.cat-item:hover{border-color:var(--blue-light);background:var(--blue-pale);transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.cat-item.active{border-color:var(--blue);background:var(--blue-pale)}
+.cat-e{width:52px;height:52px;border-radius:50%;background:linear-gradient(150deg,var(--blue-light),var(--blue));display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 10px rgba(47,95,216,.25);flex-shrink:0}
+.cat-label{font-size:.76rem;font-weight:800;color:var(--black);text-align:center;line-height:1.25}
 
 /* ===== PRODUTOS ===== */
 .products-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
@@ -268,6 +262,12 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 .del-opt.sel{border-color:var(--navy);background:var(--blue-pale)}
 .del-opt i{font-size:1.85rem;color:var(--blue)}
 .del-opt strong{font-size:.89rem;font-weight:800}
+.var-opts{display:flex;flex-direction:column;gap:9px}
+.var-opt{border:2px solid var(--gray);border-radius:var(--radius);padding:13px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:var(--tr);background:white}
+.var-opt:hover{border-color:var(--blue)}
+.var-opt.sel{border-color:var(--navy);background:var(--blue-pale)}
+.var-opt span{font-size:.88rem;font-weight:700}
+.var-opt strong{font-size:.92rem;font-weight:800;color:var(--navy)}
 .del-opt small{font-size:.74rem;color:var(--gray-dark)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .fg{margin-bottom:14px}
@@ -322,7 +322,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   .crb-info strong{font-size:.88rem}
   .crb-info span{font-size:.62rem}
   .crb-stars{font-size:.8rem}
-  .carousel-track{aspect-ratio:4/3.4}
+  .carousel-track{aspect-ratio:16/11}
   .carousel-slide img{object-position:left center}
   .carousel-arrow{width:36px;height:36px;font-size:.85rem}
   .carousel-prev{left:12px}.carousel-next{right:12px}
@@ -340,11 +340,12 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   .clinic-cta{flex-wrap:wrap;padding:16px 20px;font-size:.85rem}
 }
 @media(max-width:520px){
-  .products-grid{grid-template-columns:1fr}
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .pay-opts{grid-template-columns:1fr}
   .pay-opt{flex-direction:row;gap:12px;padding:14px}
-  .cat-item{width:96px;height:96px}
-  .cat-e{font-size:1.6rem}
+  .cats-strip{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px}
+  .cat-item{padding:14px 6px;gap:8px}
+  .cat-e{width:42px;height:42px;font-size:1.25rem}
   .cat-label{font-size:.66rem}
 }
 </style>
@@ -511,12 +512,7 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
 <section id="servicos" style="background:var(--off);padding:40px 0">
   <div style="max-width:1320px;margin:0 auto;padding:0 32px">
     <div class="sec-hd rv"><div class="sec-row"><div><h2>Serviços Pet Shop</h2><p>Agendamento direto pelo WhatsApp</p></div></div></div>
-    <div class="svc-grid">
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🛁</div><div><h3>Banho Completo</h3><p>Com secagem e perfume</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar um banho." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">✂️</div><div><h3>Tosa Profissional</h3><p>Higiênica ou estética</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar uma tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🎁</div><div><h3>Planos Pet</h3><p>Banho + tosa mensais</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de saber sobre os Planos Pet." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Consultar</a></div></div>
-      <div class="svc-card rv"><div class="svc-top"><div class="svc-emoji">🐾</div><div><h3>Combo Banho + Tosa</h3><p>Com hidratação de pelagem</p></div></div><div class="svc-body"><a href="https://wa.me/5527988840319?text=Olá! Gostaria de agendar o Combo Banho e Tosa." target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a></div></div>
-    </div>
+    <div class="svc-grid" id="svcGrid"></div>
     <a href="vetclinic.html" target="_blank" class="clinic-cta rv">
       <i class="fas fa-stethoscope"></i>
       <span>Temos Clínica Veterinária — clique aqui para acessar</span>
@@ -579,6 +575,13 @@ footer{background:var(--black);color:white;padding:58px 32px 22px}
   <div class="modal">
     <div class="modal-hd"><h3 id="mTitle">Finalizar Compra</h3><button class="modal-close" onclick="closeCheckout()">✕</button></div>
     <div class="modal-bd" id="mBody"></div>
+  </div>
+</div>
+
+<div class="modal-mask" id="varModalMask">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hd"><h3 id="varModalTitle">Produto</h3><button class="modal-close" onclick="closeVarModal()">✕</button></div>
+    <div class="modal-bd" id="varModalBody"></div>
   </div>
 </div>
 
@@ -665,6 +668,50 @@ onSnapshot(collection(db,'categorias_customizadas'), snap => {
   }
 }, err => console.error('Erro ao ouvir categorias personalizadas:', err));
 
+// Bairros e cidades atendidas (pra frete no checkout)
+let cidadesCache=[], bairrosCache=[];
+const MODALIDADE_LABEL={basica:'Entrega Básica',flash:'AgroFlash',correios:'Correios'};
+onSnapshot(collection(db,'cidades'), snap => {
+  cidadesCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+}, err => console.error('Erro ao ouvir cidades:', err));
+onSnapshot(collection(db,'bairros'), snap => {
+  bairrosCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  const sel=document.getElementById('f-bairro');
+  if(sel) populateBairroSelect(sel);
+}, err => console.error('Erro ao ouvir bairros:', err));
+
+function bairrosDisponiveis(){
+  const cidadesAtivas=new Set(cidadesCache.filter(c=>c.ativo).map(c=>c.id));
+  return bairrosCache.filter(b=>b.ativo && cidadesAtivas.has(b.cidadeId)).sort((a,b)=>a.nome.localeCompare(b.nome));
+}
+
+// Serviços do Pet Shop (banho, tosa, etc.) — geridos no painel admin
+onSnapshot(query(collection(db,'servicos_petshop'), orderBy('createdAt','asc')), snap => {
+  const grid=document.getElementById('svcGrid');
+  if(!grid)return;
+  const list=snap.docs.map(d=>({id:d.id, ...d.data()})).filter(s=>s.ativo!==false);
+  grid.innerHTML=list.map(s=>{
+    const wa=encodeURIComponent(s.waText || `Olá! Gostaria de agendar: ${s.nome}`);
+    return `<div class="svc-card rv in">
+      <div class="svc-top"><div class="svc-emoji">${s.emoji||'🐾'}</div><div><h3>${s.nome}</h3><p>${s.desc||''}</p></div></div>
+      <div class="svc-body">
+        ${s.preco!=null?`<span class="svc-price">${fmt(s.preco)}</span>`:''}
+        <a href="https://wa.me/5527988840319?text=${wa}" target="_blank" class="btn-svc"><i class="fab fa-whatsapp"></i> Agendar</a>
+      </div>
+    </div>`;
+  }).join('');
+}, err => console.error('Erro ao ouvir serviços:', err));
+
+function populateBairroSelect(sel){
+  const disponiveis=bairrosDisponiveis();
+  const atual=sel.value;
+  sel.innerHTML='<option value="">Selecione seu bairro...</option>'+disponiveis.map(b=>{
+    const cidade=cidadesCache.find(c=>c.id===b.cidadeId);
+    return `<option value="${b.id}">${b.nome}${cidade?' — '+cidade.nome:''}</option>`;
+  }).join('');
+  if(disponiveis.some(b=>b.id===atual)) sel.value=atual;
+}
+
 // Ouve as imagens de design do site (logo, banners, fotos de espécie) — sobrescreve o padrão do repositório quando o admin cadastra algo
 // Com retry: se o listener cair (rede/permissão), antes a imagem ficava presa
 // num pixel transparente pra sempre sem nenhum aviso. Agora tenta de novo com backoff.
@@ -704,6 +751,10 @@ function persistCart(){
   catch(e){ /* modo privado ou localStorage indisponível — segue sem persistir */ }
 }
 let cart=loadCart(), af={cat:'todos',sp:'todos',tag:''};
+// homeMode: enquanto true, a home mostra só os produtos marcados como
+// "vitrine" pelo admin — vira false assim que o cliente navega por
+// categoria/espécie/tag/busca, revelando o catálogo completo.
+let homeMode=true;
 
 // ===== CARROSSEL =====
 let carouselIdx=0;
@@ -743,6 +794,9 @@ function renderProds(list){
   if(!list.length){g.innerHTML='<div class="no-results"><i class="fas fa-search"></i>Nenhum produto encontrado.</div>';return}
   g.innerHTML=list.map(p=>{
     const ok=isAvailable(p.id);
+    const varsAtivas=(p.variacoes||[]).filter(v=>v.ativo!==false);
+    const temVar=varsAtivas.length>0;
+    const precoExibido = temVar ? Math.min(...varsAtivas.map(v=>v.preco)) : p.price;
     // Thumb: imagem real se tiver, senão emoji
     const thumbInner = p.imgUrl
       ? `<img src="${p.imgUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
@@ -753,15 +807,17 @@ function renderProds(list){
         ${thumbInner}
       </div>
       ${ok
-        ?`<button class="btn-add-float" onclick="addCart('${p.id}')" title="Adicionar à sacola"><i class="fas fa-plus"></i></button>`
+        ? (temVar
+            ? `<button class="btn-add-float" onclick="openProdModal('${p.id}')" title="Escolher opção"><i class="fas fa-list"></i></button>`
+            : `<button class="btn-add-float" onclick="addCart('${p.id}')" title="Adicionar à sacola"><i class="fas fa-plus"></i></button>`)
         :`<button class="btn-add-float" disabled title="Indisponível"><i class="fas fa-ban"></i></button>`
       }
       <div class="prod-body">
         <div class="prod-brand">${p.brand}</div>
         <div class="prod-name">${p.name}</div>
-        ${p.old?`<div class="prod-old">R$ ${(+p.old).toFixed(2).replace('.',',')}</div>`:''}
-        <div class="prod-price">R$ ${(+p.price).toFixed(2).replace('.',',')}</div>
-        <div class="prod-inst">${ok?'em até 3× sem juros':'<span style="color:var(--red)">Produto esgotado no momento.</span>'}</div>
+        ${(!temVar&&p.old)?`<div class="prod-old">R$ ${(+p.old).toFixed(2).replace('.',',')}</div>`:''}
+        <div class="prod-price">${temVar?'A partir de ':''}R$ ${(+precoExibido).toFixed(2).replace('.',',')}</div>
+        <div class="prod-inst">${ok?(temVar?`${varsAtivas.length} opções disponíveis`:'em até 3× sem juros'):'<span style="color:var(--red)">Produto esgotado no momento.</span>'}</div>
       </div>
     </div>`;
   }).join('');
@@ -773,10 +829,15 @@ function filtered(){
   if(af.tag) l=l.filter(p=>p.tag&&p.tag===af.tag);
   if(af.sp&&af.sp!=='todos') l=l.filter(p=>p.species===af.sp||p.species==='todos');
   if(af.cat&&af.cat!=='todos') l=l.filter(p=>p.cat===af.cat);
+  if(homeMode){
+    const destacados=l.filter(p=>p.destaque);
+    if(destacados.length) l=destacados;
+  }
   return l;
 }
 
 function filterByCat(el,cat){
+  homeMode=false;
   af.cat=cat; af.tag='';
   document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -787,6 +848,7 @@ function filterByCat(el,cat){
 }
 
 function filterBySpecies(el,sp){
+  homeMode=false;
   af.sp=sp; af.cat='todos'; af.tag='';
   document.querySelectorAll('.nav-item[data-sp]').forEach(e=>e.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -797,6 +859,7 @@ function filterBySpecies(el,sp){
 }
 
 function filterByTag(tag){
+  homeMode=false;
   af.tag=tag; af.cat='todos'; af.sp='todos';
   document.getElementById('prodsTitle').textContent='🔥 Promoções';
   document.getElementById('prodsSub').textContent='Melhores ofertas do momento';
@@ -811,7 +874,15 @@ function doSearch(q){
   if(document.activeElement!==mobile) mobile.value=q;
 
   const t=q.trim().toLowerCase();
-  if(!t){renderProds(getAllProds());document.getElementById('prodsTitle').textContent='Produtos em Destaque';document.getElementById('prodsSub').textContent='Qualidade e variedade para seu pet';return}
+  if(!t){
+    af={cat:'todos',sp:'todos',tag:''}; homeMode=true;
+    document.querySelectorAll('.cat-item,.nav-item[data-sp]').forEach(e=>e.classList.remove('active'));
+    renderProds(filtered());
+    document.getElementById('prodsTitle').textContent='Produtos em Destaque';
+    document.getElementById('prodsSub').textContent='Qualidade e variedade para seu pet';
+    return;
+  }
+  homeMode=false;
   const r=getAllProds().filter(p=>p.name.toLowerCase().includes(t)||p.brand.toLowerCase().includes(t)||p.cat.toLowerCase().includes(t)||(p.species&&p.species.toLowerCase().includes(t)));
   document.getElementById('prodsTitle').textContent=`Resultados para "${q}"`;
   document.getElementById('prodsSub').textContent=`${r.length} produto(s) encontrado(s)`;
@@ -819,13 +890,68 @@ function doSearch(q){
 }
 
 // ===== CART =====
+function cartKeyOf(id,variacaoNome){ return String(id)+'::'+(variacaoNome||''); }
+
 function addCart(id){
   if(!isAvailable(id)){toast('Produto esgotado!');return}
   const p=getAllProds().find(x=>String(x.id)===String(id));
   if(!p)return;
-  const ex=cart.find(x=>String(x.id)===String(id));
-  if(ex) ex.qty++; else cart.push({...p,qty:1});
+  const key=cartKeyOf(id,null);
+  const ex=cart.find(x=>x.cartKey===key);
+  if(ex) ex.qty++; else cart.push({...p,qty:1,cartKey:key,variacaoNome:null});
   updCart(); openDrawer(); toast(`${p.name.substring(0,30)}… adicionado!`);
+}
+
+function addCartVariacao(id,variacao){
+  const p=getAllProds().find(x=>String(x.id)===String(id));
+  if(!p)return;
+  const key=cartKeyOf(id,variacao.nome);
+  const ex=cart.find(x=>x.cartKey===key);
+  if(ex) ex.qty++; else cart.push({...p, price:variacao.preco, variacaoNome:variacao.nome, qty:1, cartKey:key});
+  updCart();
+}
+
+// ===== SELEÇÃO DE VARIAÇÃO (tamanho, peso, etc.) =====
+let varModalProdId=null, varModalSelected=null;
+
+function openProdModal(id){
+  const p=getAllProds().find(x=>String(x.id)===String(id));
+  if(!p)return;
+  const ativos=(p.variacoes||[]).filter(v=>v.ativo!==false);
+  if(!ativos.length){ addCart(id); return; }
+  varModalProdId=id; varModalSelected=null;
+  document.getElementById('varModalTitle').textContent=p.name;
+  document.getElementById('varModalBody').innerHTML=`
+    <p style="font-size:.85rem;color:var(--gray-dark);margin-bottom:14px">Escolha uma opção:</p>
+    <div class="var-opts" id="varOptsList">${ativos.map((v,i)=>`
+      <div class="var-opt" id="var-opt-${i}" onclick="selVar(${i})"><span>${v.nome}</span><strong>${fmt(v.preco)}</strong></div>`).join('')}</div>
+    <button class="btn-checkout-main" id="varAddBtn" onclick="confirmVarAdd()" disabled style="margin-top:18px;opacity:.5">Selecione uma opção</button>
+  `;
+  document.getElementById('varModalMask').classList.add('open');
+}
+
+function selVar(i){
+  const p=getAllProds().find(x=>String(x.id)===String(varModalProdId));
+  if(!p)return;
+  const ativos=(p.variacoes||[]).filter(v=>v.ativo!==false);
+  varModalSelected=ativos[i];
+  document.querySelectorAll('#varOptsList .var-opt').forEach(e=>e.classList.remove('sel'));
+  document.getElementById('var-opt-'+i)?.classList.add('sel');
+  const btn=document.getElementById('varAddBtn');
+  btn.disabled=false; btn.style.opacity='1'; btn.textContent='Adicionar à sacola';
+}
+
+function confirmVarAdd(){
+  if(!varModalSelected || !varModalProdId)return;
+  addCartVariacao(varModalProdId, varModalSelected);
+  closeVarModal();
+  openDrawer();
+  toast('Adicionado à sacola!');
+}
+
+function closeVarModal(){
+  document.getElementById('varModalMask').classList.remove('open');
+  varModalProdId=null; varModalSelected=null;
 }
 
 function updCart(){
@@ -843,21 +969,21 @@ function updCart(){
     return`<div class="ci">
       ${thumbHtml}
       <div class="ci-info">
-        <div class="ci-name">${c.name}</div>
+        <div class="ci-name">${c.name}${c.variacaoNome?` <span style="color:var(--gray-dark);font-weight:600">— ${c.variacaoNome}</span>`:''}</div>
         <div class="ci-price">${fmt(c.price*c.qty)}</div>
         <div class="ci-qty">
-          <button onclick="chgQty('${c.id}',-1)">−</button>
+          <button onclick="chgQty('${c.cartKey}',-1)">−</button>
           <span>${c.qty}</span>
-          <button onclick="chgQty('${c.id}',1)">+</button>
+          <button onclick="chgQty('${c.cartKey}',1)">+</button>
         </div>
       </div>
-      <button class="ci-del" onclick="rmItem('${c.id}')"><i class="fas fa-trash"></i></button>
+      <button class="ci-del" onclick="rmItem('${c.cartKey}')"><i class="fas fa-trash"></i></button>
     </div>`;
   }).join('');
 }
 
-function chgQty(id,d){const i=cart.find(c=>String(c.id)===String(id));if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(c=>String(c.id)!==String(id));updCart()}
-function rmItem(id){cart=cart.filter(c=>String(c.id)!==String(id));updCart()}
+function chgQty(cartKey,d){const i=cart.find(c=>c.cartKey===cartKey);if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(c=>c.cartKey!==cartKey);updCart()}
+function rmItem(cartKey){cart=cart.filter(c=>c.cartKey!==cartKey);updCart()}
 function openDrawer(){document.getElementById('drawerMask').classList.add('open')}
 function closeDrawer(){document.getElementById('drawerMask').classList.remove('open')}
 function handleMaskClick(e){if(e.target===e.currentTarget)closeDrawer()}
@@ -881,17 +1007,53 @@ async function saveOrder(data){
 }
 
 // ===== CHECKOUT =====
-let chkStep=1, payM='', delivM='';
-function openCheckout(){closeDrawer();chkStep=1;payM='';delivM='';document.getElementById('modalMask').classList.add('open');renderChk()}
+let chkStep=1, payM='', delivM='', freteM=null, freteValor=0;
+function openCheckout(){closeDrawer();chkStep=1;payM='';delivM='';freteM=null;freteValor=0;document.getElementById('modalMask').classList.add('open');renderChk()}
 function closeCheckout(){document.getElementById('modalMask').classList.remove('open')}
 function fmt(v){return'R$ '+v.toFixed(2).replace('.',',')}
 function total(){return cart.reduce((s,c)=>s+c.price*c.qty,0)}
 
 function stpsHtml(a){return`<div class="steps">${['Pagamento','Entrega','Confirmação'].map((l,i)=>{const n=i+1,cls=n<a?'done':n===a?'active':'';return`<div class="stp ${cls}"><div class="stp-dot">${n<a?'✓':n}</div><div class="stp-lbl">${l}</div></div>`;}).join('')}</div>`}
 
-function sumHtml(){return`<div class="order-sum"><h4>Resumo do pedido</h4>${cart.map(c=>`<div class="sum-row"><span>${c.name.substring(0,28)}… ×${c.qty}</span><span>${fmt(c.price*c.qty)}</span></div>`).join('')}<div class="sum-row"><span>Total</span><span class="sum-val-total">${fmt(total())}</span></div></div>`}
+function sumHtml(){return`<div class="order-sum"><h4>Resumo do pedido</h4>${cart.map(c=>`<div class="sum-row"><span>${c.name.substring(0,28)}${c.variacaoNome?' ('+c.variacaoNome+')':''}… ×${c.qty}</span><span>${fmt(c.price*c.qty)}</span></div>`).join('')}<div class="sum-row"><span>Total</span><span class="sum-val-total">${fmt(total())}</span></div></div>`}
 
-function addrForm(){return`<div class="frow"><div class="fg"><label>Nome Completo</label><input id="f-nome" placeholder="Seu nome completo"/></div><div class="fg"><label>Telefone / WhatsApp</label><input id="f-tel" placeholder="(27) 99999-9999"/></div></div><div class="frow"><div class="fg"><label>CEP</label><input id="f-cep" placeholder="00000-000" maxlength="9" oninput="mskCep(this)"/></div><div class="fg"><label>Número</label><input id="f-num" placeholder="Nº da casa"/></div></div><div class="fg"><label>Rua / Avenida</label><input id="f-rua" placeholder="Nome da rua ou avenida"/></div><div class="frow"><div class="fg"><label>Complemento <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-comp" placeholder="Apto, Bloco..."/></div><div class="fg"><label>Bairro</label><input id="f-bairro" placeholder="Seu bairro"/></div></div><div class="frow"><div class="fg"><label>Cidade</label><input id="f-cidade" value="Vila Velha"/></div><div class="fg"><label>Estado</label><input id="f-estado" value="ES" maxlength="2"/></div></div><div class="fg"><label>Referência <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-ref" placeholder="Próximo ao mercado, portão azul..."/></div>`}
+function addrForm(){
+  const disponiveis=bairrosDisponiveis();
+  const bairroField = disponiveis.length
+    ? `<select id="f-bairro" onchange="onBairroChange(this.value)"></select>`
+    : `<input id="f-bairro-texto" placeholder="Seu bairro"/><p class="hint">Ainda não configuramos a lista de bairros — digite o seu, vamos confirmar o frete pelo WhatsApp.</p>`;
+  return `<div class="frow"><div class="fg"><label>Nome Completo</label><input id="f-nome" placeholder="Seu nome completo"/></div><div class="fg"><label>Telefone / WhatsApp</label><input id="f-tel" placeholder="(27) 99999-9999"/></div></div><div class="frow"><div class="fg"><label>CEP</label><input id="f-cep" placeholder="00000-000" maxlength="9" oninput="mskCep(this)"/></div><div class="fg"><label>Número</label><input id="f-num" placeholder="Nº da casa"/></div></div><div class="fg"><label>Rua / Avenida</label><input id="f-rua" placeholder="Nome da rua ou avenida"/></div><div class="frow"><div class="fg"><label>Complemento <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-comp" placeholder="Apto, Bloco..."/></div><div class="fg"><label>Bairro</label>${bairroField}</div></div><div id="freteOpts"></div><div class="fg"><label>Referência <small style="font-weight:400;color:var(--gray-dark)">(opcional)</small></label><input id="f-ref" placeholder="Próximo ao mercado, portão azul..."/></div>`;
+}
+
+function onBairroChange(bairroId){
+  freteM=null; freteValor=0;
+  const wrap=document.getElementById('freteOpts');
+  const bairro=bairrosCache.find(b=>b.id===bairroId);
+  if(!bairro){ wrap.innerHTML=''; return; }
+  const mods=Object.entries(bairro.modalidades||{}).filter(([k,v])=>v&&v.valor!=null);
+  if(!mods.length){
+    wrap.innerHTML=`<div class="info-box"><i class="fas fa-info-circle"></i> Ainda não temos um valor de frete configurado pra esse bairro. Vamos confirmar com você pelo WhatsApp após o pedido.</div>`;
+    return;
+  }
+  wrap.innerHTML=`<p style="font-size:.82rem;font-weight:800;margin:10px 0 4px">Modalidade de entrega:</p><div class="del-opts" id="freteOptsList">${mods.map(([k,v])=>
+    `<div class="del-opt" id="op-frete-${k}" onclick="selFrete('${k}',${v.valor})"><i class="fas fa-motorcycle"></i><strong>${MODALIDADE_LABEL[k]||k}</strong><small>${fmt(v.valor)}${v.prazo?' · '+v.prazo:''}</small></div>`
+  ).join('')}</div>`;
+}
+
+function selFrete(modalidade,valor){
+  freteM=modalidade; freteValor=valor;
+  document.querySelectorAll('#freteOptsList .del-opt').forEach(e=>e.classList.remove('sel'));
+  document.getElementById('op-frete-'+modalidade)?.classList.add('sel');
+  let totalLine=document.getElementById('freteTotalLine');
+  if(!totalLine){
+    totalLine=document.createElement('div');
+    totalLine.id='freteTotalLine';
+    totalLine.className='order-sum';
+    totalLine.style.marginTop='10px';
+    document.getElementById('freteOpts').appendChild(totalLine);
+  }
+  totalLine.innerHTML=`<div class="sum-row"><span>Frete (${MODALIDADE_LABEL[modalidade]||modalidade})</span><span>${fmt(valor)}</span></div><div class="sum-row"><span>Total com frete</span><span class="sum-val-total">${fmt(total()+valor)}</span></div>`;
+}
 
 function pickupBox(lbl){return`<div class="pickup-box"><div style="font-size:2.8rem;margin-bottom:10px">🏪</div><h4 style="margin-bottom:6px;color:var(--blue-dark)">Retire na loja!</h4><p style="font-size:.82rem;color:var(--gray-dark);line-height:1.55">Av. Jerônimo Monteiro, 34 – Vila Batista, Vila Velha – ES<br/>⏰ Seg–Sex 08h–18h | Sáb 08h–13h</p><p style="margin-top:10px;font-size:.82rem;font-weight:700">Pagamento: <span style="color:var(--blue)">${lbl}</span> — realizado no balcão da loja.</p></div>`}
 
@@ -922,6 +1084,8 @@ function renderChk(){
     const lbl=payM==='dinheiro'?'💵 Dinheiro':'💳 Cartão';
     bd.innerHTML=`${stpsHtml(3)}${sumHtml()}${pickupBox(lbl)}<button class="btn-next" onclick="confirmPickup()"><i class="fas fa-check"></i> Confirmar Retirada</button>`;
   }
+  const bairroSel=document.getElementById('f-bairro');
+  if(bairroSel) populateBairroSelect(bairroSel);
 }
 
 function selPay(m){payM=m;document.querySelectorAll('.pay-opt').forEach(e=>e.classList.remove('sel'));document.getElementById('op-'+m)?.classList.add('sel')}
@@ -939,11 +1103,29 @@ function cpPix(){
 }
 
 async function confirmOrder(){
-  const nome=document.getElementById('f-nome')?.value.trim(),tel=document.getElementById('f-tel')?.value.trim(),cep=document.getElementById('f-cep')?.value.trim(),rua=document.getElementById('f-rua')?.value.trim(),num=document.getElementById('f-num')?.value.trim(),bairro=document.getElementById('f-bairro')?.value.trim();
-  if(!nome||!tel||!cep||!rua||!num||!bairro){toast('Preencha todos os campos obrigatórios!');return}
+  const nome=document.getElementById('f-nome')?.value.trim(),tel=document.getElementById('f-tel')?.value.trim(),cep=document.getElementById('f-cep')?.value.trim(),rua=document.getElementById('f-rua')?.value.trim(),num=document.getElementById('f-num')?.value.trim();
+  const bairroSel=document.getElementById('f-bairro');
+  const bairroTexto=document.getElementById('f-bairro-texto');
+  let bairroNome='';
+  if(bairroSel){
+    const b=bairrosCache.find(x=>x.id===bairroSel.value);
+    bairroNome=b?b.nome:'';
+  }else if(bairroTexto){
+    bairroNome=bairroTexto.value.trim();
+  }
+  if(!nome||!tel||!cep||!rua||!num||!bairroNome){toast('Preencha todos os campos obrigatórios!');return}
+  if(document.getElementById('freteOptsList') && !freteM){toast('Selecione a modalidade de entrega!');return}
+
   const btn=document.querySelector('.btn-next');
   if(btn){btn.disabled=true;btn.textContent='Enviando...'}
-  const ok=await saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),total:total(),payment:payM,delivery:delivM,address:{nome,tel,cep,rua,num,bairro}});
+  const ok=await saveOrder({
+    items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price,variacao:c.variacaoNome||null})),
+    subtotal:total(),
+    frete: freteM ? {modalidade:freteM, label:MODALIDADE_LABEL[freteM]||freteM, valor:freteValor} : null,
+    total:total()+freteValor,
+    payment:payM,delivery:delivM,
+    address:{nome,tel,cep,rua,num,bairro:bairroNome}
+  });
   if(!ok){if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-check"></i> Confirmar Pedido'}return}
   cart=[];updCart();
   showSuccessUI();
@@ -952,7 +1134,7 @@ async function confirmOrder(){
 async function confirmPickup(){
   const btn=document.querySelector('.btn-next');
   if(btn){btn.disabled=true;btn.textContent='Enviando...'}
-  const ok=await saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),total:total(),payment:payM,delivery:delivM});
+  const ok=await saveOrder({items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price,variacao:c.variacaoNome||null})),total:total(),payment:payM,delivery:delivM});
   if(!ok){if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-check"></i> Confirmar Retirada'}return}
   cart=[];updCart();
   showSuccessUI();
@@ -967,16 +1149,16 @@ function mskCep(el){let v=el.value.replace(/\D/g,'');if(v.length>5)v=v.slice(0,5
 function toast(msg){const t=document.getElementById('toast');document.getElementById('toastTxt').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
 function scrollSec(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
 function initRv(){const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.08});document.querySelectorAll('.rv:not(.in)').forEach(el=>obs.observe(el))}
-document.addEventListener('DOMContentLoaded',()=>{renderProds(getAllProds());updCart();initRv()});
+document.addEventListener('DOMContentLoaded',()=>{renderProds(filtered());updCart();initRv()});
 
 // ===== EXPORTAR PARA O WINDOW (necessário pois o script agora é um módulo ES6) =====
 Object.assign(window, {
   carouselMove, carouselGo, carouselClick,
   filterByCat, filterBySpecies, filterByTag, doSearch,
   openDrawer, closeDrawer, handleMaskClick,
-  addCart, chgQty, rmItem,
+  addCart, chgQty, rmItem, openProdModal, selVar, confirmVarAdd, closeVarModal,
   openCheckout, closeCheckout,
-  selPay, selDeliv, goS2, goS3, goS3pix, cpPix,
+  selPay, selDeliv, goS2, goS3, goS3pix, cpPix, onBairroChange, selFrete,
   confirmOrder, confirmPickup, mskCep,
   scrollSec
 });
