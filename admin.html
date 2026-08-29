@@ -159,6 +159,13 @@ tr:hover td{background:#fafbfd}
 .os-entregue{background:var(--blue-pale);color:var(--blue)}
 .os-cancelado{background:var(--red-pale);color:var(--red)}
 
+/* PRIORIDADE / TIPO DE PEDIDO */
+.prio-badge{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:900;padding:4px 9px;border-radius:50px;white-space:nowrap}
+.prio-retirada{background:var(--blue-pale);color:var(--blue-dark)}
+.prio-entrega{background:var(--gray);color:var(--black)}
+.prio-flash{background:#fff3cd;color:#946200;box-shadow:0 0 0 1.5px #f5c542 inset}
+.prio-correios{background:var(--off);color:var(--gray-dark)}
+
 /* EMPTY STATE */
 .empty-state{text-align:center;padding:52px 20px;color:var(--gray-dark)}
 .empty-state i{font-size:2.6rem;color:var(--gray-mid);display:block;margin-bottom:10px}
@@ -321,8 +328,14 @@ tr:hover td{background:#fafbfd}
     <div class="sb-item active" onclick="showPage('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
     <div class="sb-item" onclick="showPage('produtos',this)"><i class="fas fa-box-open"></i> Produtos <span class="sb-badge green" id="badgeProds">0</span></div>
     <div class="sb-item" onclick="showPage('categorias',this)"><i class="fas fa-tags"></i> Categorias</div>
+    <div class="sb-item" onclick="showPage('servicos',this)"><i class="fas fa-concierge-bell"></i> Serviços</div>
     <div class="sb-item" onclick="showPage('estoque',this)"><i class="fas fa-warehouse"></i> Estoque</div>
     <div class="sb-item" onclick="showPage('pedidos',this)"><i class="fas fa-shopping-bag"></i> Pedidos <span class="sb-badge" id="badgeOrders">0</span></div>
+
+    <div class="sb-item" onclick="showPage('compras',this)"><i class="fas fa-cart-plus"></i> Lista de Compras</div>
+
+    <div class="sb-section">Entregas</div>
+    <div class="sb-item" onclick="showPage('bairros',this)"><i class="fas fa-map-marker-alt"></i> Bairros e Cidades</div>
 
     <div class="sb-section">Dados</div>
     <div class="sb-item" onclick="showPage('relatorio',this)"><i class="fas fa-file-excel"></i> Relatórios</div>
@@ -544,6 +557,18 @@ tr:hover td{background:#fafbfd}
           </div>
 
           <div class="fg" style="margin-bottom:14px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" id="f-phasvar" style="width:auto;accent-color:var(--blue)" onchange="toggleVariacoesUI()"/>
+              <span>Este produto tem variações (tamanho, peso, volume, etc.)</span>
+            </label>
+            <div id="variacoesWrap" style="display:none;margin-top:10px;background:var(--off);border-radius:var(--radius-sm);padding:12px 14px">
+              <div id="variacoesRows"></div>
+              <button type="button" class="btn-form-cancel" onclick="addVariacaoRow()"><i class="fas fa-plus"></i> Adicionar variação</button>
+              <p class="hint" style="margin-top:8px">Ex: "30" — R$ 89,90 · "5kg" — R$ 45,00. Cada variação tem preço próprio; o cliente escolhe uma antes de comprar. O preço principal acima continua servindo de referência no painel.</p>
+            </div>
+          </div>
+
+          <div class="fg" style="margin-bottom:14px">
             <label>Imagem do Produto <span style="font-weight:400;color:var(--gray-dark)">(opcional)</span></label>
             <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
               <!-- Preview -->
@@ -576,6 +601,14 @@ tr:hover td{background:#fafbfd}
               </label>
             </div>
             <input type="date" id="f-pvalidade" style="display:none;max-width:220px"/>
+          </div>
+
+          <div class="fg" style="margin-bottom:14px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem">
+              <input type="checkbox" id="f-pdestaque" style="width:auto;accent-color:var(--blue)"/>
+              <span>⭐ Mostrar na vitrine da página inicial</span>
+            </label>
+            <p class="hint" style="margin-top:4px">Só os produtos marcados aparecem na home. Os demais continuam sendo encontrados pela busca ou pelas categorias. Ideal escolher uns 6 a 8. Selecionados hoje: <strong id="destaqueCount">0</strong></p>
           </div>
 
           <div class="fg" style="margin-bottom:14px">
@@ -677,6 +710,55 @@ tr:hover td{background:#fafbfd}
         </div>
       </div>
 
+      <!-- ===== SERVIÇOS DO PET SHOP ===== -->
+      <div class="page" id="page-servicos">
+        <div class="prod-form-wrap" style="margin-bottom:20px">
+          <h3 id="svcFormTitle"><i class="fas fa-plus-circle" style="color:var(--blue)"></i> Novo Serviço</h3>
+          <input type="hidden" id="svc-editing-id"/>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="fg">
+              <label>Nome do Serviço *</label>
+              <input type="text" id="svc-nome" placeholder="Ex: Banho Completo"/>
+            </div>
+            <div class="fg">
+              <label>Emoji / Ícone</label>
+              <input type="text" id="svc-emoji" placeholder="🛁" maxlength="4"/>
+            </div>
+          </div>
+          <div class="fg" style="margin-bottom:14px">
+            <label>Descrição curta</label>
+            <input type="text" id="svc-desc" placeholder="Ex: Com secagem e perfume"/>
+          </div>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="fg">
+              <label>Preço (R$) <span style="font-weight:400;color:var(--gray-dark)">(opcional)</span></label>
+              <input type="number" min="0" step="0.01" id="svc-preco" placeholder="Deixe em branco pra não mostrar preço"/>
+            </div>
+            <div class="fg">
+              <label>Mensagem do WhatsApp <span style="font-weight:400;color:var(--gray-dark)">(opcional)</span></label>
+              <input type="text" id="svc-watext" placeholder="Padrão: Olá! Gostaria de agendar: [nome]"/>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-form-save" onclick="saveServico()"><i class="fas fa-save"></i> <span id="svcSaveText">Salvar Serviço</span></button>
+            <button class="btn-form-cancel" id="svcCancelBtn" style="display:none" onclick="cancelServicoEdit()"><i class="fas fa-times"></i> Cancelar</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-head"><h3>Serviços Cadastrados</h3><span class="table-count" id="svcCount"></span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Serviço</th><th>Preço</th><th>Status no Site</th><th>Ações</th></tr></thead>
+            <tbody id="svcBody"></tbody>
+          </table></div>
+          <div id="svcEmpty" class="empty-state" style="display:none">
+            <i class="fas fa-concierge-bell"></i>
+            <h4>Nenhum serviço cadastrado</h4>
+            <p>Cadastre serviços usando o formulário acima.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- ===== ESTOQUE ===== -->
       <div class="page" id="page-estoque">
         <div class="toolbar">
@@ -712,6 +794,104 @@ tr:hover td{background:#fafbfd}
               </tr></thead>
               <tbody id="estoqueBody"></tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LISTA DE COMPRAS ===== -->
+      <div class="page" id="page-compras">
+        <div class="sec-header"><div class="sec-header-text"><h2>Lista de Compras</h2><p>Produtos com estoque no mínimo ou abaixo — baseado na quantidade/mínimo cadastrados na aba Estoque</p></div></div>
+        <div class="table-wrap">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Produto</th><th>Categoria</th><th>Estoque atual</th><th>Mínimo</th><th>Sugestão de reposição</th><th>Status</th></tr></thead>
+              <tbody id="comprasBody"></tbody>
+            </table>
+          </div>
+          <div id="comprasEmpty" class="empty-state" style="display:none">
+            <i class="fas fa-check-circle"></i>
+            <h4>Nenhum produto precisando de reposição</h4>
+            <p>Assim que algum produto com quantidade/mínimo cadastrados chegar perto do limite, ele aparece aqui.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BAIRROS E CIDADES ===== -->
+      <div class="page" id="page-bairros">
+        <div class="sec-header"><div class="sec-header-text"><h2>Cidades Atendidas</h2><p>Ative ou desative cidades inteiras — desativar aqui esconde todos os bairros dela do checkout</p></div></div>
+        <div class="table-wrap" style="margin-bottom:20px">
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Cidade</th><th>Bairros cadastrados</th><th>Status</th><th>Ação</th></tr></thead>
+            <tbody id="cidadesBody"></tbody>
+          </table></div>
+        </div>
+
+        <div class="sec-header"><div class="sec-header-text"><h2>Bairros e Valores de Entrega</h2><p>Cada bairro pode ter valores e prazos diferentes por modalidade de entrega</p></div></div>
+
+        <div class="prod-form-wrap" style="margin-bottom:20px">
+          <h3 id="bairroFormTitle"><i class="fas fa-plus-circle" style="color:var(--blue)"></i> Novo Bairro</h3>
+          <input type="hidden" id="bairro-editing-id"/>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="fg">
+              <label>Nome do Bairro *</label>
+              <input type="text" id="bairro-nome" placeholder="Ex: Praia da Costa"/>
+            </div>
+            <div class="fg">
+              <label>Cidade *</label>
+              <select id="bairro-cidade">
+                <option value="vila-velha">Vila Velha</option>
+                <option value="vitoria">Vitória</option>
+                <option value="cariacica">Cariacica</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="hint" style="margin-bottom:8px">Valores de entrega por modalidade (deixe em branco a que não estiver disponível nesse bairro):</p>
+          <div class="form-grid three" style="margin-bottom:14px">
+            <div class="fg">
+              <label>Entrega Básica (R$)</label>
+              <input type="number" min="0" step="0.01" id="bairro-basica-valor" placeholder="0,00"/>
+              <input type="text" id="bairro-basica-prazo" placeholder="Prazo, ex: até 2 dias" style="margin-top:6px"/>
+            </div>
+            <div class="fg">
+              <label>AgroFlash (R$)</label>
+              <input type="number" min="0" step="0.01" id="bairro-flash-valor" placeholder="0,00"/>
+              <input type="text" id="bairro-flash-prazo" placeholder="Prazo, ex: no mesmo dia" style="margin-top:6px"/>
+            </div>
+            <div class="fg">
+              <label>Correios (R$)</label>
+              <input type="number" min="0" step="0.01" id="bairro-correios-valor" placeholder="0,00"/>
+              <input type="text" id="bairro-correios-prazo" placeholder="Prazo, ex: 3 a 5 dias úteis" style="margin-top:6px"/>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-form-save" onclick="saveBairro()"><i class="fas fa-save"></i> <span id="bairroSaveText">Salvar Bairro</span></button>
+            <button class="btn-form-cancel" id="bairroCancelBtn" style="display:none" onclick="cancelBairroEdit()"><i class="fas fa-times"></i> Cancelar</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-head">
+            <h3>Bairros Cadastrados</h3>
+            <div style="display:flex;align-items:center;gap:10px">
+              <select id="bairroCidadeFilter" onchange="renderBairrosPage()" style="border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:8px 10px;font-size:.8rem">
+                <option value="todas">Todas as cidades</option>
+                <option value="vila-velha">Vila Velha</option>
+                <option value="vitoria">Vitória</option>
+                <option value="cariacica">Cariacica</option>
+              </select>
+              <span class="table-count" id="bairroCount"></span>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Bairro</th><th>Cidade</th><th>Modalidades ativas</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="bairrosBody"></tbody>
+          </table></div>
+          <div id="bairrosEmpty" class="empty-state" style="display:none">
+            <i class="fas fa-map-marker-alt"></i>
+            <h4>Nenhum bairro cadastrado</h4>
+            <p>Cadastre os bairros atendidos usando o formulário acima.</p>
           </div>
         </div>
       </div>
@@ -1258,6 +1438,358 @@ function deleteCategoria(slug,count){
 const SP_LABEL={cachorro:'🐶 Cachorro',gato:'🐱 Gato',peixe:'🐠 Peixe',passaro:'🦜 Pássaro',roedor:'🐹 Roedor',reptil:'🐢 Réptil',todos:'🐾 Todos'};
 
 // ============================================================
+// BAIRROS E CIDADES (entrega)
+// ============================================================
+const CIDADE_LABEL={'vila-velha':'Vila Velha','vitoria':'Vitória','cariacica':'Cariacica'};
+const MODALIDADE_LABEL={basica:'Entrega Básica',flash:'AgroFlash',correios:'Correios'};
+
+const CIDADES_SEED=[
+  {id:'vila-velha', nome:'Vila Velha'},
+  {id:'vitoria', nome:'Vitória'},
+  {id:'cariacica', nome:'Cariacica'},
+];
+const BAIRROS_SEED=[
+  // Nível 1 — bairro da loja e vizinhos diretos
+  {nome:'Vila Batista', cidadeId:'vila-velha'},
+  {nome:'Paul', cidadeId:'vila-velha'},
+  {nome:'Ilha das Flores', cidadeId:'vila-velha'},
+  {nome:'Pedra do Búzio', cidadeId:'vila-velha'},
+  {nome:'Vila Garrido', cidadeId:'vila-velha'},
+  // Nível 2 — Grande Vila Velha
+  {nome:'Centro', cidadeId:'vila-velha'},
+  {nome:'Glória', cidadeId:'vila-velha'},
+  {nome:'Cobilândia', cidadeId:'vila-velha'},
+  {nome:'Ibes', cidadeId:'vila-velha'},
+  {nome:'Itapuã', cidadeId:'vila-velha'},
+  {nome:'Praia da Costa', cidadeId:'vila-velha'},
+  {nome:'Prainha', cidadeId:'vila-velha'},
+  {nome:'Coqueiral de Itaparica', cidadeId:'vila-velha'},
+  {nome:'Terra Vermelha', cidadeId:'vila-velha'},
+  {nome:'Araçás', cidadeId:'vila-velha'},
+  {nome:'Jardim Asteca', cidadeId:'vila-velha'},
+  {nome:'Jardim Colorado', cidadeId:'vila-velha'},
+  {nome:'Santa Mônica', cidadeId:'vila-velha'},
+  {nome:'Jardim Marilândia', cidadeId:'vila-velha'},
+  // Nível 3 — Vitória
+  {nome:'Centro de Vitória', cidadeId:'vitoria'},
+  {nome:'Praia do Canto', cidadeId:'vitoria'},
+  {nome:'Jardim da Penha', cidadeId:'vitoria'},
+  {nome:'Jardim Camburi', cidadeId:'vitoria'},
+  // Nível 4 — Cariacica
+  {nome:'Jardim América', cidadeId:'cariacica'},
+];
+
+let cidadesCache=[], bairrosCache=[];
+let seededBairros=false;
+
+async function seedBairrosECidadesSeNecessario(){
+  if(seededBairros)return;
+  seededBairros=true;
+  try{
+    const cidadesSnap=await getDocs(collection(db,'cidades'));
+    if(cidadesSnap.empty){
+      const batch=writeBatch(db);
+      CIDADES_SEED.forEach(c=>batch.set(doc(db,'cidades',c.id), {nome:c.nome, ativo:true}));
+      await batch.commit();
+    }
+    const bairrosSnap=await getDocs(collection(db,'bairros'));
+    if(bairrosSnap.empty){
+      const batch=writeBatch(db);
+      BAIRROS_SEED.forEach(b=>{
+        const ref=doc(collection(db,'bairros'));
+        batch.set(ref, {nome:b.nome, cidadeId:b.cidadeId, ativo:true, modalidades:{basica:{valor:null,prazo:''},flash:{valor:null,prazo:''},correios:{valor:null,prazo:''}}});
+      });
+      await batch.commit();
+    }
+  }catch(err){
+    console.error('Erro ao inicializar cidades/bairros:', err);
+  }
+}
+
+onSnapshot(collection(db,'cidades'), snap => {
+  cidadesCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  if(isLoggedIn && currentPage==='bairros') renderBairrosPage();
+}, err => console.error('Erro ao ouvir cidades:', err));
+
+onSnapshot(collection(db,'bairros'), snap => {
+  bairrosCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  if(isLoggedIn && currentPage==='bairros') renderBairrosPage();
+}, err => console.error('Erro ao ouvir bairros:', err));
+
+function renderBairrosPage(){
+  seedBairrosECidadesSeNecessario();
+
+  // Cidades
+  const cb=document.getElementById('cidadesBody');
+  if(cb){
+    cb.innerHTML=cidadesCache.map(c=>{
+      const count=bairrosCache.filter(b=>b.cidadeId===c.id).length;
+      return `<tr>
+        <td style="font-weight:800">${c.nome}</td>
+        <td>${count}</td>
+        <td><span class="status-dot ${c.ativo?'ok':'no'}"></span> <span style="font-size:.78rem;font-weight:700;color:${c.ativo?'var(--green)':'var(--red)'}">${c.ativo?'Ativa':'Desativada'}</span></td>
+        <td><button class="act-btn" onclick="toggleCidade('${c.id}',${!!c.ativo})">${c.ativo?'Desativar':'Ativar'}</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Bairros
+  const filtroCidade=document.getElementById('bairroCidadeFilter')?.value||'todas';
+  let list=[...bairrosCache];
+  if(filtroCidade!=='todas') list=list.filter(b=>b.cidadeId===filtroCidade);
+  list.sort((a,b)=>a.nome.localeCompare(b.nome));
+
+  document.getElementById('bairroCount').textContent=`${list.length} bairro(s)`;
+  const body=document.getElementById('bairrosBody');
+  const empty=document.getElementById('bairrosEmpty');
+  if(!list.length){ body.innerHTML=''; empty.style.display='block'; }
+  else{
+    empty.style.display='none';
+    body.innerHTML=list.map(b=>{
+      const mods=Object.entries(b.modalidades||{}).filter(([k,v])=>v&&v.valor!=null);
+      const modsHtml=mods.length
+        ? mods.map(([k,v])=>`<span class="tag-pill" style="margin-right:4px">${MODALIDADE_LABEL[k]||k}: ${fmt(v.valor)}</span>`).join('')
+        : '<span style="color:var(--gray-dark);font-size:.75rem">Nenhum valor definido</span>';
+      return `<tr>
+        <td style="font-weight:800">${b.nome}</td>
+        <td>${CIDADE_LABEL[b.cidadeId]||b.cidadeId}</td>
+        <td>${modsHtml}</td>
+        <td><span class="status-dot ${b.ativo?'ok':'no'}"></span> <span style="font-size:.75rem;font-weight:700;color:${b.ativo?'var(--green)':'var(--red)'}">${b.ativo?'Ativo':'Desativado'}</span></td>
+        <td>
+          <div class="act-btns">
+            <button class="act-btn edit" title="Editar" onclick="editBairro('${b.id}')"><i class="fas fa-edit"></i></button>
+            <button class="act-btn" title="${b.ativo?'Desativar':'Ativar'}" onclick="toggleBairroAtivo('${b.id}',${!!b.ativo})" style="${b.ativo?'':'border-color:var(--green);color:var(--green)'}">
+              <i class="fas fa-${b.ativo?'ban':'check'}"></i>
+            </button>
+            <button class="act-btn danger" title="Excluir" onclick="deleteBairro('${b.id}','${b.nome.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+async function toggleCidade(id,current){
+  try{ await updateDoc(doc(db,'cidades',id), {ativo:!current}); toast(current?'Cidade desativada.':'Cidade ativada!',current?'':'green'); }
+  catch(err){ console.error(err); toast('Erro ao atualizar cidade.','red'); }
+}
+
+let editingBairroId=null;
+
+async function saveBairro(){
+  const nome=document.getElementById('bairro-nome').value.trim();
+  const cidadeId=document.getElementById('bairro-cidade').value;
+  if(!nome){toast('Digite o nome do bairro!','red');return}
+
+  const readMod=(prefix)=>{
+    const valorRaw=document.getElementById(`bairro-${prefix}-valor`).value;
+    const prazo=document.getElementById(`bairro-${prefix}-prazo`).value.trim();
+    return { valor: valorRaw===''?null:parseFloat(valorRaw), prazo };
+  };
+  const modalidades={ basica:readMod('basica'), flash:readMod('flash'), correios:readMod('correios') };
+
+  try{
+    if(editingBairroId){
+      await updateDoc(doc(db,'bairros',editingBairroId), {nome,cidadeId,modalidades});
+      toast('Bairro atualizado!','green');
+    }else{
+      await addDoc(collection(db,'bairros'), {nome,cidadeId,ativo:true,modalidades});
+      toast('Bairro cadastrado!','green');
+    }
+    cancelBairroEdit();
+  }catch(err){
+    console.error('Erro ao salvar bairro:', err);
+    toast('Erro ao salvar bairro.','red');
+  }
+}
+
+function editBairro(id){
+  const b=bairrosCache.find(x=>x.id===id); if(!b)return;
+  editingBairroId=id;
+  document.getElementById('bairro-nome').value=b.nome;
+  document.getElementById('bairro-cidade').value=b.cidadeId;
+  ['basica','flash','correios'].forEach(k=>{
+    const m=(b.modalidades||{})[k]||{};
+    document.getElementById(`bairro-${k}-valor`).value=m.valor??'';
+    document.getElementById(`bairro-${k}-prazo`).value=m.prazo||'';
+  });
+  document.getElementById('bairroFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Bairro';
+  document.getElementById('bairroSaveText').textContent='Salvar Alterações';
+  document.getElementById('bairroCancelBtn').style.display='inline-flex';
+  document.getElementById('bairro-nome').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function cancelBairroEdit(){
+  editingBairroId=null;
+  document.getElementById('bairro-nome').value='';
+  document.getElementById('bairro-cidade').value='vila-velha';
+  ['basica','flash','correios'].forEach(k=>{
+    document.getElementById(`bairro-${k}-valor`).value='';
+    document.getElementById(`bairro-${k}-prazo`).value='';
+  });
+  document.getElementById('bairroFormTitle').innerHTML='<i class="fas fa-plus-circle" style="color:var(--blue)"></i> Novo Bairro';
+  document.getElementById('bairroSaveText').textContent='Salvar Bairro';
+  document.getElementById('bairroCancelBtn').style.display='none';
+}
+
+async function toggleBairroAtivo(id,current){
+  try{ await updateDoc(doc(db,'bairros',id), {ativo:!current}); toast(current?'Bairro desativado.':'Bairro ativado!',current?'':'green'); }
+  catch(err){ console.error(err); toast('Erro ao atualizar bairro.','red'); }
+}
+
+function deleteBairro(id,nome){
+  showConfirm('Excluir bairro?', `Deseja excluir "${nome}"? Essa ação não pode ser desfeita.`, async ()=>{
+    try{ await deleteDoc(doc(db,'bairros',id)); toast('Bairro excluído!','red'); }
+    catch(err){ console.error(err); toast('Erro ao excluir bairro.','red'); }
+  });
+}
+
+// ============================================================
+// LISTA DE COMPRAS (baseada em qty/minQty dos produtos)
+// ============================================================
+function renderListaCompras(){
+  const list=getAllProds().filter(p=>p.qty!=null && p.minQty!=null && p.qty<=p.minQty);
+  list.sort((a,b)=>(a.qty-a.minQty)-(b.qty-b.minQty));
+
+  const body=document.getElementById('comprasBody');
+  const empty=document.getElementById('comprasEmpty');
+  if(!list.length){ body.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  body.innerHTML=list.map(p=>{
+    const sugestao=Math.max(p.minQty*2-p.qty, p.minQty);
+    const critico=p.qty<=0;
+    return `<tr>
+      <td><div class="prod-cell"><div class="prod-thumb-sm">${p.e}</div><div><div class="pn">${p.name}</div><div class="pb">${p.brand}</div></div></div></td>
+      <td><span class="cat-pill">${catLabel(p.cat)}</span></td>
+      <td style="font-weight:900;color:${critico?'var(--red)':'var(--yellow-dark)'}">${p.qty}</td>
+      <td>${p.minQty}</td>
+      <td style="font-weight:800;color:var(--blue)">${sugestao} un.</td>
+      <td><span style="font-size:.75rem;font-weight:800;color:${critico?'var(--red)':'var(--yellow-dark)'}">${critico?'⚠️ Zerado':'Repor em breve'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// SERVIÇOS DO PET SHOP (site principal — banho, tosa, etc.)
+// ============================================================
+const SERVICOS_SEED=[
+  {nome:'Banho Completo', desc:'Com secagem e perfume', emoji:'🛁', preco:null, waText:'Olá! Gostaria de agendar um banho.'},
+  {nome:'Tosa Profissional', desc:'Higiênica ou estética', emoji:'✂️', preco:null, waText:'Olá! Gostaria de agendar uma tosa.'},
+  {nome:'Planos Pet', desc:'Banho + tosa mensais', emoji:'🎁', preco:null, waText:'Olá! Gostaria de saber sobre os Planos Pet.'},
+  {nome:'Combo Banho + Tosa', desc:'Com hidratação de pelagem', emoji:'🐾', preco:null, waText:'Olá! Gostaria de agendar o Combo Banho e Tosa.'},
+];
+let servicosCache=[];
+let seededServicos=false;
+
+async function seedServicosSeNecessario(){
+  if(seededServicos)return;
+  seededServicos=true;
+  try{
+    const snap=await getDocs(collection(db,'servicos_petshop'));
+    if(snap.empty){
+      for(const s of SERVICOS_SEED){
+        await addDoc(collection(db,'servicos_petshop'), {...s, ativo:true, createdAt:serverTimestamp()});
+      }
+    }
+  }catch(err){ console.error('Erro ao inicializar serviços:', err); }
+}
+
+onSnapshot(query(collection(db,'servicos_petshop'), orderBy('createdAt','asc')), snap => {
+  servicosCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  if(isLoggedIn && currentPage==='servicos') renderServicosPage();
+}, err => console.error('Erro ao ouvir serviços:', err));
+
+function renderServicosPage(){
+  seedServicosSeNecessario();
+  document.getElementById('svcCount').textContent=`${servicosCache.length} serviço(s)`;
+  const body=document.getElementById('svcBody');
+  const empty=document.getElementById('svcEmpty');
+  if(!servicosCache.length){ body.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  body.innerHTML=servicosCache.map(s=>`
+    <tr>
+      <td><div class="prod-cell"><div class="prod-thumb-sm">${s.emoji||'🐾'}</div><div><div class="pn">${s.nome}</div><div class="pb">${s.desc||''}</div></div></div></td>
+      <td style="font-weight:800;color:var(--blue)">${s.preco!=null?fmt(s.preco):'<span style="color:var(--gray-dark);font-weight:500;font-size:.78rem">Sem preço fixo</span>'}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span class="status-dot ${s.ativo!==false?'ok':'no'}"></span>
+          <span style="font-size:.75rem;font-weight:800;color:${s.ativo!==false?'var(--green)':'var(--red)'}">${s.ativo!==false?'Visível no site':'Oculto'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="act-btns">
+          <button class="act-btn edit" title="Editar" onclick="editServico('${s.id}')"><i class="fas fa-edit"></i></button>
+          <button class="act-btn" title="${s.ativo!==false?'Ocultar do site':'Mostrar no site'}" onclick="toggleServicoAtivo('${s.id}',${s.ativo!==false})" style="${s.ativo!==false?'':'border-color:var(--green);color:var(--green)'}">
+            <i class="fas fa-${s.ativo!==false?'eye-slash':'eye'}"></i>
+          </button>
+          <button class="act-btn danger" title="Excluir" onclick="deleteServico('${s.id}','${(s.nome||'').replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+let editingServicoId=null;
+
+async function saveServico(){
+  const nome=document.getElementById('svc-nome').value.trim();
+  const emoji=document.getElementById('svc-emoji').value.trim()||'🐾';
+  const desc=document.getElementById('svc-desc').value.trim();
+  const precoRaw=document.getElementById('svc-preco').value;
+  const preco=precoRaw===''?null:parseFloat(precoRaw);
+  const waText=document.getElementById('svc-watext').value.trim()||null;
+  if(!nome){toast('Digite o nome do serviço!','red');return}
+
+  try{
+    if(editingServicoId){
+      await updateDoc(doc(db,'servicos_petshop',editingServicoId), {nome,emoji,desc,preco,waText});
+      toast('Serviço atualizado!','green');
+    }else{
+      await addDoc(collection(db,'servicos_petshop'), {nome,emoji,desc,preco,waText,ativo:true,createdAt:serverTimestamp()});
+      toast('Serviço cadastrado!','green');
+    }
+    cancelServicoEdit();
+  }catch(err){
+    console.error('Erro ao salvar serviço:', err);
+    toast('Erro ao salvar serviço.','red');
+  }
+}
+
+function editServico(id){
+  const s=servicosCache.find(x=>x.id===id); if(!s)return;
+  editingServicoId=id;
+  document.getElementById('svc-nome').value=s.nome||'';
+  document.getElementById('svc-emoji').value=s.emoji||'';
+  document.getElementById('svc-desc').value=s.desc||'';
+  document.getElementById('svc-preco').value=s.preco??'';
+  document.getElementById('svc-watext').value=s.waText||'';
+  document.getElementById('svcFormTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Serviço';
+  document.getElementById('svcSaveText').textContent='Salvar Alterações';
+  document.getElementById('svcCancelBtn').style.display='inline-flex';
+  document.getElementById('svc-nome').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function cancelServicoEdit(){
+  editingServicoId=null;
+  ['svc-nome','svc-emoji','svc-desc','svc-preco','svc-watext'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('svcFormTitle').innerHTML='<i class="fas fa-plus-circle" style="color:var(--blue)"></i> Novo Serviço';
+  document.getElementById('svcSaveText').textContent='Salvar Serviço';
+  document.getElementById('svcCancelBtn').style.display='none';
+}
+
+async function toggleServicoAtivo(id,current){
+  try{ await updateDoc(doc(db,'servicos_petshop',id), {ativo:!current}); toast(current?'Serviço ocultado do site.':'Serviço visível no site!',current?'':'green'); }
+  catch(err){ console.error(err); toast('Erro ao atualizar serviço.','red'); }
+}
+
+function deleteServico(id,nome){
+  showConfirm('Excluir serviço?', `Deseja excluir "${nome}"?`, async ()=>{
+    try{ await deleteDoc(doc(db,'servicos_petshop',id)); toast('Serviço excluído!','red'); }
+    catch(err){ console.error(err); toast('Erro ao excluir serviço.','red'); }
+  });
+}
+
+// ============================================================
 // IMPORTAR PRODUTOS VIA PLANILHA (CSV — abre direto no Excel)
 // ============================================================
 // IMPORTAR PRODUTOS VIA PLANILHA (.xlsx real — igual ao padrão ESD Gestão)
@@ -1788,16 +2320,19 @@ function showPage(page,el){
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
   if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',categorias:'Categorias',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',relatorio:'Relatórios',design:'Design do Site',vetclinic:'Gestão Vet Clinic'};
-  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',categorias:'Organize as categorias usadas nos produtos e no site',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',relatorio:'Exportar dados em planilha',design:'Troque logo, banners e fotos de espécie',vetclinic:'Serviços, farmácia e equipe da clínica'};
+  const titles={dashboard:'Dashboard',produtos:'Gerenciar Produtos',categorias:'Categorias',servicos:'Serviços',estoque:'Controle de Estoque',pedidos:'Pedidos Recebidos',compras:'Lista de Compras',bairros:'Bairros e Cidades',relatorio:'Relatórios',design:'Design do Site',vetclinic:'Gestão Vet Clinic'};
+  const subs={dashboard:'Visão geral da loja',produtos:'Cadastre, edite e remova produtos do site',categorias:'Organize as categorias usadas nos produtos e no site',servicos:'Banho, tosa e outros serviços exibidos no site principal',estoque:'Marque disponível ou esgotado',pedidos:'Pedidos realizados pelo site',compras:'Produtos que precisam de reposição, com base no estoque mínimo',bairros:'Regiões atendidas e valores de entrega',relatorio:'Exportar dados em planilha',design:'Troque logo, banners e fotos de espécie',vetclinic:'Serviços, farmácia e equipe da clínica'};
   document.getElementById('pageTitle').textContent=titles[page]||page;
   document.getElementById('pageSubtitle').textContent=subs[page]||'';
   closeSidebar();
   if(page==='dashboard')renderDashboard();
   if(page==='produtos')renderProdList();
   if(page==='categorias')renderCategoriasPage();
+  if(page==='servicos')renderServicosPage();
   if(page==='estoque')renderEstoque();
   if(page==='pedidos')renderPedidos();
+  if(page==='compras')renderListaCompras();
+  if(page==='bairros')renderBairrosPage();
   if(page==='design')renderDesignPage();
   if(page==='vetclinic'){renderVetSvc();renderVetPharm();renderVetTeam();}
 }
@@ -1894,7 +2429,7 @@ function renderDashboard(){
     dp.innerHTML=last.map(o=>`
       <div class="dash-item">
         <div style="flex:1;min-width:0">
-          <div class="di-name" style="font-family:monospace;font-size:.75rem;color:var(--blue)">PED-${o.id.slice(-6).toUpperCase()}</div>
+          <div class="di-name" style="font-family:monospace;font-size:.75rem;color:var(--blue)">PED-${o.id.slice(-6).toUpperCase()} ${priorityBadge(o)}</div>
           <div class="di-sub">${o.date} ${o.time}</div>
         </div>
         <span style="font-size:.82rem;font-weight:900;color:var(--blue);white-space:nowrap">${fmt(o.total||0)}</span>
@@ -2064,6 +2599,40 @@ function setValidadeField(validade){
 }
 
 // ============================================================
+// VARIAÇÕES DO PRODUTO (tamanho, peso, volume, etc. — genérico)
+// ============================================================
+let variacaoRows=[]; // [{nome, preco, ativo}]
+
+function toggleVariacoesUI(){
+  const has=document.getElementById('f-phasvar').checked;
+  document.getElementById('variacoesWrap').style.display=has?'block':'none';
+  if(has && !variacaoRows.length) addVariacaoRow();
+}
+
+function renderVariacaoRows(){
+  const wrap=document.getElementById('variacoesRows');
+  wrap.innerHTML=variacaoRows.map((v,i)=>`
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <input type="text" placeholder="Nome (ex: 30, 5kg, P)" value="${v.nome||''}" oninput="updateVariacaoRow(${i},'nome',this.value)" style="flex:1;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:8px 10px;font-size:16px"/>
+      <input type="number" min="0" step="0.01" placeholder="Preço" value="${v.preco??''}" oninput="updateVariacaoRow(${i},'preco',this.value)" style="width:110px;border:1.5px solid var(--gray);border-radius:var(--radius-sm);padding:8px 10px;font-size:16px"/>
+      <button type="button" class="act-btn" title="${v.ativo!==false?'Desativar':'Ativar'}" onclick="toggleVariacaoRowAtivo(${i})" style="${v.ativo!==false?'':'border-color:var(--gray-dark);color:var(--gray-dark)'}"><i class="fas fa-${v.ativo!==false?'eye':'eye-slash'}"></i></button>
+      <button type="button" class="act-btn danger" onclick="removeVariacaoRow(${i})" title="Remover"><i class="fas fa-trash"></i></button>
+    </div>`).join('');
+}
+
+function addVariacaoRow(){ variacaoRows.push({nome:'',preco:null,ativo:true}); renderVariacaoRows(); }
+function removeVariacaoRow(i){ variacaoRows.splice(i,1); renderVariacaoRows(); }
+function toggleVariacaoRowAtivo(i){ variacaoRows[i].ativo = variacaoRows[i].ativo===false; renderVariacaoRows(); }
+function updateVariacaoRow(i,field,value){ variacaoRows[i][field]= field==='preco' ? (value===''?null:parseFloat(value)) : value; }
+
+function setVariacoesField(variacoes){
+  variacaoRows = (variacoes||[]).map(v=>({...v}));
+  document.getElementById('f-phasvar').checked = variacaoRows.length>0;
+  document.getElementById('variacoesWrap').style.display = variacaoRows.length>0?'block':'none';
+  renderVariacaoRows();
+}
+
+// ============================================================
 // PRODUTOS CRUD (Firestore)
 // ============================================================
 let editingProdId = null;
@@ -2079,20 +2648,24 @@ async function saveProduct(){
   const e=document.getElementById('f-pemoji').value.trim()||'📦';
   const imgUrl=document.getElementById('f-pimgdata').value||null;
   const validade=document.getElementById('f-pval-has').checked ? (document.getElementById('f-pvalidade').value||null) : null;
+  const destaque=document.getElementById('f-pdestaque').checked;
+  const hasVar=document.getElementById('f-phasvar').checked;
+  const variacoes = hasVar ? variacaoRows.filter(v=>v.nome&&v.nome.trim()&&v.preco!=null).map(v=>({nome:v.nome.trim(),preco:v.preco,ativo:v.ativo!==false})) : [];
 
   if(!name||!brand||!price||!cat||!species){toast('Preencha todos os campos obrigatórios!','red');return}
   if(document.getElementById('f-pval-has').checked && !validade){toast('Informe a data de validade ou selecione "Sem validade".','red');return}
+  if(hasVar && !variacoes.length){toast('Adicione pelo menos uma variação com nome e preço, ou desmarque a opção.','red');return}
 
   const btn=document.querySelector('.btn-form-save');
   if(btn){btn.disabled=true}
 
   try{
     if(editingProdId!==null){
-      await updateDoc(doc(db,'produtos_customizados',editingProdId), {name,brand,price,old,tag,cat,species,e,imgUrl,validade});
+      await updateDoc(doc(db,'produtos_customizados',editingProdId), {name,brand,price,old,tag,cat,species,e,imgUrl,validade,destaque,variacoes});
       toast('Produto atualizado com sucesso!','green');
       cancelEdit();
     }else{
-      await addDoc(collection(db,'produtos_customizados'), {name,brand,price,old,tag,cat,species,e,imgUrl,validade,createdAt:serverTimestamp()});
+      await addDoc(collection(db,'produtos_customizados'), {name,brand,price,old,tag,cat,species,e,imgUrl,validade,destaque,variacoes,createdAt:serverTimestamp()});
       toast('Produto cadastrado e já disponível no site!','green');
       clearForm();
     }
@@ -2121,6 +2694,8 @@ function editProduct(id){
   document.getElementById('f-pimgdata').value=p.imgUrl||'';
   setImgPreview(p.imgUrl||null);
   setValidadeField(p.validade||null);
+  document.getElementById('f-pdestaque').checked=!!p.destaque;
+  setVariacoesField(p.variacoes||[]);
   document.getElementById('formTitle').innerHTML='<i class="fas fa-edit" style="color:var(--yellow)"></i> Editando Produto';
   document.getElementById('saveBtnText').textContent='Salvar Alterações';
   document.getElementById('cancelBtn').style.display='flex';
@@ -2162,6 +2737,8 @@ function clearForm(){
   document.getElementById('f-pimg').value='';
   removeImg();
   setValidadeField(null);
+  document.getElementById('f-pdestaque').checked=false;
+  setVariacoesField([]);
 }
 
 function renderProdList(){
@@ -2169,7 +2746,9 @@ function renderProdList(){
   const all=getAllProds();
   const list=q?all.filter(p=>p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q)):all;
 
-  document.getElementById('prodCount').textContent=`${list.length} produto(s)`;
+  const destaqueTotal=all.filter(p=>p.destaque).length;
+  document.getElementById('prodCount').textContent=`${list.length} produto(s) · ⭐ ${destaqueTotal} na vitrine`;
+  const dc=document.getElementById('destaqueCount'); if(dc) dc.textContent=destaqueTotal;
   const empty=document.getElementById('prodListEmpty');
   const tb=document.getElementById('prodListBody');
 
@@ -2190,6 +2769,7 @@ function renderProdList(){
       <td style="font-weight:900;color:var(--blue);white-space:nowrap">
         ${p.old?`<span style="font-size:.7rem;color:var(--gray-dark);text-decoration:line-through;display:block">${fmt(p.old)}</span>`:''}
         ${fmt(p.price)}
+        ${p.variacoes&&p.variacoes.length?`<span style="display:block;font-size:.62rem;color:var(--blue);font-weight:800">${p.variacoes.length} variações</span>`:''}
       </td>
       <td>${p.tag?`<span class="tag-pill tag-${p.tag}">${p.tag}</span>`:'<span style="color:var(--gray-dark);font-size:.75rem">—</span>'}</td>
       <td>
@@ -2200,6 +2780,9 @@ function renderProdList(){
       </td>
       <td>
         <div class="act-btns">
+          <button class="act-btn" title="${p.destaque?'Remover da vitrine':'Mostrar na vitrine'}" onclick="toggleDestaque('${p.id}',${!!p.destaque})" style="${p.destaque?'border-color:var(--yellow-dark);color:var(--yellow-dark);background:var(--yellow-pale)':''}">
+            <i class="fas fa-star"></i>
+          </button>
           ${p.custom?`<button class="act-btn edit" title="Editar" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>`:''}
           <button class="act-btn" title="${ok?'Marcar Esgotado':'Marcar Disponível'}" onclick="toggleStock('${p.id}')" style="${ok?'':'border-color:var(--green);color:var(--green)'}">
             <i class="fas fa-${ok?'ban':'check'}"></i>
@@ -2209,6 +2792,16 @@ function renderProdList(){
       </td>
     </tr>`;
   }).join('');
+}
+
+async function toggleDestaque(id,current){
+  try{
+    await updateDoc(doc(db,'produtos_customizados',id), {destaque:!current});
+    toast(current?'Removido da vitrine.':'Adicionado à vitrine da home!',current?'':'green');
+  }catch(err){
+    console.error('Erro ao atualizar vitrine:', err);
+    toast('Erro ao atualizar vitrine.','red');
+  }
 }
 
 async function toggleStock(id){
@@ -2323,6 +2916,15 @@ function setAllAvailable(){
 const PAY_LABEL={pix:'PIX',dinheiro:'Dinheiro',cartao:'Cartão'};
 const DELIVERY_LABEL={delivery:'Delivery',retirada:'Retirada'};
 
+// Identificação visual rápida do tipo/urgência do pedido
+function priorityBadge(o){
+  if(o.delivery==='retirada') return `<span class="prio-badge prio-retirada">🛍️ Retirada</span>`;
+  const mod=o.frete?.modalidade;
+  if(mod==='flash') return `<span class="prio-badge prio-flash">⚡ AgroFlash</span>`;
+  if(mod==='correios') return `<span class="prio-badge prio-correios">📮 Correios</span>`;
+  return `<span class="prio-badge prio-entrega">🚚 Entrega</span>`;
+}
+
 function orderStatusButtons(o){
   const s=(o.status||'aguardando').toLowerCase();
   const btns=[];
@@ -2354,7 +2956,7 @@ function renderPedidos(){
       <td style="font-size:.73rem;max-width:160px">${(o.items||[]).map(x=>`${x.name.substring(0,18)}… ×${x.qty}`).join('<br/>')}</td>
       <td style="font-weight:900;color:var(--blue);white-space:nowrap">${fmt(o.total||0)}</td>
       <td style="font-size:.75rem;font-weight:700">${PAY_LABEL[o.payment]||'—'}</td>
-      <td style="font-size:.75rem;font-weight:700">${DELIVERY_LABEL[o.delivery]||'—'}</td>
+      <td>${priorityBadge(o)}</td>
       <td><span class="order-status os-${(o.status||'aguardando').toLowerCase()}">${o.status||'Aguardando'}</span></td>
       <td><div class="act-btns">${orderRowActions(o)}</div></td>
     </tr>`).join('');
@@ -2383,12 +2985,20 @@ function openOrderDetail(id){
 
   const items=o.items||[];
   const subtotal=items.reduce((sum,x)=>sum+(x.price*x.qty),0);
-  const itemsHtml=items.map(x=>`
-    <tr>
-      <td style="font-size:.8rem">${x.name}</td>
+  const itemsHtml=items.map((x,i)=>`
+    <tr class="od-item-row" onclick="toggleOdItem(${i})" style="cursor:pointer">
+      <td style="font-size:.8rem"><i class="fas fa-chevron-right od-chevron" id="od-chevron-${i}" style="font-size:.65rem;color:var(--gray-dark);margin-right:6px;transition:var(--tr)"></i>${x.name}</td>
       <td style="font-size:.8rem;text-align:center">${x.qty}</td>
       <td style="font-size:.8rem;text-align:right">${fmt(x.price)}</td>
       <td style="font-size:.8rem;text-align:right;font-weight:800">${fmt(x.price*x.qty)}</td>
+    </tr>
+    <tr class="od-item-detail" id="od-detail-${i}" style="display:none">
+      <td colspan="4" style="background:var(--off);padding:10px 14px;font-size:.78rem;color:var(--gray-dark)">
+        ${x.variacao?`<div><strong>Variação:</strong> ${x.variacao}</div>`:'<div>Sem variação — produto único.</div>'}
+        <div><strong>Preço unitário:</strong> ${fmt(x.price)}</div>
+        <div><strong>Quantidade:</strong> ${x.qty}</div>
+        <div><strong>Subtotal do item:</strong> ${fmt(x.price*x.qty)}</div>
+      </td>
     </tr>`).join('');
 
   const a=o.address;
@@ -2407,7 +3017,7 @@ function openOrderDetail(id){
 
     <h4 style="font-size:.8rem;margin-bottom:6px;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.04em">Cliente e Entrega</h4>
     <div style="background:var(--off);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:.82rem;line-height:1.5">
-      <p style="margin:0 0 6px;font-weight:800">${DELIVERY_LABEL[o.delivery]||'—'}</p>
+      <p style="margin:0 0 8px">${priorityBadge(o)}</p>
       ${enderecoHtml}
     </div>
 
@@ -2423,20 +3033,74 @@ function openOrderDetail(id){
     </table>
 
     <div style="border-top:1.5px solid var(--gray);padding-top:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;font-size:.85rem">
-      <div>Subtotal: <strong>${fmt(subtotal)}</strong></div>
+      <div>Subtotal: <strong>${fmt(o.subtotal??subtotal)}</strong></div>
+      ${o.frete?`<div>Frete (${o.frete.label||o.frete.modalidade}): <strong>${fmt(o.frete.valor||0)}</strong></div>`:''}
       <div style="font-size:1rem;font-weight:900;color:var(--blue)">Total: ${fmt(o.total||0)}</div>
       <div style="color:var(--gray-dark);font-size:.78rem">Pagamento: ${PAY_LABEL[o.payment]||'—'}</div>
     </div>
   `;
   const statusBtns=orderStatusButtons(o);
-  document.getElementById('odActions').innerHTML = statusBtns
-    ? statusBtns.replaceAll('class="act-btn','class="btn-modal act-btn')
-    : '';
+  document.getElementById('odActions').innerHTML =
+    `<button class="btn-modal act-btn" onclick="printOrder('${o.id}')" style="color:var(--blue);border-color:var(--blue)"><i class="fas fa-print"></i> Imprimir</button>` +
+    (statusBtns ? statusBtns.replaceAll('class="act-btn','class="btn-modal act-btn') : '');
   document.getElementById('orderDetailMask').classList.add('open');
 }
 
 function closeOrderDetail(){
   document.getElementById('orderDetailMask').classList.remove('open');
+}
+
+function toggleOdItem(i){
+  const row=document.getElementById(`od-detail-${i}`);
+  const chevron=document.getElementById(`od-chevron-${i}`);
+  if(!row)return;
+  const open=row.style.display!=='none';
+  row.style.display=open?'none':'table-row';
+  if(chevron) chevron.style.transform=open?'':'rotate(90deg)';
+}
+
+function printOrder(id){
+  const o=ordersCache.find(x=>x.id===id);
+  if(!o)return;
+  const items=o.items||[];
+  const subtotal=o.subtotal ?? items.reduce((s,x)=>s+x.price*x.qty,0);
+  const a=o.address;
+  const win=window.open('','_blank');
+  if(!win){ toast('Permita pop-ups pra imprimir o pedido.','red'); return; }
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>Pedido PED-${o.id.slice(-6).toUpperCase()}</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;padding:24px;color:#111;max-width:480px;margin:0 auto}
+      h1{font-size:18px;margin:0 0 2px}
+      .muted{color:#666;font-size:12px}
+      table{width:100%;border-collapse:collapse;margin:14px 0}
+      th,td{text-align:left;padding:6px 4px;border-bottom:1px solid #ddd;font-size:13px}
+      th{color:#666;font-weight:600}
+      .right{text-align:right}
+      .total-row{font-weight:800;font-size:15px}
+      .section{margin:14px 0}
+      .section h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#666;margin:0 0 6px}
+      hr{border:none;border-top:1px solid #ddd;margin:14px 0}
+    </style></head><body>
+      <h1>Agrocampo Pet Shop</h1>
+      <div class="muted">Pedido PED-${o.id.slice(-6).toUpperCase()} — ${o.date} às ${o.time}</div>
+      <hr/>
+      <div class="section"><h3>Cliente</h3>
+        ${a ? `<div><strong>${a.nome||'—'}</strong> — ${a.tel||''}</div><div>${a.rua||''}${a.num?', '+a.num:''}${a.comp?' - '+a.comp:''}</div><div>${a.bairro||''}${a.cep?' — CEP '+a.cep:''}</div>${a.ref?`<div>Ref: ${a.ref}</div>`:''}` : '<div>Retirada na loja</div>'}
+      </div>
+      <div class="section"><h3>Itens</h3>
+        <table><thead><tr><th>Produto</th><th class="right">Qtd</th><th class="right">Preço</th><th class="right">Subtotal</th></tr></thead>
+        <tbody>${items.map(x=>`<tr><td>${x.name}${x.variacao?` (${x.variacao})`:''}</td><td class="right">${x.qty}</td><td class="right">${fmt(x.price)}</td><td class="right">${fmt(x.price*x.qty)}</td></tr>`).join('')}</tbody></table>
+      </div>
+      <hr/>
+      <div class="right">Subtotal: ${fmt(subtotal)}</div>
+      ${o.frete?`<div class="right">Frete (${o.frete.label||o.frete.modalidade}): ${fmt(o.frete.valor||0)}</div>`:''}
+      <div class="right total-row">Total: ${fmt(o.total||0)}</div>
+      <div class="right muted">Pagamento: ${PAY_LABEL[o.payment]||'—'}</div>
+      <div class="right muted">${DELIVERY_LABEL[o.delivery]||'—'}${o.frete?' — '+(o.frete.label||o.frete.modalidade):''}</div>
+  </body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(), 300);
 }
 
 function clearOrders(){
@@ -2538,11 +3202,14 @@ Object.assign(window, {
   showPage, setEstoqueCat,
   saveProduct, cancelEdit, editProduct, deleteProduct, toggleStock, importDemoProducts,
   toggleValidadeField,
+  toggleVariacoesUI, addVariacaoRow, removeVariacaoRow, toggleVariacaoRowAtivo, updateVariacaoRow,
   saveCategoria, editCategoria, cancelCategoriaEdit, deleteCategoria,
+  toggleCidade, saveBairro, editBairro, cancelBairroEdit, toggleBairroAtivo, deleteBairro,
+  saveServico, editServico, cancelServicoEdit, toggleServicoAtivo, deleteServico,
   downloadTemplateXLSX, handleImportFile, confirmImport, cancelImportPreview,
-  setStatus, setAllAvailable, setProductQty,
+  setStatus, setAllAvailable, setProductQty, toggleDestaque,
   renderProdList, renderEstoque,
-  clearOrders, setOrderStatus, openOrderDetail, closeOrderDetail,
+  clearOrders, setOrderStatus, openOrderDetail, closeOrderDetail, toggleOdItem, printOrder,
   exportOrders, exportEstoque, exportEsgotados,
   removeImg, handleImgUpload,
   handleDesignUpload, removeDesignImg,
